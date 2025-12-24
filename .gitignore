@@ -1,0 +1,82 @@
+############################
+# Backend (Node / Express)
+############################
+ecommerce-backend/node_modules/
+ecommerce-backend/.env
+ecommerce-backend/.env.*
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+############################
+# Frontend (React / Vite)
+############################
+ecommerce-frontend/node_modules/
+ecommerce-frontend/dist/
+ecommerce-frontend/build/
+ecommerce-frontend/.env
+ecommerce-frontend/.env.*
+.vite/
+.eslintcache
+
+############################
+# Environment Variables (root)
+############################
+.env
+.env.*
+!.env.example
+
+############################
+# Database / Local Data
+############################
+mongodb-data/
+dump/
+*.sqlite
+*.db
+
+############################
+# Uploads / Media
+############################
+ecommerce-backend/uploads/
+ecommerce-backend/public/uploads/
+
+############################
+# Coverage / Testing
+############################
+coverage/
+.nyc_output/
+
+############################
+# Cache / Temp
+############################
+.cache/
+.tmp/
+.temp/
+
+############################
+# Build / Deploy Artifacts
+############################
+out/
+.next/
+.vercel/
+.render/
+
+############################
+# OS / Editor
+############################
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+############################
+# Misc
+############################
+*.tgz
+*.zip

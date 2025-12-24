@@ -1,0 +1,57 @@
+:root {
+  --color-first: #e7eaf6;
+  --color-second: #a2a8d3;
+  --color-third: #38598b;
+  --color-fourth: #113f67;
+
+  --text-dark: #1a1a1a;
+  --text-light: #ffffff;
+
+  --radius: 10px;
+  --shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: var(--color-first);
+  color: var(--text-dark);
+  line-height: 1.6;
+
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #1f2933;
+}
+
+/* Utility Classes */
+.first-color {
+  background: var(--color-first);
+}
+.second-color {
+  background: var(--color-second);
+}
+.third-color {
+  background: var(--color-third) !important;
+}
+.fourth-color {
+  background: var(--color-fourth) !important;
+}
+
+.text-light {
+  color: var(--text-light);
+}
+.text-dark {
+  color: var(--text-dark);
+}
+
+.container {
+  width: 90%;
+  margin: auto;
+  padding: 20px 0;
+}

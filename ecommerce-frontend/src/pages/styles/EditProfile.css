@@ -1,0 +1,94 @@
+/* ----------------------------------------
+   EDIT PROFILE PAGE WRAPPER
+----------------------------------------- */
+.edit-profile-wrapper {
+  width: 420px;
+  margin: 40px auto;
+  background: var(--color-second);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  animation: fadeIn 0.3s ease;
+}
+
+/* ----------------------------------------
+   TITLE
+----------------------------------------- */
+.edit-profile-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-fourth);
+  margin-bottom: 20px;
+}
+
+/* ----------------------------------------
+   INPUT FIELDS
+----------------------------------------- */
+.edit-profile-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-third);
+  background: var(--color-first);
+  font-size: 1rem;
+  transition: border 0.2s ease;
+}
+
+.edit-profile-form input:focus {
+  outline: none;
+  border: 2px solid var(--color-fourth);
+}
+
+/* ----------------------------------------
+   ERROR MESSAGE
+----------------------------------------- */
+.edit-error {
+  background: rgba(255, 0, 0, 0.08);
+  color: #c10000;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 12px;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+/* ----------------------------------------
+   BUTTONS
+----------------------------------------- */
+.edit-profile-form button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.edit-cancel-btn {
+  margin-top: 10px;
+  background: var(--color-third);
+  border: none;
+  color: var(--text-light);
+  padding: 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.edit-cancel-btn:hover {
+  background: var(--color-fourth);
+  opacity: 0.9;
+}
+
+/* ----------------------------------------
+   FADE IN ANIMATION
+----------------------------------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

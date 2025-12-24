@@ -1,0 +1,253 @@
+/* ----------------------------------------------------------
+   PAGE WRAPPER
+---------------------------------------------------------- */
+.admin-add-product-page {
+  padding: 25px;
+  animation: fadeIn 0.3s ease;
+  background: #f7f9fc;
+  min-height: 100%;
+}
+
+.admin-add-product-page h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: #12395b;
+}
+
+/* ----------------------------------------------------------
+   FORM CONTAINER
+---------------------------------------------------------- */
+.admin-add-product-form {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 14px;
+  border: 1px solid #e6e9ef;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Input & Textarea Styling */
+.admin-add-product-form input,
+.admin-add-product-form select,
+.admin-add-product-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #cfd7e3;
+  font-size: 1rem;
+  background: #fff;
+  transition: border 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-add-product-form input:focus,
+.admin-add-product-form select:focus,
+.admin-add-product-form textarea:focus {
+  border-color: #4fa3ff;
+  box-shadow: 0 0 5px rgba(79, 163, 255, 0.4);
+  outline: none;
+}
+
+.admin-add-product-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.admin-add-product-form label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: -10px;
+  color: #12395b;
+}
+
+/* ----------------------------------------------------------
+   FILE UPLOAD AREA
+---------------------------------------------------------- */
+input[type="file"] {
+  padding: 12px;
+  border: 1px dashed #a7b4c2;
+  border-radius: 10px;
+  background: #f1f5fb;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+input[type="file"]:hover {
+  background: #e9f1fa;
+  border-color: #4fa3ff;
+}
+
+input[type="file"]:disabled {
+  background: #eee;
+  cursor: not-allowed;
+}
+
+.admin-add-product-uploading-text {
+  font-size: 0.95rem;
+  color: #777;
+  margin-top: -5px;
+}
+
+/* ----------------------------------------------------------
+   IMAGE PREVIEW GRID
+---------------------------------------------------------- */
+.admin-add-product-preview-images {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 15px;
+}
+
+.admin-add-product-preview-images img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #d9dfe7;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-add-product-preview-images img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ----------------------------------------------------------
+   SUBMIT BUTTON
+---------------------------------------------------------- */
+.admin-add-product-btn.admin-add-product-btn--submit {
+  background: #1d4768;
+  color: white;
+  border: none;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.25s ease;
+  margin-top: 10px;
+  width: 180px;
+}
+
+.admin-add-product-btn.admin-add-product-btn--submit:hover {
+  background: #15344d;
+}
+
+.admin-add-product-btn.admin-add-product-btn--submit:disabled {
+  background: #b3b8bd;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ----------------------------------------------------------
+   DRAG & DROP UPOADER
+---------------------------------------------------------- */
+.admin-add-product-upload-dropzone {
+  padding: 28px;
+  border: 2px dashed #91a5bc;
+  background: #f3f7fc;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.admin-add-product-upload-dropzone:hover {
+  background: #e9f1fa;
+  border-color: #4fa3ff;
+}
+
+.admin-add-product-upload-dropzone.admin-add-product-upload-dropzone--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-add-product-upload-dropzone p {
+  margin: 0;
+  font-size: 1rem;
+  color: #37567c;
+}
+
+.admin-add-product-file-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------
+   IMAGE PREVIEW GRID (detailed)
+---------------------------------------------------------- */
+.admin-add-product-preview-images {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 18px;
+}
+
+.admin-add-product-preview-box {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-add-product-preview-box img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #dce3ee;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: 0.25s ease;
+}
+
+.admin-add-product-preview-box img:hover {
+  transform: scale(1.05);
+}
+
+/* REMOVE BUTTON */
+.admin-add-product-remove-image {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4d4d;
+  border: none;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.admin-add-product-remove-image:hover {
+  background: #d93636;
+}
+
+/* ----------------------------------------------------------
+   FADE-IN ANIMATION
+---------------------------------------------------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

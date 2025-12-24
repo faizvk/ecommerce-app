@@ -1,0 +1,265 @@
+/* ===========================================================================
+   ADMIN ORDERS — PREMIUM DASHBOARD UI
+   Clean spacing • Modern elevation • Consistent color hierarchy
+=========================================================================== */
+
+/* -----------------------------------------------
+   PAGE WRAPPER
+------------------------------------------------ */
+.admin-orders-page {
+  animation: fadeInUp 0.35s ease;
+  padding-bottom: 35px;
+}
+
+.admin-page-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f2f4f;
+  margin-bottom: 32px;
+  letter-spacing: -0.3px;
+}
+
+/* -----------------------------------------------
+   EMPTY STATE
+------------------------------------------------ */
+.no-orders {
+  text-align: center;
+  padding: 45px;
+  font-size: 1.2rem;
+  color: #787878;
+  background: #f9fafb;
+  border-radius: 16px;
+  border: 1px solid #ececee;
+  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.04);
+}
+
+.order-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.order-tab {
+  padding: 10px 18px;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.order-tab.active {
+  background: #1a73e8;
+  color: white;
+  border-color: #1a73e8;
+}
+
+.order-tab:hover {
+  background: #e6f0ff;
+}
+
+/* -----------------------------------------------
+   LIST GRID
+------------------------------------------------ */
+.admin-orders-list {
+  display: grid;
+  gap: 25px;
+}
+
+/* Two-column layout on wider screens */
+@media (min-width: 900px) {
+  .admin-orders-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ===========================================================================
+   ORDER CARD
+=========================================================================== */
+.admin-order-card {
+  background: #fefbfb;
+  padding: 26px 24px;
+  border-radius: 18px;
+  transition: all 0.28s ease;
+}
+
+.admin-order-card:hover {
+  transform: scale(1.001);
+  opacity: 0.9;
+  box-shadow: 0px 16px 34px rgba(0, 0, 0, 0.13);
+}
+
+/* ===========================================================================
+   HEADER (Order ID + Date + Status badge)
+=========================================================================== */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eff2f5;
+}
+
+.order-header h3 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #102c46;
+}
+
+.order-date {
+  font-size: 0.82rem;
+  color: #6b6b6b;
+  margin-top: 4px;
+  letter-spacing: 0.4px;
+}
+
+/* ===========================================================================
+   STATUS BADGES — Soft pastel pill tags
+=========================================================================== */
+.order-status {
+  padding: 7px 18px;
+  border-radius: 50px;
+  font-size: 0.83rem;
+  font-weight: 700;
+  min-width: 120px;
+  text-align: center;
+  letter-spacing: 0.4px;
+}
+
+.order-status.pending {
+  background: #fff2c6;
+  color: #8a6800;
+}
+.order-status.processing {
+  background: #dcecff;
+  color: #0a4f99;
+}
+.order-status.shipped {
+  background: #d6ffe6;
+  color: #11854b;
+}
+.order-status.delivered {
+  background: #c2ffd7;
+  color: #0d7429;
+}
+.order-status.cancelled {
+  background: #ffe2e2;
+  color: #c20000;
+}
+
+/* ===========================================================================
+   CUSTOMER + SECTIONS
+=========================================================================== */
+.order-section {
+  margin-top: 22px;
+}
+
+.order-section h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #103b60;
+  margin-bottom: 10px;
+}
+
+/* Address */
+.order-address {
+  margin-top: 10px;
+  color: #444;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: break-word; /* modern */
+  word-break: break-word;
+}
+
+/* ===========================================================================
+   ITEMS LIST
+=========================================================================== */
+.order-items {
+  margin-top: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fafafa;
+  border: 1px solid #ececec;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid #dcdcdc;
+  background: #fff;
+}
+
+.order-item-info strong {
+  font-size: 1.05rem;
+  color: #18324f;
+}
+
+.order-item-info p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  color: #525252;
+}
+
+/* ===========================================================================
+   TOTAL AMOUNT
+=========================================================================== */
+.order-total {
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid #edf1f4;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #10304d;
+}
+
+/* ===========================================================================
+   ACTION BUTTONS
+=========================================================================== */
+.order-actions {
+  margin-top: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.order-actions button {
+  padding: 10px 20px !important;
+  font-size: 0.94rem;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+/* ===========================================================================
+   ANIMATIONS
+=========================================================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

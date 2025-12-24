@@ -1,0 +1,111 @@
+/* --------------------------------------
+   SEARCH RESULTS PAGE
+--------------------------------------- */
+.search-results {
+  margin-top: 30px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-fourth);
+}
+
+.title span {
+  color: var(--color-third);
+}
+
+.search-loading {
+  margin-top: 40px;
+  font-size: 1.6rem;
+  color: var(--color-third);
+}
+
+/* No results message */
+.no-results {
+  margin-top: 25px;
+  font-size: 1.2rem;
+  color: var(--color-fourth);
+  opacity: 0.7;
+}
+
+/* Product grid inherits site-wide grid style */
+.grid {
+  margin-top: 25px;
+}
+.filters-bar {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f8f8f8;
+  font-size: 0.95rem;
+}
+
+.filter-input:focus {
+  border-color: #1a73e8;
+  outline: none;
+}
+
+.no-results {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+}
+.apply-btn {
+  padding: 8px 14px;
+  border: none;
+  background: var(--color-fourth, #1a73e8);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.apply-btn:hover {
+  background: #155ac4;
+}
+.pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 25px 0;
+}
+
+.pg-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.pg-btn:hover {
+  background: #ddd;
+}
+
+.pg-btn.active {
+  background: #1a73e8;
+  color: white;
+  border-color: #1a73e8;
+}
+
+.pg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .title {
+    font-size: 1.6rem;
+  }
+}

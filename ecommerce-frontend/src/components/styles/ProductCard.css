@@ -1,0 +1,133 @@
+.pc-card {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #e6e9ef;
+  transition: 0.25s ease;
+}
+
+.pc-card:hover {
+  transform: translateY(-6px);
+  opacity: 0.9;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* IMAGE BOX FIXED */
+.pc-image-box {
+  position: relative; /* IMPORTANT */
+  width: 100%;
+  height: 230px;
+  overflow: hidden;
+  background: #f6f7fb;
+}
+
+/* PRODUCT IMAGE */
+.pc-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+  position: relative;
+  transition: 0.3s ease;
+}
+
+/* Ensure image doesn't cover overlay */
+.pc-card:hover .pc-image {
+  transform: scale(1.06);
+  opacity: 0.7;
+}
+.pc-card:hover .pc-info {
+  opacity: 0.95;
+}
+
+/* DISCOUNT BADGE FIX */
+.pc-discount-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 5; /* SUPER IMPORTANT */
+  background: #e53935;
+  color: white;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+/* VIEW DETAILS OVERLAY FIX */
+.pc-view-overlay {
+  position: absolute;
+  bottom: -40px; /* hidden initially */
+  left: 0;
+  right: 0;
+  z-index: 6; /* MUST BE ABOVE IMAGE */
+  padding: 12px 0;
+  background: rgba(17, 47, 74, 0.92);
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0;
+  transition: 0.3s ease;
+  text-decoration: none;
+}
+
+.pc-card:hover .pc-view-overlay {
+  bottom: 0;
+  opacity: 0.8;
+}
+
+.pc-card:hover .pc-view-overlay:focus {
+  opacity: 0.9;
+}
+
+/* INFO SECTION */
+.pc-info {
+  padding: 16px;
+}
+
+.pc-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #12395b;
+  margin-bottom: 6px;
+}
+
+/* RATING */
+.pc-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.pc-stars {
+  color: #ffb300;
+}
+
+.pc-rating-count {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+/* PRICE SECTION */
+.pc-price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.pc-price {
+  font-size: 1.25rem;
+  color: #1d8f42;
+  font-weight: 700;
+}
+
+.pc-old-price {
+  text-decoration: line-through;
+  color: #575454;
+  font-size: 1rem;
+}

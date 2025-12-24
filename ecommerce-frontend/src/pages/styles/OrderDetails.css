@@ -1,0 +1,213 @@
+/* ======================================================
+   ORDER DETAILS PAGE
+====================================================== */
+.od-page {
+  padding: 20px 0;
+  width: 60%;
+}
+
+/* Title + messages */
+.od-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #12395b;
+  margin-bottom: 20px;
+}
+
+.od-loading,
+.od-error {
+  margin-top: 20px;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+/* ======================================================
+   HEADER: ID + STATUS + META
+====================================================== */
+.od-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 18px;
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  gap: 16px;
+}
+
+.od-id {
+  font-weight: 800;
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+}
+
+.od-status {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.od-status.pending {
+  background: orange;
+}
+.od-status.shipped {
+  background: #1976d2;
+}
+.od-status.delivered {
+  background: #2e7d32;
+}
+.od-status.cancelled {
+  background: #d32f2f;
+}
+
+/* ======================================================
+   SECTIONS: ADDRESS / ITEMS / TOTAL
+====================================================== */
+.od-section {
+  margin-bottom: 25px;
+}
+
+.od-section h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #12395b;
+}
+
+/* Address box */
+.od-address {
+  background: #fff;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Items list */
+.od-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.od-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #e4e4e4;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.od-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.od-item-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.od-item-info {
+  flex: 1;
+}
+
+.od-item-info p {
+  margin: 2px 0;
+  font-size: 0.95rem;
+}
+
+/* Price */
+.od-item-price {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #12395b;
+}
+
+/* Total box */
+.od-total-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.od-total-box p {
+  margin: 2px 0;
+  font-size: 0.95rem;
+}
+
+.od-total {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2e7d32;
+  margin-top: 8px;
+}
+
+/* ======================================================
+   ACTIONS
+====================================================== */
+.od-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.od-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.od-btn.track {
+  background: #1976d2;
+  color: #fff;
+}
+
+.od-btn.track:hover {
+  background: #145ca3;
+}
+
+.od-btn.shop {
+  background: #12395b;
+  color: #fff;
+}
+
+.od-btn.shop:hover {
+  background: #0c283f;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+@media (max-width: 768px) {
+  .od-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .od-actions {
+    flex-direction: column;
+  }
+
+  .od-btn {
+    width: 100%;
+  }
+}

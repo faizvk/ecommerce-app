@@ -1,0 +1,152 @@
+/* ----------------------------------
+   HOME PAGE GLOBAL
+------------------------------------- */
+
+.home {
+  width: 100%;
+  margin: auto;
+}
+
+/* ----------------------------------
+   PRODUCTS SECTION
+------------------------------------- */
+
+.products-section {
+  margin-top: 60px;
+  margin: 0 20px;
+}
+
+.products-title {
+  text-align: center;
+  font-size: 2.3rem;
+  color: var(--color-fourth);
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+/* Product grid */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 28px;
+}
+
+/* CATEGORY TABS */
+
+.category-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 10px;
+  z-index: 20;
+}
+
+.category-tab {
+  padding: 10px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 30px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+
+  color: #374151;
+
+  transition: all 0.25s ease;
+}
+
+.category-tab:hover {
+  background: #e8eef7;
+  border-color: #c6d4ef;
+  color: #1a73e8;
+}
+
+.category-tab.active {
+  background: #1a73e8;
+  border-color: #1a73e8;
+  color: #ffffff;
+
+  box-shadow: 0 3px 6px rgba(26, 115, 232, 0.3);
+  transform: translateY(-2px);
+}
+
+/* CATEGORY SECTION */
+.category-section {
+  margin-top: 10px;
+}
+
+.category-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: #12395b;
+}
+
+.category-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  margin-left: 30px;
+  color: #12395b;
+  text-transform: capitalize;
+}
+
+.show-more-wrapper {
+  text-align: center;
+  margin-top: 18px;
+}
+
+.show-more-btn {
+  padding: 10px 20px;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.show-more-btn:hover {
+  background: #1558b0;
+}
+
+/* ----------------------------------
+   RESPONSIVENESS
+------------------------------------- */
+
+@media (max-width: 900px) {
+  .products-title {
+    font-size: 2rem;
+  }
+
+  .grid {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .products-section {
+    margin-top: 40px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .category-tabs {
+    gap: 10px;
+    padding: 12px;
+    overflow-x: auto;
+    justify-content: flex-start; /* scrollable on mobile */
+  }
+
+  .category-tab {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 25px;
+  }
+}

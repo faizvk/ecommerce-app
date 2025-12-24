@@ -1,0 +1,66 @@
+/* ----------------------------------
+   GLOBAL BUTTON STYLES
+------------------------------------- */
+
+.btn {
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  transition: 0.3s ease;
+  font-size: 1rem;
+}
+
+/* ----------------------------------
+   PRIMARY BUTTON
+------------------------------------- */
+
+.btn.primary {
+  background: var(--color-third);
+  color: var(--text-light);
+}
+
+.btn.primary:hover {
+  background: var(--color-fourth);
+}
+
+.btn.primary:active {
+  transform: scale(0.96);
+}
+
+/* ----------------------------------
+   OUTLINE BUTTON
+------------------------------------- */
+
+.btn.outline {
+  background: transparent;
+  border: 2px solid var(--color-third);
+  color: var(--color-third);
+}
+
+.btn.outline:hover {
+  background: var(--color-third);
+  color: var(--text-light);
+}
+
+.btn.outline:active {
+  transform: scale(0.96);
+}
+
+/* ----------------------------------
+   DANGER BUTTON (Used in Cancel Order)
+------------------------------------- */
+
+.btn.danger {
+  background: red;
+  color: white;
+}
+
+.btn.danger:hover {
+  background: #b30000;
+}
+
+.btn.danger:active {
+  transform: scale(0.96);
+}

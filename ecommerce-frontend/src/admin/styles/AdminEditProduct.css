@@ -1,0 +1,136 @@
+/* ==============================================================
+   EDIT PRODUCT PAGE — UNIQUE EP-* CLASS NAMES
+============================================================== */
+
+.ep-wrapper {
+  padding: 28px;
+  animation: fadeIn 0.3s ease;
+}
+
+.ep-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #12395b;
+  margin-bottom: 6px;
+}
+
+.ep-subtitle {
+  color: #6f6f6f;
+  margin-bottom: 25px;
+}
+
+/* GRID LAYOUT */
+.ep-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 32px;
+  margin-bottom: 30px;
+}
+
+/* =======================
+   LEFT FORM STYLING
+======================= */
+.ep-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.ep-label {
+  font-weight: 600;
+  color: #23466d;
+  margin-bottom: 6px;
+}
+
+.ep-input,
+.ep-textarea,
+.ep-select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d6dee9;
+  background: white;
+  font-size: 1rem;
+  margin-bottom: 18px;
+  transition: 0.25s ease;
+}
+
+.ep-input:focus,
+.ep-textarea:focus,
+.ep-select:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.18);
+}
+
+.ep-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.ep-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* =======================
+   IMAGE UPLOAD SECTION
+======================= */
+.ep-image-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.ep-image-box {
+  width: 100%;
+  height: 260px;
+  background: #f4f7fc;
+  border: 2px dashed #c9d4e2;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.ep-image-box:hover {
+  background: #e8eef8;
+  border-color: #1a73e8;
+}
+
+.ep-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ep-file {
+  padding: 10px;
+  border: 1px solid #d6dee9;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.ep-file:hover {
+  border-color: #1a73e8;
+}
+
+/* Loading text */
+.ep-loading {
+  color: #666;
+  font-size: 1.1rem;
+  padding: 20px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+  }
+}

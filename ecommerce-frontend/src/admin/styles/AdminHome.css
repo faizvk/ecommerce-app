@@ -1,0 +1,296 @@
+/* ===================================================================
+   ⬤ MODERN ADMIN DASHBOARD — PREMIUM UI DESIGN
+   Inspired by Shopify / Stripe / Amazon Seller Central
+=================================================================== */
+
+:root {
+  --admin-bg: #f4f7fb;
+  --admin-primary: #124a78;
+  --admin-accent: #4fa3ff;
+  --admin-secondary: #2c3e50;
+  --admin-muted: #6c7a89;
+  --card-bg: #ffffff;
+  --card-border: #e3e8ef;
+  --shadow-soft: 0 4px 18px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* -------------------------------------------------------------------
+   PAGE CONTAINER
+------------------------------------------------------------------- */
+.admin-home {
+  padding: 32px;
+  background: var(--admin-bg);
+  min-height: 100%;
+  animation: fadeIn 0.45s ease;
+  color: var(--admin-secondary);
+}
+
+.admin-home h1 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: var(--admin-primary);
+}
+
+.subtitle {
+  color: var(--admin-muted);
+  margin-bottom: 32px;
+  font-size: 1.1rem;
+}
+
+/* -------------------------------------------------------------------
+   STATS GRID — Modern Cards
+------------------------------------------------------------------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 28px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  padding: 30px 26px;
+  border-radius: 18px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  transform: translateY(0);
+  cursor: pointer;
+}
+
+/* Soft glow hover */
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 220%;
+  height: 220%;
+  background: radial-gradient(
+    circle,
+    rgba(79, 163, 255, 0.18) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+.stat-card h2 {
+  font-size: 2.7rem;
+  color: var(--admin-primary);
+  font-weight: 900;
+}
+
+.stat-card p {
+  font-size: 1.15rem;
+  color: var(--admin-muted);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* -------------------------------------------------------------------
+   CHARTS — Beautiful card containers
+------------------------------------------------------------------- */
+.charts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-bottom: 45px;
+}
+
+.chart-box {
+  flex: 1;
+  min-width: 350px;
+  background: var(--card-bg);
+  padding: 26px;
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.chart-box:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.chart-box h3 {
+  margin-bottom: 20px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--admin-primary);
+}
+
+/* -------------------------------------------------------------------
+   LIST SECTIONS (Users, Products)
+------------------------------------------------------------------- */
+.section-title {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: var(--admin-primary);
+}
+
+/* General list */
+.list-box,
+.user-list,
+.product-list {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow-soft);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* =============== USERS LIST =============== */
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid #eef1f4;
+  transition: background 0.22s ease;
+}
+
+.user-item:hover {
+  background: #f1f6ff;
+}
+
+.user-info span {
+  display: block;
+  color: var(--admin-muted);
+}
+
+.user-info small {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.role-badge {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.role-badge.admin {
+  background: var(--admin-primary);
+  color: white;
+}
+
+.role-badge.user {
+  background: #e9eef3;
+  color: #333;
+}
+
+/* ==========================================================
+   PREMIUM TOP SELLING PRODUCT LIST
+========================================================== */
+
+.product-list {
+  padding: 0;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: white;
+  border: 1px solid #e6e9ef;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 6%);
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 13%);
+  background: #f2f7ff;
+}
+
+/* Product Thumbnail */
+.thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #d9dfe5;
+}
+
+/* Product Info */
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #12395b;
+}
+
+/* Sub-meta (sold & revenue) */
+.product-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.sold-count {
+  background: #e7f1ff;
+  color: #2a5fa3;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.revenue {
+  font-size: 0.9rem;
+  color: #444;
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------
+   ANIMATIONS
+------------------------------------------------------------------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

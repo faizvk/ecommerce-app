@@ -1,0 +1,279 @@
+/* ===========================================================
+   ORDER TRACKING — PREMIUM UI
+=========================================================== */
+.ot-wrapper {
+  padding: 25px 0;
+  animation: fadeIn 0.3s ease;
+  width: 60%;
+}
+
+.ot-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #12395b;
+  margin-bottom: 10px;
+}
+
+.ot-msg {
+  background: #e8f4ff;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #0a4da3;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ===========================================================
+   TOP SECTION (Timeline + Details)
+=========================================================== */
+.ot-top {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+/* ================= TIMELINE ================== */
+.ot-timeline {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #e2e7ee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  min-height: 90px;
+}
+
+.ot-cancelled {
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  color: #b50000;
+}
+
+.ot-cancel-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+/* step + line */
+/* container for each step */
+/* each step */
+.ot-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 28px; /* space between steps */
+}
+
+/* label above circle */
+.ot-label {
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+  z-index: 2;
+}
+
+.ot-label.active {
+  color: #12395b;
+  font-weight: 700;
+}
+
+/* circle */
+.ot-circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #cfd6e2;
+  z-index: 3;
+}
+
+.ot-circle.done {
+  background: #1a73e8;
+}
+
+/* vertical connector line */
+.ot-line {
+  position: absolute;
+  left: 50%;
+  top: calc(12px + 8px); /* label margin-bottom + circle height */
+  bottom: -14px; /* half of spacing between steps */
+  width: 2px;
+  background: #e8edf4;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.ot-line.done {
+  background: #1a73e8;
+}
+
+/* fix extra bottom spacing on last step */
+.ot-step:last-child {
+  padding-bottom: 0;
+}
+
+/* ================= DETAILS BOX ================== */
+.ot-details {
+  background: #fff;
+  padding: 20px;
+  width: 100%;
+  border-radius: 14px;
+  font-size: 0.95rem;
+}
+
+.ot-id-main {
+  font-size: 1rem;
+}
+.ot-id {
+  font-size: 1.1rem;
+  font-weight: 800px;
+}
+
+.ot-details h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #12395b;
+}
+.oy-amount {
+  margin: 10px 0;
+}
+
+.ot-address {
+  margin: 20px 0;
+  line-height: 1.5;
+  width: 80%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.ot-status {
+  display: inline-block;
+  margin: 10px 10px 10px 10px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.ot-status.pending {
+  background: #fff5cc;
+  color: #a67c00;
+}
+
+.ot-status.shipped {
+  background: #daf1ff;
+  color: #005fa3;
+}
+
+.ot-status.delivered {
+  background: #d8ffd9;
+  color: #0f7a1a;
+}
+
+.ot-status.cancelled {
+  background: #ffd6d6;
+  color: #ab0000;
+}
+
+/* ===========================================================
+   ITEMS SECTION
+=========================================================== */
+
+.ot-items-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #12395b;
+}
+
+.ot-items-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.ot-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.ot-item:last-child {
+  border-bottom: none;
+}
+
+.ot-item-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ot-item-info h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #12395b;
+}
+
+.ot-item-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.ot-item-price {
+  margin-left: auto;
+  font-weight: 700;
+  color: #1a7f37;
+  font-size: 1rem;
+}
+
+/* ===========================================================
+   ANIMATION
+=========================================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================================================
+   RESPONSIVE
+=========================================================== */
+@media (max-width: 900px) {
+  .ot-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .ot-timeline {
+    padding: 16px;
+  }
+
+  .ot-item-img {
+    width: 70px;
+    height: 70px;
+  }
+}

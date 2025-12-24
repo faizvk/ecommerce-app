@@ -1,0 +1,184 @@
+.admin-page {
+  padding: 20px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.admin-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.add-btn {
+  background: #1b7ced;
+  color: white;
+}
+
+.edit-btn {
+  background: #ffc107;
+  color: black;
+  margin-right: 6px;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 400px;
+}
+
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+}
+.admin-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.admin-order-card {
+  padding: 20px;
+  background: var(--color-first);
+  border-radius: 12px;
+  border: 1px solid var(--color-second);
+  box-shadow: var(--shadow);
+}
+
+.admin-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.status-pending {
+  background: orange;
+}
+
+.status-processing {
+  background: dodgerblue;
+}
+
+.status-shipped {
+  background: purple;
+}
+
+.status-delivered {
+  background: green;
+}
+
+.status-cancelled {
+  background: red;
+}
+
+.admin-order-items {
+  margin-top: 15px;
+}
+
+.admin-order-item {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.admin-order-item:last-child {
+  border-bottom: none;
+}
+
+.admin-order-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--color-second);
+}
+
+.total {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-top: 10px;
+  color: var(--color-fourth);
+}
+
+.admin-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 12px;
+}
+
+.user-filter {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.role-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+}
+
+.role-badge.admin {
+  background: #007bff;
+}
+
+.role-badge.user {
+  background: #6c757d;
+}
+
+.promote-btn {
+  background: #007bff;
+  color: white;
+}
+
+.demote-btn {
+  background: #dc3545;
+  color: white;
+}

@@ -1,0 +1,100 @@
+/* ----------------------------------
+   ADMIN LAYOUT
+---------------------------------- */
+.admin-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.admin-back-btn {
+  background: #1d4768;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: 0.25s ease;
+}
+
+.admin-back-btn:hover {
+  background: #163650;
+}
+
+/* ----------------------------------
+   SIDEBAR
+---------------------------------- */
+.admin-sidebar {
+  width: 240px;
+  background: var(--color-fourth);
+  color: white;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  position: fixed; /* NEW */
+  top: 0; /* NEW */
+  left: 0; /* NEW */
+  height: 100vh; /* NEW – ensures full-height sidebar */
+  overflow-y: auto;
+}
+
+.admin-logo {
+  font-size: 1.7rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-link {
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #f0f0f0;
+  transition: 0.25s ease;
+}
+
+.admin-link:hover {
+  color: rgba(255, 255, 255, 0.15);
+  transform: translateX(2px);
+}
+
+.admin-link.active {
+  background: #1d4768;
+  color: #ffffff;
+  padding-left: 11px;
+}
+
+/* ----------------------------------
+   MAIN CONTENT (OUTLET AREA)
+---------------------------------- */
+.admin-content {
+  flex: 1; /* 🔥 EXPAND OUTLET AREA */
+  padding: 30px;
+  background: #ffffff;
+  overflow-y: auto;
+  animation: fadeIn 0.25s ease;
+  margin-left: 240px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,271 @@
+/* ======================================================
+   ORDERS PAGE LAYOUT
+====================================================== */
+.orders-page {
+  margin-top: 30px;
+}
+
+.orders-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-fourth);
+  margin-bottom: 20px;
+}
+
+.orders-error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.no-orders,
+.orders-empty {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.orders-loading {
+  text-align: center;
+  padding: 20px;
+  color: #555;
+}
+
+.browse-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 18px;
+  background: #1a73e8;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.orders-tabs {
+  display: flex;
+  gap: 14px;
+  margin: 20px 0 30px;
+}
+
+.orders-tab {
+  padding: 10px 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: 0.25s ease;
+}
+
+.orders-tab:hover {
+  color: var(--color-third);
+}
+
+.orders-tab.active {
+  color: var(--color-third);
+}
+
+.orders-empty-tab {
+  padding: 40px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* ======================================================
+   ORDER LIST + CARDS
+====================================================== */
+.orders-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 28px;
+  margin-top: 20px;
+}
+
+.order-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  background: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  transition: all 0.3s ease-in;
+}
+
+.order-card:hover {
+  transform: scale(1.01);
+  opacity: 0.8;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ======================================================
+   ORDER CONTENT
+====================================================== */
+.order-info {
+  flex: 1;
+}
+
+.order-info p {
+  margin: 4px 0;
+  color: var(--color-fourth);
+  font-size: 0.95rem;
+}
+
+/* Header: ID + status badge */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.order-id {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.order-id strong,
+.order-total strong,
+.order-items strong {
+  color: var(--color-third);
+}
+
+/* ======================================================
+   STATUS BADGE
+====================================================== */
+.order-status-badge {
+  margin-left: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.order-status-badge.pending {
+  background: #ffeb99;
+  color: #b88a00;
+}
+.order-status-badge.processing {
+  background: #b3e5fc;
+  color: #0277bd;
+}
+.order-status-badge.shipped {
+  background: #e1f5fe;
+  color: #01579b;
+}
+.order-status-badge.delivered {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+.order-status-badge.cancelled {
+  background: #ffcdd2;
+  color: #c62828;
+}
+
+/* Legacy .order-status text (if you still use it somewhere) */
+.order-status {
+  font-weight: 600;
+}
+.order-status.pending {
+  color: orange;
+}
+.order-status.cancelled {
+  color: red;
+}
+.order-status.delivered {
+  color: green;
+}
+.order-status.shipped {
+  color: #0074d9;
+}
+
+/* ======================================================
+   THUMBNAILS STRIP
+====================================================== */
+.order-thumbs {
+  display: flex;
+  margin-top: 10px;
+}
+
+.order-thumbs img {
+  width: 55px;
+  height: 55px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: -10px;
+  border: 2px solid #fff;
+}
+
+.more-items {
+  padding-left: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ======================================================
+   RIGHT-SIDE ACTIONS
+====================================================== */
+.order-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  margin-left: 20px;
+  min-width: 160px;
+}
+
+.track-btn,
+.details-btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.track-btn {
+  background: var(--color-third);
+}
+.track-btn:hover {
+  background: var(--color-fourth);
+}
+
+.details-btn {
+  background: #eaeff7;
+  color: #23466d;
+}
+.details-btn:hover {
+  background: #d8e4f3;
+}
+
+/* Total line (if you show it in card) */
+.order-total {
+  margin-top: 8px;
+  font-size: 0.95rem;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+@media (max-width: 700px) {
+  .order-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .order-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .track-btn,
+  .details-btn {
+    width: auto;
+  }
+}

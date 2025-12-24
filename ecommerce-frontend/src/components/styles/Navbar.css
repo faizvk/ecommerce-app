@@ -1,0 +1,319 @@
+/* ======================================================
+   NAVBAR BASE
+======================================================= */
+.navbar {
+  width: 100%;
+  padding: 20px 4%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-fourth);
+  color: var(--text-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+/* ADMIN NAVBAR (minimal UI) */
+.admin-navbar {
+  background: var(--color-fourth);
+  padding: 14px 4%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-user-label {
+  color: var(--text-light);
+  font-weight: 600;
+  margin-right: 15px;
+}
+
+/* ======================================================
+   LOGOUT BUTTON (shared)
+======================================================= */
+.logout-btn {
+  padding: 8px 18px;
+  background: var(--color-third);
+  border: none;
+  border-radius: 999px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: 0.25s;
+}
+
+.logout-btn:hover {
+  background: var(--color-second);
+}
+
+/* ======================================================
+   LOGO
+======================================================= */
+.logo {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--text-light);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: 0.2s;
+}
+
+.logo:hover {
+  opacity: 0.7;
+}
+
+/* ======================================================
+   SEARCH BAR
+======================================================= */
+.navbar-search-wrapper {
+  position: relative;
+  width: 50%;
+}
+
+.navbar-search {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.navbar-search input {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px 0 0 6px;
+  background: #fff;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.navbar-search button {
+  padding: 11.11px 18px;
+  background: var(--color-third);
+  border: none;
+  color: var(--text-light);
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.navbar-search button:hover {
+  background: var(--color-fourth);
+}
+
+/* ======================================================
+   SEARCH SUGGESTIONS DROPDOWN
+======================================================= */
+.search-suggestions {
+  position: absolute;
+  top: 48px;
+  width: 100%;
+  background: var(--color-first);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  z-index: 200;
+  max-height: 260px;
+  overflow-y: auto;
+  animation: fadeSlide 0.15s ease-out;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestion-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+  color: var(--color-fourth);
+  transition: 0.2s;
+}
+
+.suggestion-item:hover {
+  background: #f5f5f5;
+}
+
+.no-suggestions {
+  padding: 10px;
+  text-align: center;
+  color: gray;
+}
+
+/* Enhanced suggestion layout */
+.suggestion-item.enhanced {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #e5e5e5;
+  transition: background 0.1s ease;
+}
+
+.suggestion-item.enhanced:hover {
+  background: #f3f4f6;
+}
+
+.suggestion-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #eee;
+}
+
+.suggestion-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.suggestion-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+}
+
+.suggestion-price {
+  font-size: 0.85rem;
+  color: #1a7f37;
+  font-weight: 600;
+}
+
+/* ======================================================
+   RIGHT SECTION: PROFILE + CART
+======================================================= */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* "Hello, User" label */
+.nav-hello {
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Inline nav links (Profile / Orders / etc.) */
+.nav-link {
+  text-decoration: none;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+/* LOGIN BUTTON */
+.login-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+/* ======================================================
+   CART ICON
+======================================================= */
+.cart-link {
+  position: relative;
+  font-size: 1.6rem;
+  color: var(--text-light);
+  text-decoration: none;
+  transition: all 0.2s ease-in;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background: var(--color-third);
+  color: var(--text-light);
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+.logout-icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.logout-icon-btn:hover,
+.login-btn:hover,
+.cart-link:hover,
+.nav-link:hover,
+.admin-shortcut-link:hover {
+  color: rgba(255, 255, 255, 0.15);
+  transform: translateX(2px);
+}
+
+/* Admin shortcut link */
+.admin-shortcut-link {
+  padding: 8px 14px;
+
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+/* ======================================================
+   RESPONSIVE
+======================================================= */
+@media (max-width: 900px) {
+  .navbar-search-wrapper {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar-right {
+    gap: 10px;
+  }
+
+  .nav-hello {
+    display: none;
+  }
+
+  .cart-link {
+    font-size: 1.3rem;
+  }
+
+  .login-btn,
+  .nav-link,
+  .admin-shortcut-link,
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+}

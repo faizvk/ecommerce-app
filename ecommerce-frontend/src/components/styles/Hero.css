@@ -1,0 +1,141 @@
+/* ----------------------------------
+   HERO SECTION
+------------------------------------- */
+
+.hero-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 70px 6%;
+  background: linear-gradient(135deg, var(--color-first), var(--color-second));
+  border-radius: 22px;
+  margin-top: 30px;
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.15));
+  gap: 60px;
+  overflow: hidden;
+}
+
+/* -------------------------
+   LEFT CONTENT
+-------------------------- */
+.hero-content {
+  flex: 1;
+  animation: fadeInUp 0.6s ease;
+}
+
+.hero-content h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--color-fourth);
+  line-height: 1.15;
+}
+
+.hero-content h1 span {
+  color: var(--color-third);
+}
+
+.hero-content p {
+  margin-top: 18px;
+  font-size: 1.25rem;
+  color: var(--text-dark);
+  max-width: 500px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* Button */
+.hero-btn {
+  margin-top: 28px;
+  padding: 14px 32px !important;
+  font-size: 1.15rem;
+  border-radius: var(--radius);
+  transition: 0.3s ease;
+}
+
+.hero-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+/* -------------------------
+   RIGHT IMAGE
+-------------------------- */
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  animation: fadeIn 0.8s ease;
+}
+
+.hero-image img {
+  width: 480px;
+  max-width: 100%;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  object-fit: cover;
+  transition: 0.3s ease;
+}
+
+.hero-image img:hover {
+  transform: scale(1.03);
+}
+
+/* ----------------------------------
+   RESPONSIVE DESIGN
+------------------------------------- */
+@media (max-width: 900px) {
+  .hero-section {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding: 45px 6%;
+    gap: 35px;
+  }
+
+  .hero-content h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-image img {
+    width: 75%;
+  }
+
+  .hero-content p {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 550px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-image img {
+    width: 90%;
+  }
+}
+
+/* ----------------------------------
+   ANIMATIONS
+------------------------------------- */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
