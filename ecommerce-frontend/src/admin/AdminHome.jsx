@@ -16,9 +16,6 @@ import { fetchAllUsersThunk } from "../redux/slice/userSlice";
 
 import "./styles/AdminHome.css";
 
-/* =========================
-   CHART REGISTRATION
-========================= */
 ChartJS.register(
   BarElement,
   CategoryScale,
@@ -30,30 +27,18 @@ ChartJS.register(
 export default function AdminHome() {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { users } = useSelector((state) => state.user);
   const { products } = useSelector((state) => state.product);
   const { adminOrders, loading } = useSelector((state) => state.order);
 
-  /* =========================
-     LOCAL DERIVED STATS
-  ========================= */
   const [stats, setStats] = useState(null);
 
-  /* =========================
-     LOAD RAW DATA
-  ========================= */
   useEffect(() => {
     dispatch(fetchAllUsersThunk());
     dispatch(fetchProductsThunk());
     dispatch(adminFetchOrdersThunk());
   }, [dispatch]);
 
-  /* =========================
-     DERIVE DASHBOARD STATS
-  ========================= */
   useEffect(() => {
     if (!users || !products || !adminOrders) return;
 
@@ -131,16 +116,10 @@ export default function AdminHome() {
     });
   }, [users, products, adminOrders]);
 
-  /* =========================
-     LOADING
-  ========================= */
   if (loading || !stats) {
     return <p className="loading">Loading dashboard...</p>;
   }
 
-  /* =========================
-     CHART DATA
-  ========================= */
   const revenueChartData = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [
@@ -164,9 +143,6 @@ export default function AdminHome() {
     ],
   };
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="admin-home">
       <h1>Dashboard Overview</h1>

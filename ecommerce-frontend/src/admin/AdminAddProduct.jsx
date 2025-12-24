@@ -21,9 +21,6 @@ export default function AdminAddProduct() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  /* =========================
-     IMAGE UPLOAD
-  ========================= */
   const handleImageUpload = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -44,9 +41,6 @@ export default function AdminAddProduct() {
     setUploading(false);
   };
 
-  /* =========================
-     FORM SUBMIT
-  ========================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -95,9 +89,6 @@ export default function AdminAddProduct() {
     }
   };
 
-  /* =========================
-     DRAG & DROP
-  ========================= */
   const handleDrop = async (e) => {
     e.preventDefault();
     if (uploading || saving) return;
@@ -108,9 +99,6 @@ export default function AdminAddProduct() {
     await handleImageUpload({ target: { files } });
   };
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="admin-add-product-page">
       <h1>Add New Product</h1>

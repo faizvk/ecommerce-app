@@ -14,9 +14,6 @@ import "./styles/Cart.css";
 export default function Cart() {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { user, loading: authLoading } = useSelector((state) => state.auth);
   const {
     items,
@@ -25,9 +22,6 @@ export default function Cart() {
     error,
   } = useSelector((state) => state.cartItems);
 
-  /* =========================
-     EFFECT
-  ========================= */
   useEffect(() => {
     if (!authLoading && user) {
       dispatch(fetchCartThunk());
@@ -35,9 +29,6 @@ export default function Cart() {
     }
   }, [authLoading, user, dispatch]);
 
-  /* =========================
-     GUARDS
-  ========================= */
   if (authLoading) return <p className="loading">Loading...</p>;
 
   if (!user) {
@@ -55,9 +46,6 @@ export default function Cart() {
   if (cartLoading) return <p className="loading">Loading cart...</p>;
   if (error) return <p className="error">{error}</p>;
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="cart-page container">
       <h1 className="cart-title">Your Cart</h1>

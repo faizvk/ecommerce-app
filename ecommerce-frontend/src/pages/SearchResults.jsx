@@ -14,9 +14,6 @@ export default function SearchResults() {
   const query = url.get("query") || "";
   const defaultCategory = url.get("category") || "";
 
-  /* =========================
-     REDUX STATE (SAFE DEFAULTS)
-  ========================= */
   const {
     searchedProducts = [], // ✅ fallback
     totalPages = 1, // ✅ fallback
@@ -25,9 +22,6 @@ export default function SearchResults() {
 
   const products = searchedProducts;
 
-  /* =========================
-     LOCAL UI STATE
-  ========================= */
   const [page, setPage] = useState(1);
 
   const [localFilters, setLocalFilters] = useState({
@@ -46,9 +40,6 @@ export default function SearchResults() {
     order: "desc",
   });
 
-  /* =========================
-     FETCH SEARCH RESULTS
-  ========================= */
   useEffect(() => {
     dispatch(
       searchProductsThunk({
@@ -60,9 +51,6 @@ export default function SearchResults() {
     );
   }, [query, activeFilters, page, dispatch]);
 
-  /* =========================
-     AUTO APPLY CATEGORY
-  ========================= */
   useEffect(() => {
     if (defaultCategory) {
       setLocalFilters((prev) => ({ ...prev, category: defaultCategory }));
@@ -74,24 +62,15 @@ export default function SearchResults() {
     }
   }, [defaultCategory]);
 
-  /* =========================
-     APPLY FILTERS
-  ========================= */
   const applyFilters = () => {
     setPage(1);
     setActiveFilters({ ...localFilters, _force: Date.now() });
   };
 
-  /* =========================
-     PAGINATION
-  ========================= */
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setPage(p);
   };
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="container search-results">
       <h2 className="title">

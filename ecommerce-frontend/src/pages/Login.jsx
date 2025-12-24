@@ -12,14 +12,8 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  /* =========================
-     REDUX AUTH STATE
-  ========================= */
   const { loading } = useSelector((state) => state.auth);
 
-  /* =========================
-     FORM SETUP
-  ========================= */
   const {
     register,
     handleSubmit,
@@ -29,9 +23,6 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  /* =========================
-     SUBMIT HANDLER
-  ========================= */
   const onSubmit = async (data) => {
     try {
       const res = await dispatch(loginThunk(data)).unwrap();
@@ -46,9 +37,6 @@ export default function Login() {
     }
   };
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="form-main">
       {/* LEFT PANEL */}

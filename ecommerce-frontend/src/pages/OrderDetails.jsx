@@ -8,25 +8,16 @@ export default function OrderDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const {
     currentOrder: order,
     loading,
     error,
   } = useSelector((state) => state.order);
 
-  /* =========================
-     LOAD ORDER
-  ========================= */
   useEffect(() => {
     dispatch(trackOrderThunk(id));
   }, [dispatch, id]);
 
-  /* =========================
-     LOADING
-  ========================= */
   if (loading) {
     return (
       <div className="container od-page">
@@ -36,9 +27,6 @@ export default function OrderDetails() {
     );
   }
 
-  /* =========================
-     ERROR / NOT FOUND
-  ========================= */
   if (!order) {
     return (
       <div className="container od-page">
@@ -48,9 +36,6 @@ export default function OrderDetails() {
     );
   }
 
-  /* =========================
-     STATUS STYLES
-  ========================= */
   const statusColors = {
     pending: "pending",
     shipped: "shipped",
@@ -59,9 +44,6 @@ export default function OrderDetails() {
     processing: "pending",
   };
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="container od-page">
       <h1 className="od-title">Order Details</h1>

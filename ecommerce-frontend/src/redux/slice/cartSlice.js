@@ -26,9 +26,6 @@ export const refreshCartCountThunk = createAsyncThunk(
   }
 );
 
-/* =========================
-   SLICE
-========================= */
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -37,9 +34,6 @@ const cartSlice = createSlice({
     error: null,
   },
   reducers: {
-    /**
-     * Clear cart state (used on logout)
-     */
     clearCart: (state) => {
       state.count = 0;
       state.loading = false;

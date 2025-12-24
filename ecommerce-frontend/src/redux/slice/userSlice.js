@@ -8,10 +8,6 @@ import {
   updateUserRole,
 } from "../../api/user.api";
 
-/* =========================
-   THUNKS
-========================= */
-
 export const signupThunk = createAsyncThunk(
   "user/signup",
   async (data, { rejectWithValue }) => {
@@ -67,10 +63,6 @@ export const updatePasswordThunk = createAsyncThunk(
   }
 );
 
-/* =========================
-   ADMIN THUNKS
-========================= */
-
 export const fetchAllUsersThunk = createAsyncThunk(
   "user/fetchAll",
   async (_, { rejectWithValue }) => {
@@ -94,10 +86,6 @@ export const updateUserRoleThunk = createAsyncThunk(
     }
   }
 );
-
-/* =========================
-   SLICE
-========================= */
 
 const userSlice = createSlice({
   name: "user",

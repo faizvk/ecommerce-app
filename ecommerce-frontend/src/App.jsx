@@ -40,8 +40,8 @@ const AdminUsers = lazy(() => import("./admin/AdminUsers"));
 
 function LoadingScreen() {
   return (
-    <div className="global-loader">
-      <p>Loading...</p>
+    <div>
+      <p className="loading">Loading...</p>
     </div>
   );
 }

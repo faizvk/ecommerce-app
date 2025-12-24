@@ -9,9 +9,6 @@ export default function OrderTrack() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { user, loading: authLoading } = useSelector((state) => state.auth);
 
   const {
@@ -21,31 +18,19 @@ export default function OrderTrack() {
     message,
   } = useSelector((state) => state.order);
 
-  /* =========================
-     AUTH GUARD
-  ========================= */
   if (!authLoading && user?.role === "admin") {
     return <Navigate to="/admin" replace />;
   }
 
-  /* =========================
-     LOAD ORDER
-  ========================= */
   useEffect(() => {
     if (authLoading) return;
     dispatch(trackOrderThunk(id));
   }, [id, authLoading, dispatch]);
 
-  /* =========================
-     CANCEL ORDER
-  ========================= */
   const handleCancel = () => {
     dispatch(cancelOrderThunk(id));
   };
 
-  /* =========================
-     LOADING / ERROR
-  ========================= */
   if (authLoading || orderLoading) {
     return <p className="loading">Loading...</p>;
   }
@@ -59,9 +44,6 @@ export default function OrderTrack() {
     );
   }
 
-  /* =========================
-     ORDER STATUS LOGIC
-  ========================= */
   const steps = ["Ordered", "Shipped", "Delivered"];
   const currentStep =
     order.status === "pending"
@@ -72,9 +54,6 @@ export default function OrderTrack() {
       ? 2
       : -1;
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="container ot-wrapper">
       <h1 className="ot-title">Track Your Order</h1>

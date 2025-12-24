@@ -10,10 +10,6 @@ import {
   updateStock,
 } from "../../api/product.api";
 
-/* =====================================================
-   THUNKS
-===================================================== */
-
 /* FETCH ALL PRODUCTS (Home, Admin) */
 export const fetchProductsThunk = createAsyncThunk(
   "product/fetchAll",
@@ -86,10 +82,6 @@ export const fetchPaginatedProductsThunk = createAsyncThunk(
   }
 );
 
-/* =====================================================
-   ADMIN THUNKS
-===================================================== */
-
 export const adminAddProductThunk = createAsyncThunk(
   "product/adminAdd",
   async (data, { rejectWithValue }) => {
@@ -137,10 +129,6 @@ export const updateStockThunk = createAsyncThunk(
     }
   }
 );
-
-/* =====================================================
-   SLICE
-===================================================== */
 
 const productSlice = createSlice({
   name: "product",

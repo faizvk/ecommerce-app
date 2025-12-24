@@ -9,14 +9,8 @@ export default function ChangePassword() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { loading, error, success } = useSelector((state) => state.user);
 
-  /* =========================
-     LOCAL FORM STATE
-  ========================= */
   const [data, setData] = useState({
     oldPassword: "",
     newPassword: "",
@@ -24,26 +18,17 @@ export default function ChangePassword() {
 
   const [localError, setLocalError] = useState("");
 
-  /* =========================
-     CLEANUP ON UNMOUNT
-  ========================= */
   useEffect(() => {
     return () => {
       dispatch(clearUserState());
     };
   }, [dispatch]);
 
-  /* =========================
-     PASSWORD VALIDATION
-  ========================= */
   const validatePassword = (pass) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
     return regex.test(pass);
   };
 
-  /* =========================
-     SUBMIT
-  ========================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError("");
@@ -62,9 +47,6 @@ export default function ChangePassword() {
     }
   };
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="form-container">
       <h2>Change Password</h2>

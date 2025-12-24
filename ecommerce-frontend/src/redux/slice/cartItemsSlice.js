@@ -7,10 +7,6 @@ import {
   decreaseQty,
 } from "../../api/cart.api";
 
-/* =========================
-   THUNKS
-========================= */
-
 /* Fetch full cart */
 export const fetchCartThunk = createAsyncThunk(
   "cartItems/fetch",
@@ -75,10 +71,6 @@ export const decreaseQtyThunk = createAsyncThunk(
     }
   }
 );
-
-/* =========================
-   SLICE
-========================= */
 
 const cartItemsSlice = createSlice({
   name: "cartItems",

@@ -15,9 +15,6 @@ export default function Home() {
     dispatch(refreshCartCountThunk());
   });
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { products, loading } = useSelector((state) => state.product);
 
   const categoryOrder = [
@@ -28,39 +25,24 @@ export default function Home() {
     "home appliances",
   ];
 
-  /* =========================
-     FETCH PRODUCTS
-  ========================= */
   useEffect(() => {
     dispatch(fetchProductsThunk());
   }, [dispatch]);
 
-  /* =========================
-     GROUP BY CATEGORY
-  ========================= */
   const categories = {};
   products.forEach((p) => {
     if (!categories[p.category]) categories[p.category] = [];
     categories[p.category].push(p);
   });
 
-  /* =========================
-     NAVIGATION
-  ========================= */
   const goToCategory = (cat) => {
     navigate(`/search?category=${encodeURIComponent(cat)}`);
   };
 
-  /* =========================
-     LOADING STATE
-  ========================= */
   if (loading) {
     return <p className="loading">Loading products...</p>;
   }
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="home">
       {/* HERO SECTION */}

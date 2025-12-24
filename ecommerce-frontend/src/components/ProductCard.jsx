@@ -11,14 +11,8 @@ export default function ProductCard({ product }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { user } = useSelector((state) => state.auth);
 
-  /* =========================
-     ADD TO CART
-  ========================= */
   const handleAdd = async () => {
     if (!user) {
       alert("Please login to add items to cart.");

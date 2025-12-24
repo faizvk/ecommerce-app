@@ -20,35 +20,20 @@ const CATEGORY_TABS = [
 export default function AdminProducts() {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { products, loading } = useSelector((state) => state.product);
 
-  /* =========================
-     LOCAL UI STATE
-  ========================= */
   const [updating, setUpdating] = useState(null);
   const [activeCategory, setActiveCategory] = useState("all");
 
-  /* =========================
-     LOAD PRODUCTS
-  ========================= */
   useEffect(() => {
     dispatch(fetchProductsThunk());
   }, [dispatch]);
 
-  /* =========================
-     FILTER BY CATEGORY
-  ========================= */
   const filteredProducts = useMemo(() => {
     if (activeCategory === "all") return products;
     return products.filter((p) => p.category === activeCategory);
   }, [products, activeCategory]);
 
-  /* =========================
-     DELETE PRODUCT
-  ========================= */
   const deleteProduct = async (id) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this product?"
@@ -58,9 +43,6 @@ export default function AdminProducts() {
     dispatch(adminDeleteProductThunk(id));
   };
 
-  /* =========================
-     UPDATE STOCK
-  ========================= */
   const handleStockChange = async (id, value) => {
     const stock = Number(value);
     if (Number.isNaN(stock) || stock < 0) return;
@@ -81,9 +63,6 @@ export default function AdminProducts() {
     }
   };
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="admin-products-page">
       {/* HEADER */}

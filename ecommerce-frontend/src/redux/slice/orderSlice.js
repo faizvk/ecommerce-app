@@ -8,10 +8,6 @@ import {
   adminUpdateOrderStatus,
 } from "../../api/order.api";
 
-/* =========================
-   USER THUNKS
-========================= */
-
 /* Place order (after payment success) */
 export const placeOrderThunk = createAsyncThunk(
   "order/place",
@@ -66,10 +62,6 @@ export const cancelOrderThunk = createAsyncThunk(
   }
 );
 
-/* =========================
-   ADMIN THUNKS
-========================= */
-
 export const adminFetchOrdersThunk = createAsyncThunk(
   "order/adminFetchAll",
   async (_, { rejectWithValue }) => {
@@ -93,10 +85,6 @@ export const adminUpdateOrderStatusThunk = createAsyncThunk(
     }
   }
 );
-
-/* =========================
-   SLICE
-========================= */
 
 const orderSlice = createSlice({
   name: "order",

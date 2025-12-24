@@ -13,26 +13,14 @@ const STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled"];
 export default function AdminOrders() {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { adminOrders, loading } = useSelector((state) => state.order);
 
-  /* =========================
-     LOCAL UI STATE
-  ========================= */
   const [activeTab, setActiveTab] = useState("pending");
 
-  /* =========================
-     LOAD ADMIN ORDERS
-  ========================= */
   useEffect(() => {
     dispatch(adminFetchOrdersThunk());
   }, [dispatch]);
 
-  /* =========================
-     GROUP ORDERS BY STATUS
-  ========================= */
   const ordersByStatus = useMemo(() => {
     const map = {};
     STATUSES.forEach((s) => (map[s] = []));
@@ -46,9 +34,6 @@ export default function AdminOrders() {
     return map;
   }, [adminOrders]);
 
-  /* =========================
-     UPDATE ORDER STATUS
-  ========================= */
   const updateStatus = (orderId, newStatus) => {
     dispatch(
       adminUpdateOrderStatusThunk({
@@ -58,9 +43,6 @@ export default function AdminOrders() {
     );
   };
 
-  /* =========================
-     CANCEL ORDER
-  ========================= */
   const handleCancelOrder = (orderId) => {
     const confirmed = window.confirm(
       "Are you sure you want to cancel this order?"
@@ -70,9 +52,6 @@ export default function AdminOrders() {
     dispatch(cancelOrderThunk(orderId));
   };
 
-  /* =========================
-     LOADING
-  ========================= */
   if (loading) {
     return (
       <div className="admin-orders-page">
@@ -82,9 +61,6 @@ export default function AdminOrders() {
     );
   }
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="admin-orders-page">
       <h1 className="admin-page-title">Manage Orders</h1>
@@ -191,16 +167,6 @@ export default function AdminOrders() {
                     Mark Delivered
                   </Button>
                 )}
-
-                {order.status !== "cancelled" &&
-                  order.status !== "delivered" && (
-                    <Button
-                      variant="danger"
-                      onClick={() => handleCancelOrder(order._id)}
-                    >
-                      Cancel Order
-                    </Button>
-                  )}
               </div>
             </div>
           ))}

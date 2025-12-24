@@ -9,29 +9,17 @@ import "./styles/AdminUsers.css";
 export default function AdminUsers() {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { users, loading } = useSelector((state) => state.user);
 
-  /* =========================
-     LOCAL UI STATE
-  ========================= */
   const [roleFilter, setRoleFilter] = useState("all");
   const [updatingId, setUpdatingId] = useState(null);
 
   const currentAdmin = JSON.parse(localStorage.getItem("user"));
 
-  /* =========================
-     LOAD USERS
-  ========================= */
   useEffect(() => {
     dispatch(fetchAllUsersThunk());
   }, [dispatch]);
 
-  /* =========================
-     UPDATE ROLE
-  ========================= */
   const updateRole = async (id, newRole, name) => {
     const confirmed = window.confirm(
       `Are you sure you want to change ${name}'s role to ${newRole}?`
@@ -51,17 +39,11 @@ export default function AdminUsers() {
     }
   };
 
-  /* =========================
-     FILTER USERS
-  ========================= */
   const filteredUsers = useMemo(() => {
     if (roleFilter === "all") return users;
     return users.filter((u) => u.role === roleFilter);
   }, [users, roleFilter]);
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="admin-users-page">
       <div className="admin-users-header">

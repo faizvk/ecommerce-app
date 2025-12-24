@@ -15,32 +15,20 @@ export default function AdminEditProduct() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { currentProduct, loading, error } = useSelector(
     (state) => state.product
   );
 
-  /* =========================
-     LOCAL UI STATE
-  ========================= */
   const [form, setForm] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [localError, setLocalError] = useState("");
   const [saving, setSaving] = useState(false);
 
-  /* =========================
-     LOAD PRODUCT
-  ========================= */
   useEffect(() => {
     dispatch(fetchProductByIdThunk(id));
   }, [id, dispatch]);
 
-  /* =========================
-     SYNC REDUX → LOCAL FORM
-  ========================= */
   useEffect(() => {
     if (!currentProduct) return;
 
@@ -55,9 +43,6 @@ export default function AdminEditProduct() {
     setPreview(img && img.length > 3 ? img : "/placeholder.jpg");
   }, [currentProduct]);
 
-  /* =========================
-     HANDLERS
-  ========================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
     const numberFields = ["costPrice", "salePrice", "stock"];
@@ -80,9 +65,6 @@ export default function AdminEditProduct() {
     setPreview(URL.createObjectURL(file));
   };
 
-  /* =========================
-     VALIDATION
-  ========================= */
   const validate = () => {
     if (!form.name.trim()) return "Product name is required";
     if (!form.category.trim()) return "Category is required";
@@ -98,9 +80,6 @@ export default function AdminEditProduct() {
     return "";
   };
 
-  /* =========================
-     UPDATE PRODUCT
-  ========================= */
   const updateProduct = async () => {
     setLocalError("");
     const validation = validate();
@@ -132,9 +111,6 @@ export default function AdminEditProduct() {
     }
   };
 
-  /* =========================
-     LOADING / ERROR
-  ========================= */
   if (loading || !form) {
     return <p className="loading">Loading...</p>;
   }

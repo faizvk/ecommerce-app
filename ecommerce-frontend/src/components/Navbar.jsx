@@ -12,15 +12,9 @@ export default function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { user } = useSelector((state) => state.auth);
   const { count } = useSelector((state) => state.cart);
 
-  /* =========================
-     LOCAL STATE
-  ========================= */
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -32,9 +26,6 @@ export default function Navbar() {
   const adminLinkLabel = isAdminPage ? "Home" : "Admin Panel";
   const adminLinkTarget = isAdminPage ? "/" : "/admin";
 
-  /* =========================
-     SEARCH SUGGESTIONS
-  ========================= */
   useEffect(() => {
     if (isAuthPage || isAdminPage) return;
 
@@ -61,9 +52,6 @@ export default function Navbar() {
     return () => clearTimeout(delay);
   }, [searchText, isAuthPage, isAdminPage]);
 
-  /* =========================
-     LOGOUT
-  ========================= */
   const handleLogout = async () => {
     try {
       await api.post("/logout");

@@ -15,18 +15,12 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  /* =========================
-     LOCAL STATE
-  ========================= */
   const [cart, setCart] = useState(null);
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
-  /* =========================
-     LOAD CART + PROFILE
-  ========================= */
   useEffect(() => {
     const load = async () => {
       try {
@@ -46,9 +40,6 @@ export default function Checkout() {
     load();
   }, []);
 
-  /* =========================
-     PAYMENT FLOW
-  ========================= */
   const startPayment = async () => {
     if (!address.trim()) {
       setError("Shipping address is required");
@@ -129,9 +120,6 @@ export default function Checkout() {
     }
   };
 
-  /* =========================
-     GUARDS
-  ========================= */
   if (loading) return <p className="loading">Loading checkout...</p>;
 
   if (!cart || cart.products.length === 0) {
@@ -143,9 +131,6 @@ export default function Checkout() {
     );
   }
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="checkout-page container">
       <h1 className="checkout-title">Checkout</h1>

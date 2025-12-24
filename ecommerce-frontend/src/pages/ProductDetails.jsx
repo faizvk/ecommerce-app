@@ -22,9 +22,6 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { user } = useSelector((state) => state.auth);
 
   const {
@@ -33,22 +30,13 @@ export default function ProductDetails() {
     loading,
   } = useSelector((state) => state.product);
 
-  /* =========================
-     LOCAL UI STATE
-  ========================= */
   const [activeImage, setActiveImage] = useState(0);
   const [msg, setMsg] = useState("");
 
-  /* =========================
-     LOAD PRODUCT
-  ========================= */
   useEffect(() => {
     dispatch(fetchProductByIdThunk(id));
   }, [id, dispatch]);
 
-  /* =========================
-     LOAD RELATED PRODUCTS
-  ========================= */
   useEffect(() => {
     if (!product?.category) return;
 
@@ -61,9 +49,6 @@ export default function ProductDetails() {
     );
   }, [product, dispatch]);
 
-  /* =========================
-     ADD TO CART (REDUX)
-  ========================= */
   const handleAdd = async () => {
     if (!user) {
       alert("Please login to add to cart.");
@@ -91,9 +76,6 @@ export default function ProductDetails() {
     }
   };
 
-  /* =========================
-     GUARDS
-  ========================= */
   if (loading || !product) {
     return <p className="loading">Loading...</p>;
   }
@@ -107,9 +89,6 @@ export default function ProductDetails() {
   const isOutOfStock = product.stock === 0;
   const isUser = user?.role === "user";
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="pd-page">
       {/* TOP SECTION */}

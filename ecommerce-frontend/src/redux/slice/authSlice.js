@@ -1,9 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/api";
 
-/* =========================
-   LOGIN THUNK
-========================= */
 export const loginThunk = createAsyncThunk(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
@@ -24,9 +21,6 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
-/* =========================
-   RESTORE SESSION THUNK
-========================= */
 export const restoreSession = createAsyncThunk(
   "auth/restoreSession",
   async (_, { rejectWithValue }) => {
@@ -53,9 +47,6 @@ export const restoreSession = createAsyncThunk(
   }
 );
 
-/* =========================
-   AUTH SLICE
-========================= */
 const authSlice = createSlice({
   name: "auth",
   initialState: {

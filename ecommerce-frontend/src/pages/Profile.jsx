@@ -9,9 +9,6 @@ export default function Profile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { user: authUser, loading: authLoading } = useSelector(
     (state) => state.auth
   );
@@ -22,25 +19,16 @@ export default function Profile() {
     error,
   } = useSelector((state) => state.user);
 
-  /* =========================
-     ROLE GUARD
-  ========================= */
   if (!authLoading && authUser?.role === "admin") {
     return <Navigate to="/admin" replace />;
   }
 
-  /* =========================
-     FETCH PROFILE
-  ========================= */
   useEffect(() => {
     if (!authLoading && authUser) {
       dispatch(fetchProfileThunk());
     }
   }, [authLoading, authUser, dispatch]);
 
-  /* =========================
-     STATES
-  ========================= */
   if (authLoading || profileLoading) {
     return <p className="loading">Loading profile...</p>;
   }
@@ -53,9 +41,6 @@ export default function Profile() {
     return <p className="loading-text">Profile not found</p>;
   }
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="profile-container">
       <h1 className="profile-title">My Profile</h1>

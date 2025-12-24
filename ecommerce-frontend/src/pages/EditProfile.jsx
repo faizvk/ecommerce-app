@@ -13,14 +13,8 @@ export default function EditProfile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { profile, loading, error } = useSelector((state) => state.user);
 
-  /* =========================
-     LOCAL FORM STATE
-  ========================= */
   const [data, setData] = useState({
     name: "",
     age: "",
@@ -28,9 +22,6 @@ export default function EditProfile() {
     contact: "",
   });
 
-  /* =========================
-     LOAD PROFILE
-  ========================= */
   useEffect(() => {
     dispatch(fetchProfileThunk());
 
@@ -39,9 +30,6 @@ export default function EditProfile() {
     };
   }, [dispatch]);
 
-  /* =========================
-     SYNC REDUX → FORM
-  ========================= */
   useEffect(() => {
     if (!profile) return;
 
@@ -53,9 +41,6 @@ export default function EditProfile() {
     });
   }, [profile]);
 
-  /* =========================
-     SUBMIT UPDATE
-  ========================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,16 +51,10 @@ export default function EditProfile() {
     }
   };
 
-  /* =========================
-     LOADING
-  ========================= */
   if (loading && !profile) {
     return <p className="loading">Loading...</p>;
   }
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="edit-profile-wrapper">
       <h2 className="edit-profile-title">Edit Profile</h2>

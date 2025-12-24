@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children }) {
      WAIT FOR AUTH RESOLUTION
   ========================= */
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="loading">Loading...</p>;
   }
 
   /* =========================

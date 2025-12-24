@@ -5,9 +5,6 @@ import { fetchOrdersThunk } from "../redux/slice/orderSlice";
 import { fadeIn } from "../animations/FadeIn";
 import "./styles/Orders.css";
 
-/* -----------------------------------------
-   MEMOIZED ORDER CARD
------------------------------------------- */
 const OrderCard = memo(function OrderCard({ order }) {
   return (
     <div
@@ -66,29 +63,17 @@ const OrderCard = memo(function OrderCard({ order }) {
   );
 });
 
-/* -----------------------------------------
-   ORDERS PAGE
------------------------------------------- */
 export default function Orders() {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
   const { orders = [], loading, error } = useSelector((state) => state.order);
 
   const [activeTab, setActiveTab] = useState("pending");
 
-  /* =========================
-     LOAD ORDERS
-  ========================= */
   useEffect(() => {
     dispatch(fetchOrdersThunk());
   }, [dispatch]);
 
-  /* =========================
-     TAB FILTERING
-  ========================= */
   const categorized = useMemo(() => {
     return {
       pending: orders.filter(
@@ -100,9 +85,6 @@ export default function Orders() {
     };
   }, [orders]);
 
-  /* =========================
-     LOADING
-  ========================= */
   if (loading) {
     return (
       <div className="container orders-page">
@@ -112,9 +94,6 @@ export default function Orders() {
     );
   }
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="container orders-page">
       <h1 className="orders-title">My Orders</h1>
