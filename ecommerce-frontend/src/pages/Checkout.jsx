@@ -17,6 +17,7 @@ export default function Checkout() {
 
   const [cart, setCart] = useState(null);
   const [address, setAddress] = useState("");
+  const [isProfileComplete, setIsProfileComplete] = useState(true);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
@@ -29,6 +30,7 @@ export default function Checkout() {
 
         const profileRes = await getProfile();
         setAddress(profileRes.data.user.address || "");
+        setIsProfileComplete(profileRes.data.isProfileComplete);
       } catch (err) {
         console.error(err);
         setError("Failed to load checkout data");
@@ -41,6 +43,13 @@ export default function Checkout() {
   }, []);
 
   const startPayment = async () => {
+    if (!isProfileComplete) {
+      setError("Please complete your profile before checkout");
+      setTimeout(() => {
+        navigate("/profile");
+      }, 800);
+      return;
+    }
     if (!address.trim()) {
       setError("Shipping address is required");
       return;
