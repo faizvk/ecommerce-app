@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/api";
 
+/* ---------- EMAIL / PASSWORD LOGIN ---------- */
 export const loginThunk = createAsyncThunk(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
@@ -21,6 +22,7 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
+/* ---------- RESTORE SESSION ---------- */
 export const restoreSession = createAsyncThunk(
   "auth/restoreSession",
   async (_, { rejectWithValue }) => {
@@ -32,7 +34,6 @@ export const restoreSession = createAsyncThunk(
     }
 
     try {
-      // Attempt token refresh / validation
       await api.post("/refresh");
 
       return {
@@ -56,6 +57,20 @@ const authSlice = createSlice({
     error: null,
   },
   reducers: {
+    /* ---------- GOOGLE / OAUTH LOGIN ---------- */
+    loginSuccess: (state, action) => {
+      const { user, accessToken } = action.payload;
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
+
+      state.user = user;
+      state.accessToken = accessToken;
+      state.loading = false;
+      state.error = null;
+    },
+
+    /* ---------- LOGOUT ---------- */
     logout: (state) => {
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
@@ -103,5 +118,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, loginSuccess } = authSlice.actions;
 export default authSlice.reducer;

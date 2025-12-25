@@ -11,6 +11,7 @@ import {
   getAllUsers,
   updateUserRole,
 } from "../controller/user.controller.js";
+import { googleLogin } from "../controller/googleAuth.controller.js";
 
 import { verifyToken, verifyRefreshToken } from "../auth/auth.middleware.js";
 
@@ -20,6 +21,7 @@ const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
+router.post("/google", googleLogin);
 
 router.post("/refresh", verifyRefreshToken, refreshToken);
 

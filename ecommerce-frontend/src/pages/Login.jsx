@@ -5,7 +5,10 @@ import { loginSchema } from "../utils/signUpSchema";
 import { useNavigate, Link } from "react-router-dom";
 import { fadeIn } from "../animations/FadeIn";
 import { useDispatch, useSelector } from "react-redux";
-import { loginThunk } from "../redux/slice/authSlice";
+import { loginThunk, loginSuccess } from "../redux/slice/authSlice";
+import { GoogleLogin } from "@react-oauth/google";
+import { googleLogin } from "../api/user.api";
+import axios from "axios";
 import "./styles/Form.css";
 
 export default function Login() {
@@ -26,13 +29,26 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       const res = await dispatch(loginThunk(data)).unwrap();
+      navigate(res.user.role === "admin" ? "/admin" : "/", { replace: true });
+    } catch (err) {
+      setError("root", {
+        message: err || "Invalid email or password",
+      });
+    }
+  };
 
-      navigate(res.user.role === "admin" ? "/admin" : "/", {
+  const handleGoogleLogin = async (credential) => {
+    try {
+      const res = await googleLogin(credential);
+
+      dispatch(loginSuccess(res.data));
+
+      navigate(res.data.user.role === "admin" ? "/admin" : "/", {
         replace: true,
       });
     } catch (err) {
       setError("root", {
-        message: err || "Invalid email or password",
+        message: "Google login failed",
       });
     }
   };
@@ -61,7 +77,6 @@ export default function Login() {
           noValidate
           className="auth-form"
         >
-          {/* MOBILE HEADER */}
           <div className="form-header-mobile">
             <h2>Login</h2>
             <p>Enter your credentials to continue</p>
@@ -83,7 +98,6 @@ export default function Login() {
                 className={
                   errors.email ? "input-error form-input" : "form-input"
                 }
-                {...fadeIn({ direction: "left", distance: 80, duration: 0.9 })}
                 {...register("email")}
               />
             </div>
@@ -104,7 +118,6 @@ export default function Login() {
                 className={
                   errors.password ? "input-error form-input" : "form-input"
                 }
-                {...fadeIn({ direction: "left", distance: 80, duration: 0.9 })}
                 {...register("password")}
               />
             </div>
@@ -117,6 +130,16 @@ export default function Login() {
             {loading ? "Logging in..." : "Login"}
             {!loading && <LogIn size={18} />}
           </button>
+
+          {/* GOOGLE LOGIN */}
+          <div style={{ marginTop: "1rem", textAlign: "center" }}>
+            <GoogleLogin
+              onSuccess={(res) => handleGoogleLogin(res.credential)}
+              onError={() =>
+                setError("root", { message: "Google login failed" })
+              }
+            />
+          </div>
 
           <p className="footer-text">
             Don’t have an account? <Link to="/signup">Sign Up</Link>
