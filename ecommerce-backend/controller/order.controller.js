@@ -2,6 +2,7 @@
 import mongoose from "mongoose";
 import Cart from "../model/cart.model.js";
 import Order from "../model/order.model.js";
+import User from "../model/user.model.js";
 
 const isValid = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -21,6 +22,17 @@ export const placeOrder = async (req, res) => {
 
     if (!shippingAddress)
       return res.status(400).json({ message: "Shipping address is required" });
+
+    /* 🔒 PROFILE COMPLETION ENFORCEMENT */
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.isProfileComplete()) {
+      return res.status(403).json({
+        code: "PROFILE_INCOMPLETE",
+        message: "Please complete your profile before checkout",
+      });
+    }
 
     const cart = await Cart.findOne({ userId });
     if (!cart) return res.status(404).json({ message: "No cart exists" });

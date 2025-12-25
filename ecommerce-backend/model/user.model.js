@@ -89,6 +89,10 @@ userSchema.methods.comparePassword = async function (plainPassword) {
   return bcrypt.compare(plainPassword, this.password);
 };
 
+userSchema.methods.isProfileComplete = function () {
+  return Boolean(this.age && this.address && this.contact);
+};
+
 const User = mongoose.model("User", userSchema);
 
 export default User;
