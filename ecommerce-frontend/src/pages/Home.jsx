@@ -1,110 +1,136 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+
 import { fetchProductsThunk } from "../redux/slice/productSlice";
+import { refreshCartCountThunk } from "../redux/slice/cartSlice";
+
 import ProductCard from "../components/ProductCard";
 import HeroCarousel from "../components/HeroCarousel";
-import { refreshCartCountThunk } from "../redux/slice/cartSlice";
+
 import "./styles/Home.css";
+
+const CATEGORY_CONFIG = [
+  { key: "electronics", label: "Electronics" },
+  { key: "fashion", label: "Fashion" },
+  { key: "dairy", label: "Dairy" },
+  { key: "technology", label: "Technology" },
+  { key: "home appliances", label: "Home Appliances" },
+];
+
+const PREVIEW_LIMIT = 12;
 
 export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { products, loading, error } = useSelector((state) => state.product);
+
+  // Run once on mount
   useEffect(() => {
     dispatch(refreshCartCountThunk());
-  });
-
-  const { products, loading } = useSelector((state) => state.product);
-
-  const categoryOrder = [
-    "electronics",
-    "fashion",
-    "dairy",
-    "technology",
-    "home appliances",
-  ];
-
-  useEffect(() => {
     dispatch(fetchProductsThunk());
   }, [dispatch]);
 
-  const categories = {};
-  products.forEach((p) => {
-    if (!categories[p.category]) categories[p.category] = [];
-    categories[p.category].push(p);
-  });
+  const productsByCategory = useMemo(() => {
+    const map = {};
+    for (const product of products || []) {
+      if (!product?.category) continue;
+      if (!map[product.category]) map[product.category] = [];
+      map[product.category].push(product);
+    }
+    return map;
+  }, [products]);
 
-  const goToCategory = (cat) => {
-    navigate(`/search?category=${encodeURIComponent(cat)}`);
-  };
+  const goToCategory = useCallback(
+    (category) => {
+      navigate(`/search?category=${encodeURIComponent(category)}`);
+    },
+    [navigate]
+  );
 
   if (loading) {
-    return <p className="loading">Loading products...</p>;
+    return (
+      <main className="home">
+        <p className="loading">Loading products...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="home error-state">
+        <h2>Unable to load products</h2>
+        <p>{error}</p>
+        <button onClick={() => dispatch(fetchProductsThunk())}>Retry</button>
+      </main>
+    );
   }
 
   return (
-    <div className="home">
-      {/* HERO SECTION */}
-      <div>
+    <main className="home">
+      {/* HERO */}
+      <section aria-label="Promotions">
         <HeroCarousel />
-      </div>
+      </section>
 
-      {/* CATEGORY TABS */}
-      <div className="category-tabs">
-        {categoryOrder.map((cat) => (
+      {/* CATEGORY NAV */}
+      <nav className="category-tabs" aria-label="Product categories">
+        {CATEGORY_CONFIG.map(({ key, label }) => (
           <button
-            key={cat}
+            key={key}
             className="category-tab"
-            onClick={() => goToCategory(cat)}
+            onClick={() => goToCategory(key)}
+            aria-label={`Browse ${label}`}
           >
-            {cat[0].toUpperCase() + cat.slice(1)}
+            {label}
           </button>
         ))}
-      </div>
+      </nav>
 
-      {/* CATEGORY SECTIONS */}
+      {/* PRODUCTS */}
       <section className="products-section">
-        <div>
-          {categoryOrder.map((cat) => {
-            const list = categories[cat] || [];
+        {CATEGORY_CONFIG.map(({ key, label }) => {
+          const list = productsByCategory[key] || [];
+          if (list.length === 0) return null;
 
-            // SKIP CATEGORY IF EMPTY
-            if (list.length === 0) return null;
+          const preview = list.slice(0, PREVIEW_LIMIT);
+          const hasMore = list.length > PREVIEW_LIMIT;
 
-            const preview = list.slice(0, 12);
-            const hasMore = list.length > 12;
+          return (
+            <section
+              key={key}
+              className="category-section"
+              aria-labelledby={`category-${key}`}
+            >
+              <h2 id={`category-${key}`} className="category-title">
+                {label}
+              </h2>
 
-            return (
-              <section key={cat} className="category-section">
-                {/* CATEGORY TITLE */}
-                <h2 className="category-title">
-                  {cat[0].toUpperCase() + cat.slice(1)}
-                </h2>
+              <div className="grid">
+                {preview.map((product) => (
+                  <ProductCard
+                    key={product._id}
+                    product={product}
+                    loading="lazy"
+                  />
+                ))}
+              </div>
 
-                {/* PRODUCT GRID */}
-                <div className="grid">
-                  {preview.map((product) => (
-                    <ProductCard key={product._id} product={product} />
-                  ))}
+              {hasMore && (
+                <div className="show-more-wrapper">
+                  <button
+                    className="show-more-btn"
+                    onClick={() => goToCategory(key)}
+                  >
+                    Show More →
+                  </button>
                 </div>
-
-                {/* SHOW MORE */}
-                {hasMore && (
-                  <div className="show-more-wrapper">
-                    <button
-                      className="show-more-btn"
-                      onClick={() => goToCategory(cat)}
-                    >
-                      Show More →
-                    </button>
-                  </div>
-                )}
-              </section>
-            );
-          })}
-        </div>
+              )}
+            </section>
+          );
+        })}
       </section>
-    </div>
+    </main>
   );
 }
