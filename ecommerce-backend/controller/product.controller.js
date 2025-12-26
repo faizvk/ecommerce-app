@@ -1,8 +1,19 @@
-// controller/product.controller.js
 import mongoose from "mongoose";
 import Product from "../model/product.model.js";
+import { redisClient } from "../config/redis.js";
+import crypto from "crypto";
 
-/* CREATE PRODUCT */
+/* ----------------------------
+   CONFIG
+----------------------------- */
+const CACHE_TTL = 300; // 5 minutes
+
+const hashQuery = (query) =>
+  crypto.createHash("md5").update(JSON.stringify(query)).digest("hex");
+
+/* ----------------------------
+   CREATE PRODUCT
+----------------------------- */
 export const createProduct = async (req, res) => {
   try {
     const { name, description, costPrice, salePrice, category } = req.body;
@@ -18,15 +29,21 @@ export const createProduct = async (req, res) => {
       sellerId: req.user.id,
     });
 
+    // Invalidate cache (dev-friendly approach)
+    try {
+      await redisClient.flushDb();
+    } catch (_) {}
+
     res.status(201).json({
-      message: "Product created successfully",
       success: true,
+      message: "Product created successfully",
       product: createdProduct,
     });
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(400).json({ message: error.message });
     }
+
     res.status(500).json({
       message: "Failed to create product",
       error: error.message,
@@ -34,7 +51,9 @@ export const createProduct = async (req, res) => {
   }
 };
 
-/* SEARCH PRODUCTS */
+/* ----------------------------
+   SEARCH PRODUCTS
+----------------------------- */
 export const searchProducts = async (req, res) => {
   try {
     const {
@@ -45,6 +64,19 @@ export const searchProducts = async (req, res) => {
       sortBy = "createdAt",
       order = "desc",
     } = req.query;
+
+    const cacheKey = `products:search:${hashQuery(req.query)}`;
+
+    try {
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return res.status(200).json({
+          success: true,
+          source: "cache",
+          products: JSON.parse(cached),
+        });
+      }
+    } catch (_) {}
 
     let filter = {};
 
@@ -57,11 +89,21 @@ export const searchProducts = async (req, res) => {
       if (maxPrice) filter.salePrice.$lte = Number(maxPrice);
     }
 
-    const products = await Product.find(filter).sort({
-      [sortBy]: order === "desc" ? -1 : 1,
-    });
+    const products = await Product.find(filter)
+      .sort({ [sortBy]: order === "desc" ? -1 : 1 })
+      .lean();
 
-    res.status(200).json({ success: true, products });
+    try {
+      await redisClient.set(cacheKey, JSON.stringify(products), {
+        EX: CACHE_TTL,
+      });
+    } catch (_) {}
+
+    res.status(200).json({
+      success: true,
+      source: "db",
+      products,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Product search failed",
@@ -70,7 +112,9 @@ export const searchProducts = async (req, res) => {
   }
 };
 
-/* PAGINATED PRODUCT LIST */
+/* ----------------------------
+   PAGINATED PRODUCT LIST
+----------------------------- */
 export const getProducts = async (req, res) => {
   try {
     let { page = 1, limit = 20 } = req.query;
@@ -78,18 +122,43 @@ export const getProducts = async (req, res) => {
     page = Number(page);
     limit = Number(limit);
 
+    const cacheKey = `products:page:${page}:limit:${limit}`;
+
+    try {
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return res.status(200).json({
+          success: true,
+          source: "cache",
+          ...JSON.parse(cached),
+        });
+      }
+    } catch (_) {}
+
     const products = await Product.find()
       .skip((page - 1) * limit)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     const total = await Product.countDocuments();
 
-    res.status(200).json({
-      success: true,
+    const response = {
       page,
       totalPages: Math.ceil(total / limit),
       products,
+    };
+
+    try {
+      await redisClient.set(cacheKey, JSON.stringify(response), {
+        EX: CACHE_TTL,
+      });
+    } catch (_) {}
+
+    res.status(200).json({
+      success: true,
+      source: "db",
+      ...response,
     });
   } catch (error) {
     res.status(500).json({
@@ -99,19 +168,47 @@ export const getProducts = async (req, res) => {
   }
 };
 
-/* GET PRODUCT BY ID */
+/* ----------------------------
+   GET PRODUCT BY ID
+----------------------------- */
 export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id))
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid product ID" });
+    }
 
-    const product = await Product.findById(id);
+    const cacheKey = `product:${id}`;
 
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    try {
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return res.status(200).json({
+          success: true,
+          source: "cache",
+          product: JSON.parse(cached),
+        });
+      }
+    } catch (_) {}
 
-    res.status(200).json({ success: true, product });
+    const product = await Product.findById(id).lean();
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    try {
+      await redisClient.set(cacheKey, JSON.stringify(product), {
+        EX: CACHE_TTL,
+      });
+    } catch (_) {}
+
+    res.status(200).json({
+      success: true,
+      source: "db",
+      product,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch product",
@@ -120,13 +217,16 @@ export const getProductById = async (req, res) => {
   }
 };
 
-/* UPDATE PRODUCT */
+/* ----------------------------
+   UPDATE PRODUCT
+----------------------------- */
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id))
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid product ID" });
+    }
 
     if (req.body.stock !== undefined && req.body.stock < 0) {
       return res.status(400).json({ message: "Stock cannot be negative" });
@@ -137,7 +237,14 @@ export const updateProduct = async (req, res) => {
       runValidators: true,
     });
 
-    if (!updated) return res.status(404).json({ message: "Product not found" });
+    if (!updated) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Invalidate cache
+    try {
+      await redisClient.flushDb();
+    } catch (_) {}
 
     res.status(200).json({
       success: true,
@@ -152,17 +259,27 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-/* DELETE PRODUCT */
+/* ----------------------------
+   DELETE PRODUCT
+----------------------------- */
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id))
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid product ID" });
+    }
 
     const deleted = await Product.findByIdAndDelete(id);
 
-    if (!deleted) return res.status(404).json({ message: "Product not found" });
+    if (!deleted) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Invalidate cache
+    try {
+      await redisClient.flushDb();
+    } catch (_) {}
 
     res.status(200).json({
       success: true,

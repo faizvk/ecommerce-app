@@ -15,6 +15,7 @@
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-rate-limit": "^8.2.1",
@@ -24,6 +25,7 @@
     "mo": "^1.7.3",
     "mongoose": "^9.0.0",
     "nodemon": "^3.1.11",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "redis": "^5.10.0"
   }
 }

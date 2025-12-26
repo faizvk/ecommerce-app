@@ -2,9 +2,11 @@ import mongoose from "mongoose";
 import app from "./app.js";
 import connectDB from "./config/db.js";
 import { PORT } from "./config/env.js";
+import { connectRedis, redisClient } from "./config/redis.js";
 
 const startServer = async () => {
-  await connectDB();
+  await connectDB(); // MongoDB
+  await connectRedis(); // Redis (non-blocking if fails)
 
   const server = app.listen(PORT, () =>
     console.log(`🚀 Server running on port ${PORT}`)
@@ -12,7 +14,17 @@ const startServer = async () => {
 
   process.on("SIGTERM", () => {
     console.log("🛑 SIGTERM received. Shutting down gracefully...");
-    server.close(() => {
+
+    server.close(async () => {
+      try {
+        if (redisClient?.isOpen) {
+          await redisClient.quit();
+          console.log("✅ Redis connection closed.");
+        }
+      } catch (err) {
+        console.warn("⚠️ Redis shutdown error:", err.message);
+      }
+
       mongoose.connection.close(false, () => {
         console.log("✅ MongoDB connection closed.");
         process.exit(0);
