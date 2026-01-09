@@ -6,6 +6,7 @@ import {
   refreshToken,
   logout,
   updatePassword,
+  setPassword,
   getProfile,
   updateProfile,
   getAllUsers,
@@ -28,6 +29,7 @@ router.post("/refresh", verifyRefreshToken, refreshToken);
 router.post("/logout", logout);
 
 router.put("/update-password", verifyToken, updatePassword);
+router.put("/set-password", verifyToken, setPassword);
 
 router.get("/me", verifyToken, getProfile);
 router.put("/me", verifyToken, updateProfile);

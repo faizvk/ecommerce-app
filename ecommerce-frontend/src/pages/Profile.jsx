@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchProfileThunk } from "../redux/slice/userSlice";
 import { fadeIn } from "../animations/FadeIn";
-import "./styles/Profile.css";
+import "./styles/Form.css";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export default function Profile() {
   }
 
   if (error) {
-    return <p className="loading-text error-text">{error}</p>;
+    return <p className="error-text">{error}</p>;
   }
 
   if (!profile) {
@@ -42,64 +42,72 @@ export default function Profile() {
   }
 
   return (
-    <div className="profile-container">
-      <h1 className="profile-title">My Profile</h1>
-
-      <div className="profile-card">
+    <div className="form-main">
+      {/* LEFT PANEL */}
+      <div className="form-head">
         <div
-          className="profile-left"
+          className="head-content"
           {...fadeIn({ direction: "right", distance: 80, duration: 0.9 })}
         >
-          <div className="profile-avatar-circle">
-            {profile.name?.charAt(0)?.toUpperCase()}
-          </div>
-
-          <span className="profile-role-badge">{profile.name}</span>
+          <span className="badge">Account</span>
+          <h1>My Profile</h1>
+          <p>View and manage your personal information.</p>
         </div>
+      </div>
 
+      {/* RIGHT PANEL */}
+      <div className="form-container">
         <div
-          className="profile-right"
+          className="auth-form"
           {...fadeIn({ direction: "up", distance: 80, duration: 0.9 })}
         >
-          <div className="profile-field">
+          {/* PROFILE FIELDS */}
+          <div className="input-group">
             <label>Email</label>
-            <p>{profile.email}</p>
+            <p className="form-input" style={{ paddingLeft: "16px" }}>
+              {profile.email}
+            </p>
           </div>
 
           {profile.age && (
-            <div className="profile-field">
+            <div className="input-group">
               <label>Age</label>
-              <p>{profile.age}</p>
+              <p className="form-input" style={{ paddingLeft: "16px" }}>
+                {profile.age}
+              </p>
             </div>
           )}
 
           {profile.contact && (
-            <div className="profile-field">
+            <div className="input-group">
               <label>Contact</label>
-              <p>{profile.contact}</p>
+              <p className="form-input" style={{ paddingLeft: "16px" }}>
+                {profile.contact}
+              </p>
             </div>
           )}
 
           {profile.address && (
-            <div className="profile-field">
+            <div className="input-group">
               <label>Address</label>
-              <p>{profile.address}</p>
+              <p className="form-input" style={{ paddingLeft: "16px" }}>
+                {profile.address}
+              </p>
             </div>
           )}
 
-          <div
-            className="profile-actions"
-            {...fadeIn({ direction: "left", distance: 80, duration: 0.9 })}
-          >
+          {/* ACTIONS */}
+          <div style={{ marginTop: "20px" }}>
             <button
-              className="profile-btn edit"
+              className="submit-btn"
               onClick={() => navigate("/profile/edit")}
             >
               Edit Profile
             </button>
 
             <button
-              className="profile-btn password"
+              className="submit-btn"
+              style={{ background: "var(--color-fourth)" }}
               onClick={() => navigate("/profile/password")}
             >
               Change Password

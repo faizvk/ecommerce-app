@@ -26,6 +26,8 @@ export const updateProfile = (data) => api.put("/me", data);
 
 export const updatePassword = (data) => api.put("/update-password", data);
 
+export const setPassword = (data) => api.put("/set-password", data);
+
 /* ===================== ADMIN ===================== */
 
 export const getAllUsers = () => api.get("/all");

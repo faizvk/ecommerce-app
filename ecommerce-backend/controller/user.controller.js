@@ -123,8 +123,18 @@ export const updatePassword = async (req, res) => {
     if (!oldPassword || !newPassword)
       return res.status(400).json({ message: "All fields are required" });
 
-    const user = await User.findById(req.user.id).select("+password");
+    const user = await User.findById(req.user.id).select("+password +provider");
+
     if (!user) return res.status(404).json({ message: "User not found" });
+    console.log("Provider:", user.provider);
+    console.log("Has password:", Boolean(user.password));
+
+    // 🚫 Google-only users
+    if (user.provider === "google" && !user.password) {
+      return res.status(403).json({
+        message: "GOOGLE_ACCOUNT_NO_PASSWORD",
+      });
+    }
 
     const isMatch = await user.comparePassword(oldPassword);
     if (!isMatch)
@@ -133,12 +143,45 @@ export const updatePassword = async (req, res) => {
     user.password = newPassword;
     await user.save();
 
-    res
-      .status(200)
-      .json({ message: "Password updated successfully", success: true });
+    res.status(200).json({
+      message: "Password updated successfully",
+      success: true,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Password update failed",
+      error: error.message,
+    });
+  }
+};
+
+/* SET PASSWORD */
+export const setPassword = async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+
+    if (!newPassword)
+      return res.status(400).json({ message: "New password is required" });
+
+    const user = await User.findById(req.user.id).select("+password +provider");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.provider !== "google") {
+      return res.status(400).json({ message: "Password already exists" });
+    }
+
+    user.password = newPassword;
+    user.provider = "local";
+    await user.save();
+
+    res.status(200).json({
+      message: "Password set successfully",
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Set password failed",
       error: error.message,
     });
   }

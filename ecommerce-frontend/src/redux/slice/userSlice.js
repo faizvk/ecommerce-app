@@ -6,6 +6,7 @@ import {
   updatePassword,
   getAllUsers,
   updateUserRole,
+  setPassword,
 } from "../../api/user.api";
 
 export const signupThunk = createAsyncThunk(
@@ -43,6 +44,19 @@ export const updateProfileThunk = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || "Profile update failed"
+      );
+    }
+  }
+);
+export const setPasswordThunk = createAsyncThunk(
+  "user/setPassword",
+  async (data, { rejectWithValue }) => {
+    try {
+      await setPassword(data);
+      return true;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Set password failed"
       );
     }
   }
@@ -161,6 +175,19 @@ const userSlice = createSlice({
         state.success = "Password updated successfully";
       })
       .addCase(updatePasswordThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* ---------- SET PASSWORD ---------- */
+      .addCase(setPasswordThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(setPasswordThunk.fulfilled, (state) => {
+        state.loading = false;
+        state.success = "Password set successfully";
+      })
+      .addCase(setPasswordThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

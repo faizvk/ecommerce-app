@@ -7,7 +7,7 @@ import {
   clearUserState,
 } from "../redux/slice/userSlice";
 import Button from "../components/Button";
-import "./styles/EditProfile.css";
+import "./styles/Form.css";
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -56,51 +56,97 @@ export default function EditProfile() {
   }
 
   return (
-    <div className="edit-profile-wrapper">
-      <h2 className="edit-profile-title">Edit Profile</h2>
+    <div className="form-main">
+      {/* LEFT PANEL */}
+      <div className="form-head">
+        <div className="head-content">
+          <span className="badge">Profile</span>
+          <h1>Edit your profile</h1>
+          <p>Update your personal information and keep it up to date.</p>
+        </div>
+      </div>
 
-      {error && <p className="edit-error">{error}</p>}
+      {/* RIGHT PANEL */}
+      <div className="form-container">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-header-mobile">
+            <h2>Edit Profile</h2>
+            <p>Update your personal details</p>
+          </div>
 
-      <form className="edit-profile-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={data.name}
-          onChange={(e) => setData({ ...data, name: e.target.value })}
-          required
-        />
+          {error && <span className="error-text">{error}</span>}
 
-        <input
-          type="number"
-          placeholder="Age"
-          value={data.age}
-          onChange={(e) => setData({ ...data, age: e.target.value })}
-        />
+          {/* NAME */}
+          <div className="input-group">
+            <label>Full Name</label>
+            <div className="input-wrapper">
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Full Name"
+                value={data.name}
+                onChange={(e) => setData({ ...data, name: e.target.value })}
+                required
+              />
+            </div>
+          </div>
 
-        <input
-          type="text"
-          placeholder="Address"
-          value={data.address}
-          onChange={(e) => setData({ ...data, address: e.target.value })}
-        />
+          {/* AGE */}
+          <div className="input-group">
+            <label>Age</label>
+            <div className="input-wrapper">
+              <input
+                type="number"
+                className="form-input"
+                placeholder="Age"
+                value={data.age}
+                onChange={(e) => setData({ ...data, age: e.target.value })}
+              />
+            </div>
+          </div>
 
-        <input
-          type="number"
-          placeholder="Contact"
-          value={data.contact}
-          onChange={(e) => setData({ ...data, contact: e.target.value })}
-        />
+          {/* ADDRESS */}
+          <div className="input-group">
+            <label>Address</label>
+            <div className="input-wrapper">
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Address"
+                value={data.address}
+                onChange={(e) => setData({ ...data, address: e.target.value })}
+              />
+            </div>
+          </div>
 
-        <Button variant="primary">Save Changes</Button>
+          {/* CONTACT */}
+          <div className="input-group">
+            <label>Contact</label>
+            <div className="input-wrapper">
+              <input
+                type="number"
+                className="form-input"
+                placeholder="Contact"
+                value={data.contact}
+                onChange={(e) => setData({ ...data, contact: e.target.value })}
+              />
+            </div>
+          </div>
 
-        <button
-          type="button"
-          className="edit-cancel-btn"
-          onClick={() => navigate("/profile")}
-        >
-          Cancel
-        </button>
-      </form>
+          <button className="submit-btn" disabled={loading}>
+            {loading ? "Saving..." : "Save Changes"}
+          </button>
+
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={() => navigate("/profile")}
+            style={{ marginTop: "10px" }}
+          >
+            Cancel
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
