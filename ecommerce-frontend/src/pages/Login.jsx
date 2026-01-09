@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, loginSuccess } from "../redux/slice/authSlice";
 import { GoogleLogin } from "@react-oauth/google";
 import { googleLogin } from "../api/user.api";
-import axios from "axios";
 import "./styles/Form.css";
 
 export default function Login() {

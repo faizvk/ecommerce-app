@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/api";
 
-/* ---------- EMAIL / PASSWORD LOGIN ---------- */
+/* ---------- LOGIN ---------- */
 export const loginThunk = createAsyncThunk(
   "auth/login",
   async (credentials, { rejectWithValue }) => {
@@ -27,37 +27,44 @@ export const restoreSession = createAsyncThunk(
   "auth/restoreSession",
   async (_, { rejectWithValue }) => {
     const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("accessToken");
 
-    if (!storedUser || !storedToken) {
-      return rejectWithValue("No active session");
+    if (!storedUser) {
+      return rejectWithValue("No session");
     }
 
     try {
-      await api.post("/refresh");
+      // Let cookies + interceptor handle auth
+      const res = await api.post("/refresh");
+
+      const newAccessToken = res.data.accessToken;
+      localStorage.setItem("accessToken", newAccessToken);
 
       return {
         user: JSON.parse(storedUser),
-        accessToken: storedToken,
+        accessToken: newAccessToken,
       };
-    } catch (err) {
-      localStorage.removeItem("user");
-      localStorage.removeItem("accessToken");
+    } catch {
+      localStorage.clear();
       return rejectWithValue("Session expired");
     }
   }
 );
+
+/* ---------- LOGOUT ---------- */
+export const logoutThunk = createAsyncThunk("auth/logout", async () => {
+  await api.post("/logout");
+  localStorage.clear();
+});
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
     accessToken: null,
-    loading: true,
+    loading: false,
     error: null,
   },
   reducers: {
-    /* ---------- GOOGLE / OAUTH LOGIN ---------- */
     loginSuccess: (state, action) => {
       const { user, accessToken } = action.payload;
 
@@ -70,11 +77,8 @@ const authSlice = createSlice({
       state.error = null;
     },
 
-    /* ---------- LOGOUT ---------- */
     logout: (state) => {
-      localStorage.removeItem("user");
-      localStorage.removeItem("accessToken");
-
+      localStorage.clear();
       state.user = null;
       state.accessToken = null;
       state.loading = false;
@@ -83,7 +87,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      /* ---------- RESTORE SESSION ---------- */
       .addCase(restoreSession.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -100,7 +103,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* ---------- LOGIN ---------- */
       .addCase(loginThunk.pending, (state) => {
         state.loading = true;
         state.error = null;

@@ -2,13 +2,15 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  withCredentials: true,
+  withCredentials: true, // REQUIRED for refresh cookie
 });
 
 /* Attach Access Token */
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
@@ -24,10 +26,14 @@ const processQueue = (error, token = null) => {
 /* Auto Refresh Access Token */
 api.interceptors.response.use(
   (res) => res,
-
   async (error) => {
     const original = error.config;
     const status = error.response?.status;
+
+    // DO NOT retry refresh requests
+    if (original.url.includes("/refresh")) {
+      return Promise.reject(error);
+    }
 
     if ((status === 401 || status === 403) && !original._retry) {
       if (isRefreshing) {
@@ -59,8 +65,7 @@ api.interceptors.response.use(
         processQueue(refreshErr, null);
         isRefreshing = false;
 
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("user");
+        localStorage.clear();
         window.location.href = "/login";
 
         return Promise.reject(refreshErr);

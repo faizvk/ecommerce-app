@@ -57,8 +57,9 @@ export const login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: false,
+      path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -79,12 +80,16 @@ export const login = async (req, res) => {
 /* REFRESH ACCESS TOKEN */
 export const refreshToken = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const user = await User.findById(req.refreshUser.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     const newAccessToken = createAccessToken(user);
+
     res.status(200).json({ accessToken: newAccessToken });
-  } catch {
+  } catch (error) {
     res.status(500).json({ message: "Refresh failed" });
   }
 };

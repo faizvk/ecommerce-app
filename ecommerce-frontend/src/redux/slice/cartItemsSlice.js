@@ -7,76 +7,74 @@ import {
   decreaseQty,
 } from "../../api/cart.api";
 
-/* Fetch full cart */
+/* ================= FETCH CART ================= */
 export const fetchCartThunk = createAsyncThunk(
   "cartItems/fetch",
   async (_, { rejectWithValue }) => {
     try {
       const res = await getCart();
       return res.data.cart;
-    } catch (err) {
+    } catch {
       return rejectWithValue("Failed to load cart");
     }
   }
 );
 
-/* Add item */
+/* ================= ADD ITEM ================= */
 export const addToCartThunk = createAsyncThunk(
   "cartItems/add",
   async ({ productId, quantity = 1 }, { rejectWithValue }) => {
     try {
       await addToCart(productId, quantity);
-      return productId;
     } catch {
       return rejectWithValue("Failed to add item");
     }
   }
 );
 
-/* Remove item */
+/* ================= REMOVE ITEM ================= */
 export const removeFromCartThunk = createAsyncThunk(
   "cartItems/remove",
   async (productId, { rejectWithValue }) => {
     try {
       await removeFromCart(productId);
-      return productId;
     } catch {
       return rejectWithValue("Failed to remove item");
     }
   }
 );
 
-/* Increase quantity */
+/* ================= INCREASE QTY ================= */
 export const increaseQtyThunk = createAsyncThunk(
   "cartItems/increaseQty",
   async (productId, { rejectWithValue }) => {
     try {
       await increaseQty(productId);
-      return productId;
     } catch {
       return rejectWithValue("Failed to increase quantity");
     }
   }
 );
 
-/* Decrease quantity */
+/* ================= DECREASE QTY ================= */
 export const decreaseQtyThunk = createAsyncThunk(
   "cartItems/decreaseQty",
   async (productId, { rejectWithValue }) => {
     try {
       await decreaseQty(productId);
-      return productId;
     } catch {
       return rejectWithValue("Failed to decrease quantity");
     }
   }
 );
 
+/* ================= SLICE ================= */
 const cartItemsSlice = createSlice({
   name: "cartItems",
+
   initialState: {
-    cart: null, // full cart object
-    items: [], // convenience mirror of cart.products
+    cart: null,
+    items: [],
     totalAmount: 0,
     loading: false,
     error: null,
@@ -87,6 +85,7 @@ const cartItemsSlice = createSlice({
       state.cart = null;
       state.items = [];
       state.totalAmount = 0;
+      state.loading = false;
       state.error = null;
     },
   },
@@ -101,12 +100,14 @@ const cartItemsSlice = createSlice({
       })
       .addCase(fetchCartThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.cart = action.payload;
-        state.items = action.payload?.products || [];
-        state.totalAmount = action.payload?.totalAmount || 0;
+        state.cart = action.payload || null;
+        state.items = action.payload?.products ?? [];
+        state.totalAmount = action.payload?.totalAmount ?? 0;
       })
       .addCase(fetchCartThunk.rejected, (state, action) => {
         state.loading = false;
+        state.items = [];
+        state.totalAmount = 0;
         state.error = action.payload;
       })
 

@@ -67,7 +67,7 @@ const verifyRefreshToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, refreshSecret);
-    req.user = decoded; // attach user to request
+    req.refreshUser = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid refresh token" });

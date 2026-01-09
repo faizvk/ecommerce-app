@@ -3,25 +3,26 @@ import { getCart } from "../../api/cart.api";
 
 export const refreshCartCountThunk = createAsyncThunk(
   "cart/refreshCount",
-  async (_, { getState, rejectWithValue }) => {
+  async (_, { getState }) => {
     const { auth } = getState();
     const user = auth.user;
     const token = localStorage.getItem("accessToken");
 
-    // 🚫 Block unauthenticated users and admins
+    // 🚫 Not logged in or admin
     if (!user || !token || user.role !== "user") {
       return { count: 0 };
     }
 
     try {
       const res = await getCart();
-      const items = res.data.cart?.products || [];
+      const items = res.data.cart?.products ?? [];
 
       const count = items.reduce((sum, item) => sum + item.quantity, 0);
 
       return { count };
-    } catch (err) {
-      return rejectWithValue("Failed to load cart");
+    } catch {
+      // 🟢 Fallback: never break navbar/cart badge
+      return { count: 0 };
     }
   }
 );

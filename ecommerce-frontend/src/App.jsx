@@ -1,6 +1,6 @@
 import "./globalStyles/App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { useFadeInScroll } from "./animations/UseFadeInScroll";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -9,7 +9,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import GuestRoute from "./components/GuestRoute";
 
-import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { restoreSession } from "./redux/slice/authSlice";
 
@@ -29,7 +28,6 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const ChangePassword = lazy(() => import("./pages/ChangePassword"));
 const OrderDetails = lazy(() => import("./pages/OrderDetails"));
 
-/* Admin Pages */
 const AdminDashboard = lazy(() => import("./admin/AdminDashboard"));
 const AdminHome = lazy(() => import("./admin/AdminHome"));
 const AdminProducts = lazy(() => import("./admin/AdminProducts"));
@@ -39,21 +37,22 @@ const AdminOrders = lazy(() => import("./admin/AdminOrders"));
 const AdminUsers = lazy(() => import("./admin/AdminUsers"));
 
 function LoadingScreen() {
-  return (
-    <div>
-      <p className="loading">Loading...</p>
-    </div>
-  );
+  return <p className="loading">Loading...</p>;
 }
 
 export default function App() {
   useFadeInScroll();
-
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(restoreSession());
-  }, []);
+    const user = localStorage.getItem("user");
+    const token = localStorage.getItem("accessToken");
+
+    if (user && token) {
+      dispatch(restoreSession());
+    }
+  }, [dispatch]);
+
   return (
     <div className="app-layout">
       <Navbar />
@@ -61,12 +60,10 @@ export default function App() {
       <main className="main-content">
         <Suspense fallback={<LoadingScreen />}>
           <Routes>
-            {/* PUBLIC ROUTES */}
             <Route path="/" element={<Home />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/search" element={<SearchResults />} />
 
-            {/* GUEST ROUTES */}
             <Route
               path="/login"
               element={
@@ -85,7 +82,6 @@ export default function App() {
               }
             />
 
-            {/* USER PROTECTED ROUTES */}
             <Route
               path="/cart"
               element={
@@ -158,7 +154,6 @@ export default function App() {
               }
             />
 
-            {/* ADMIN ROUTES */}
             <Route
               path="/admin"
               element={
