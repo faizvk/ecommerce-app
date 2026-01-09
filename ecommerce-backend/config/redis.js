@@ -2,22 +2,32 @@ import { createClient } from "redis";
 
 const redisUrl = process.env.REDIS_URL;
 
-export const redisClient = createClient({
-  url: redisUrl,
-});
+let redisClient = null;
+let isReady = false;
 
-redisClient.on("connect", () => {
-  console.log("Redis connected");
-});
+export const getRedisClient = async () => {
+  if (!redisUrl) return null;
 
-redisClient.on("error", (err) => {
-  console.warn("Redis error (continuing without cache):", err.message);
-});
+  if (redisClient && isReady) {
+    return redisClient;
+  }
 
-export const connectRedis = async () => {
   try {
+    redisClient = createClient({ url: redisUrl });
+
+    redisClient.on("error", (err) => {
+      console.warn("Redis error, cache disabled:", err.message);
+      isReady = false;
+    });
+
     await redisClient.connect();
+    isReady = true;
+
+    console.log("Redis connected");
+    return redisClient;
   } catch (err) {
-    console.warn("Redis connection failed, cache disabled");
+    console.warn("Redis connection failed, continuing without cache");
+    isReady = false;
+    return null;
   }
 };

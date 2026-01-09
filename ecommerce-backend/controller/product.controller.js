@@ -1,19 +1,25 @@
 import mongoose from "mongoose";
 import Product from "../model/product.model.js";
-import { redisClient } from "../config/redis.js";
+import { getRedisClient } from "../config/redis.js";
 import crypto from "crypto";
 
-/* ----------------------------
-   CONFIG
------------------------------ */
 const CACHE_TTL = 300; // 5 minutes
 
 const hashQuery = (query) =>
   crypto.createHash("md5").update(JSON.stringify(query)).digest("hex");
 
-/* ----------------------------
-   CREATE PRODUCT
------------------------------ */
+const invalidateProductCache = async () => {
+  try {
+    const redis = await getRedisClient();
+    if (!redis) return;
+
+    const keys = await redis.keys("product*");
+    if (keys.length) {
+      await redis.del(keys);
+    }
+  } catch (_) {}
+};
+
 export const createProduct = async (req, res) => {
   try {
     const { name, description, costPrice, salePrice, category } = req.body;
@@ -29,10 +35,7 @@ export const createProduct = async (req, res) => {
       sellerId: req.user.id,
     });
 
-    // Invalidate cache (dev-friendly approach)
-    try {
-      await redisClient.flushDb();
-    } catch (_) {}
+    await invalidateProductCache();
 
     res.status(201).json({
       success: true,
@@ -40,10 +43,6 @@ export const createProduct = async (req, res) => {
       product: createdProduct,
     });
   } catch (error) {
-    if (error.name === "ValidationError") {
-      return res.status(400).json({ message: error.message });
-    }
-
     res.status(500).json({
       message: "Failed to create product",
       error: error.message,
@@ -51,11 +50,22 @@ export const createProduct = async (req, res) => {
   }
 };
 
-/* ----------------------------
-   SEARCH PRODUCTS
------------------------------ */
 export const searchProducts = async (req, res) => {
   try {
+    const redis = await getRedisClient();
+    const cacheKey = `products:search:${hashQuery(req.query)}`;
+
+    if (redis) {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return res.status(200).json({
+          success: true,
+          source: "cache",
+          products: JSON.parse(cached),
+        });
+      }
+    }
+
     const {
       name,
       category,
@@ -65,20 +75,7 @@ export const searchProducts = async (req, res) => {
       order = "desc",
     } = req.query;
 
-    const cacheKey = `products:search:${hashQuery(req.query)}`;
-
-    try {
-      const cached = await redisClient.get(cacheKey);
-      if (cached) {
-        return res.status(200).json({
-          success: true,
-          source: "cache",
-          products: JSON.parse(cached),
-        });
-      }
-    } catch (_) {}
-
-    let filter = {};
+    const filter = {};
 
     if (name) filter.name = { $regex: name, $options: "i" };
     if (category) filter.category = category;
@@ -93,11 +90,11 @@ export const searchProducts = async (req, res) => {
       .sort({ [sortBy]: order === "desc" ? -1 : 1 })
       .lean();
 
-    try {
-      await redisClient.set(cacheKey, JSON.stringify(products), {
+    if (redis) {
+      await redis.set(cacheKey, JSON.stringify(products), {
         EX: CACHE_TTL,
       });
-    } catch (_) {}
+    }
 
     res.status(200).json({
       success: true,
@@ -112,11 +109,9 @@ export const searchProducts = async (req, res) => {
   }
 };
 
-/* ----------------------------
-   PAGINATED PRODUCT LIST
------------------------------ */
 export const getProducts = async (req, res) => {
   try {
+    const redis = await getRedisClient();
     let { page = 1, limit = 20 } = req.query;
 
     page = Number(page);
@@ -124,8 +119,8 @@ export const getProducts = async (req, res) => {
 
     const cacheKey = `products:page:${page}:limit:${limit}`;
 
-    try {
-      const cached = await redisClient.get(cacheKey);
+    if (redis) {
+      const cached = await redis.get(cacheKey);
       if (cached) {
         return res.status(200).json({
           success: true,
@@ -133,7 +128,7 @@ export const getProducts = async (req, res) => {
           ...JSON.parse(cached),
         });
       }
-    } catch (_) {}
+    }
 
     const products = await Product.find()
       .skip((page - 1) * limit)
@@ -149,11 +144,11 @@ export const getProducts = async (req, res) => {
       products,
     };
 
-    try {
-      await redisClient.set(cacheKey, JSON.stringify(response), {
+    if (redis) {
+      await redis.set(cacheKey, JSON.stringify(response), {
         EX: CACHE_TTL,
       });
-    } catch (_) {}
+    }
 
     res.status(200).json({
       success: true,
@@ -168,11 +163,9 @@ export const getProducts = async (req, res) => {
   }
 };
 
-/* ----------------------------
-   GET PRODUCT BY ID
------------------------------ */
 export const getProductById = async (req, res) => {
   try {
+    const redis = await getRedisClient();
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -181,8 +174,8 @@ export const getProductById = async (req, res) => {
 
     const cacheKey = `product:${id}`;
 
-    try {
-      const cached = await redisClient.get(cacheKey);
+    if (redis) {
+      const cached = await redis.get(cacheKey);
       if (cached) {
         return res.status(200).json({
           success: true,
@@ -190,7 +183,7 @@ export const getProductById = async (req, res) => {
           product: JSON.parse(cached),
         });
       }
-    } catch (_) {}
+    }
 
     const product = await Product.findById(id).lean();
 
@@ -198,11 +191,11 @@ export const getProductById = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    try {
-      await redisClient.set(cacheKey, JSON.stringify(product), {
+    if (redis) {
+      await redis.set(cacheKey, JSON.stringify(product), {
         EX: CACHE_TTL,
       });
-    } catch (_) {}
+    }
 
     res.status(200).json({
       success: true,
@@ -217,9 +210,6 @@ export const getProductById = async (req, res) => {
   }
 };
 
-/* ----------------------------
-   UPDATE PRODUCT
------------------------------ */
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -241,10 +231,7 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Invalidate cache
-    try {
-      await redisClient.flushDb();
-    } catch (_) {}
+    await invalidateProductCache();
 
     res.status(200).json({
       success: true,
@@ -259,9 +246,6 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-/* ----------------------------
-   DELETE PRODUCT
------------------------------ */
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -276,10 +260,7 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Invalidate cache
-    try {
-      await redisClient.flushDb();
-    } catch (_) {}
+    await invalidateProductCache();
 
     res.status(200).json({
       success: true,
