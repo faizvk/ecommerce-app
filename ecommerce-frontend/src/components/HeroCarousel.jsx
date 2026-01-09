@@ -2,29 +2,7 @@ import { useState, useEffect } from "react";
 import { fadeIn } from "../animations/FadeIn";
 import "./styles/HeroCarousel.css";
 
-const slides = [
-  {
-    id: 1,
-    title: "Premium Products for Modern Living",
-    text: "Shop top-quality items with unbeatable prices and fast delivery.",
-    image: "/main.png",
-    button: "Shop Now",
-  },
-  {
-    id: 2,
-    title: "Unbeatable Deals",
-    text: "Exclusive discounts on your favorite items. Limited time only!",
-    image: "/main.png",
-    button: "Grab Offer",
-  },
-  {
-    id: 3,
-    title: "New Arrivals",
-    text: "Explore the latest products handpicked just for you.",
-    image: "/main.png",
-    button: "Explore Now",
-  },
-];
+import { slides } from "../utils/slides";
 
 export default function HeroCarousel() {
   const [index, setIndex] = useState(0);

@@ -92,7 +92,7 @@ export default function SignUp() {
               <User size={18} className="input-icon" />
               <input
                 type="text"
-                placeholder="John Doe"
+                placeholder="Name"
                 autoComplete="name"
                 className={
                   errors.fullName ? "input-error form-input" : "form-input"
@@ -132,7 +132,7 @@ export default function SignUp() {
               <Mail size={18} className="input-icon" />
               <input
                 type="email"
-                placeholder="name@company.com"
+                placeholder="email"
                 autoComplete="email"
                 className={
                   errors.email ? "input-error form-input" : "form-input"

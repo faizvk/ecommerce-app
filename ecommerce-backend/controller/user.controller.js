@@ -46,11 +46,25 @@ export const login = async (req, res) => {
     if (!email || !password)
       return res.status(400).json({ message: "All fields are required" });
 
-    let user = await User.findOne({ email }).select("+password");
-    if (!user) return res.status(404).json({ message: "User not found" });
+    let user = await User.findOne({ email }).select("+password +provider");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Google-only account fallback
+    if (user.provider === "google" && !user.password) {
+      return res.status(403).json({
+        message: "ACCOUNT_HAS_NO_PASSWORD",
+        provider: "google",
+      });
+    }
 
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) return res.status(401).json({ message: "Invalid password" });
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
 
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
@@ -73,6 +87,7 @@ export const login = async (req, res) => {
       user,
     });
   } catch (error) {
+    console.error("LOGIN ERROR:", error);
     res.status(500).json({ message: "Login failed", error: error.message });
   }
 };

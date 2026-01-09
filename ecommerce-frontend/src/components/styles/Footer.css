@@ -1,27 +1,27 @@
-/* --------------------------------------------------
-     FOOTER WRAPPER
--------------------------------------------------- */
 .footer-container {
   background: var(--color-fourth);
   color: var(--text-light);
-  padding: 50px 8%;
+  padding: 60px 8% 40px;
   margin-top: 60px;
   box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.08);
 }
 
-/* --------------------------------------------------
-     TOP GRID SECTIONS
--------------------------------------------------- */
 .footer-sections {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 40px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  align-items: start;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
 }
 
 .footer-col h3,
 .footer-col h4 {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   font-weight: 700;
 }
 
@@ -29,15 +29,17 @@
   margin-bottom: 8px;
   color: #dcdcdc;
   font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .footer-col a {
-  display: block;
+  display: inline-block;
   margin: 6px 0;
   text-decoration: none;
   color: #f0f0f0;
-  transition: 0.25s ease;
+  transition: color 0.25s ease, transform 0.25s ease;
   font-size: 0.95rem;
+  width: fit-content;
 }
 
 .footer-col a:hover {
@@ -45,20 +47,21 @@
   transform: translateX(4px);
 }
 
-/* --------------------------------------------------
-     SOCIAL ICONS
--------------------------------------------------- */
 .footer-social {
-  margin: 25px 0;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 30px 0 20px;
 }
 
 .footer-social a {
-  margin: 0 12px;
   font-size: 1.4rem;
   color: #ffffff;
-  display: inline-block;
-  transition: 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .footer-social a:hover {
@@ -66,9 +69,6 @@
   transform: translateY(-4px);
 }
 
-/* --------------------------------------------------
-     COPYRIGHT SECTION
--------------------------------------------------- */
 .footer-bottom {
   text-align: center;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -77,16 +77,30 @@
   opacity: 0.85;
 }
 
-/* --------------------------------------------------
-     RESPONSIVE
--------------------------------------------------- */
+@media (max-width: 900px) {
+  .footer-sections {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+}
+
 @media (max-width: 600px) {
   .footer-container {
-    padding: 40px 5%;
+    padding: 40px 5% 30px;
   }
 
   .footer-sections {
+    grid-template-columns: 1fr;
     gap: 25px;
+    text-align: center;
+  }
+
+  .footer-col {
+    align-items: center;
+  }
+
+  .footer-social {
+    gap: 18px;
   }
 
   .footer-social a {

@@ -30,12 +30,12 @@ api.interceptors.response.use(
     const original = error.config;
     const status = error.response?.status;
 
-    // DO NOT retry refresh requests
     if (original.url.includes("/refresh")) {
       return Promise.reject(error);
     }
 
-    if ((status === 401 || status === 403) && !original._retry) {
+    // ONLY refresh on 401 (expired session)
+    if (status === 401 && !original._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

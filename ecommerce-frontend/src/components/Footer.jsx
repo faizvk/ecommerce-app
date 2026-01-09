@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import "./styles/Footer.css";
 import {
   FaFacebookF,
@@ -27,17 +27,23 @@ export default function Footer() {
 
         <div className="footer-col">
           <h4>Quick Links</h4>
-          <a href="/">Home</a>
-          <a href="/cart">My Cart</a>
-          <a href="/orders">My Orders</a>
-          <a href="/profile">My Profile</a>
+          <Link to="/">Home</Link>
+          <Link to="/cart">My Cart</Link>
+          <Link to="/orders">My Orders</Link>
+          <Link to="/profile">My Profile</Link>
         </div>
 
         <div className="footer-col">
           <h4>Support</h4>
-          <a href="#">Help Center</a>
-          <a href="#">Refund Policy</a>
-          <a href="#">Shipping Info</a>
+          <a href="#" onClick={(e) => e.preventDefault()}>
+            Help Center
+          </a>
+          <a href="#" onClick={(e) => e.preventDefault()}>
+            Refund Policy
+          </a>
+          <a href="#" onClick={(e) => e.preventDefault()}>
+            Shipping Info
+          </a>
         </div>
 
         <div className="footer-col">
@@ -49,19 +55,19 @@ export default function Footer() {
 
       {/* SOCIAL ICONS */}
       <div className="footer-social">
-        <a href="#">
+        <a href="https://facebook.com" target="_blank" rel="noreferrer">
           <FaFacebookF />
         </a>
-        <a href="#">
+        <a href="https://instagram.com" target="_blank" rel="noreferrer">
           <FaInstagram />
         </a>
-        <a href="#">
+        <a href="https://twitter.com" target="_blank" rel="noreferrer">
           <FaTwitter />
         </a>
-        <a href="#">
+        <a href="https://linkedin.com" target="_blank" rel="noreferrer">
           <FaLinkedinIn />
         </a>
-        <a href="#">
+        <a href="https://youtube.com" target="_blank" rel="noreferrer">
           <FaYoutube />
         </a>
       </div>

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-export default function GuestRoute({ children }) {
+export default function GuestRoute() {
   const { user, loading } = useSelector((state) => state.auth);
 
   if (loading) {
@@ -12,5 +12,5 @@ export default function GuestRoute({ children }) {
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return <Outlet />;
 }

@@ -15,9 +15,7 @@ export const loginThunk = createAsyncThunk(
 
       return { user, accessToken };
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.message || "Invalid email or password"
-      );
+      return rejectWithValue(err.response?.data?.message || "LOGIN_FAILED");
     }
   }
 );

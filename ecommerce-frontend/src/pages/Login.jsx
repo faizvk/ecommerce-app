@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, loginSuccess } from "../redux/slice/authSlice";
 import { GoogleLogin } from "@react-oauth/google";
 import { googleLogin } from "../api/user.api";
+
 import "./styles/Form.css";
 
 export default function Login() {
@@ -30,9 +31,20 @@ export default function Login() {
       const res = await dispatch(loginThunk(data)).unwrap();
       navigate(res.user.role === "admin" ? "/admin" : "/", { replace: true });
     } catch (err) {
-      setError("root", {
-        message: err || "Invalid email or password",
-      });
+      if (err === "ACCOUNT_HAS_NO_PASSWORD") {
+        setGoogleOnly(true);
+
+        setError("root", {
+          message:
+            "This account does not have a password. Please sign in with Google.",
+        });
+      } else {
+        setGoogleOnly(false);
+
+        setError("root", {
+          message: err || "Invalid email or password",
+        });
+      }
     }
   };
 
@@ -82,7 +94,20 @@ export default function Login() {
           </div>
 
           {errors.root?.message && (
-            <span className="error-text">{errors.root.message}</span>
+            <div className="error-box">
+              <span className="error-text">{errors.root.message}</span>
+
+              {errors.root.message.includes("Google") && (
+                <div style={{ marginTop: "1rem", textAlign: "center" }}>
+                  <GoogleLogin
+                    onSuccess={(res) => handleGoogleLogin(res.credential)}
+                    onError={() =>
+                      setError("root", { message: "Google login failed" })
+                    }
+                  />
+                </div>
+              )}
+            </div>
           )}
 
           {/* EMAIL */}

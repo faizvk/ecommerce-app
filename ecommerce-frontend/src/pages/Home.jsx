@@ -7,18 +7,9 @@ import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 
 import ProductCard from "../components/ProductCard";
 import HeroCarousel from "../components/HeroCarousel";
+import { CATEGORY_CONFIG, PREVIEW_LIMIT } from "../utils/productCategory";
 
 import "./styles/Home.css";
-
-const CATEGORY_CONFIG = [
-  { key: "electronics", label: "Electronics" },
-  { key: "fashion", label: "Fashion" },
-  { key: "dairy", label: "Dairy" },
-  { key: "technology", label: "Technology" },
-  { key: "home appliances", label: "Home Appliances" },
-];
-
-const PREVIEW_LIMIT = 12;
 
 export default function Home() {
   const dispatch = useDispatch();

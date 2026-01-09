@@ -5,9 +5,9 @@ import { useFadeInScroll } from "./animations/UseFadeInScroll";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminProtectedRoute from "./components/AdminProtectedRoute";
-import GuestRoute from "./components/GuestRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminProtectedRoute from "./routes/AdminProtectedRoute";
+import GuestRoute from "./routes/GuestRoute";
 
 import { useDispatch } from "react-redux";
 import { restoreSession } from "./redux/slice/authSlice";
@@ -60,116 +60,45 @@ export default function App() {
       <main className="main-content">
         <Suspense fallback={<LoadingScreen />}>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/search" element={<SearchResults />} />
 
-            <Route
-              path="/login"
-              element={
-                <GuestRoute>
-                  <Login />
-                </GuestRoute>
-              }
-            />
-
-            <Route
-              path="/signup"
-              element={
-                <GuestRoute>
-                  <Signup />
-                </GuestRoute>
-              }
-            />
-
-            <Route
-              path="/cart"
-              element={
-                <ProtectedRoute>
-                  <Cart />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/checkout"
-              element={
-                <ProtectedRoute>
-                  <Checkout />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/track/:id"
-              element={
-                <ProtectedRoute>
-                  <OrderTrack />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/orders"
-              element={
-                <ProtectedRoute>
-                  <Orders />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/orders/:id"
-              element={
-                <ProtectedRoute>
-                  <OrderDetails />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/profile/edit"
-              element={
-                <ProtectedRoute>
-                  <EditProfile />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/profile/password"
-              element={
-                <ProtectedRoute>
-                  <ChangePassword />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin"
-              element={
-                <AdminProtectedRoute>
-                  <AdminDashboard />
-                </AdminProtectedRoute>
-              }
-            >
-              <Route index element={<AdminHome />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="products/add" element={<AdminAddProduct />} />
-              <Route path="products/edit/:id" element={<AdminEditProduct />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="users" element={<AdminUsers />} />
+            {/* Guest Only */}
+            <Route element={<GuestRoute />}>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
             </Route>
 
+            {/* Authenticated Users */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/track/:id" element={<OrderTrack />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/orders/:id" element={<OrderDetails />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/edit" element={<EditProfile />} />
+              <Route path="/profile/password" element={<ChangePassword />} />
+            </Route>
+
+            {/* Admin */}
+            <Route element={<AdminProtectedRoute />}>
+              <Route path="/admin" element={<AdminDashboard />}>
+                <Route index element={<AdminHome />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="products/add" element={<AdminAddProduct />} />
+                <Route
+                  path="products/edit/:id"
+                  element={<AdminEditProduct />}
+                />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="users" element={<AdminUsers />} />
+              </Route>
+            </Route>
+
+            {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

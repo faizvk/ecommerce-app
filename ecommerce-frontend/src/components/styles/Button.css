@@ -1,7 +1,3 @@
-/* ----------------------------------
-   GLOBAL BUTTON STYLES
-------------------------------------- */
-
 .btn {
   padding: 12px 22px;
   border-radius: 8px;
@@ -11,10 +7,6 @@
   transition: 0.3s ease;
   font-size: 1rem;
 }
-
-/* ----------------------------------
-   PRIMARY BUTTON
-------------------------------------- */
 
 .btn.primary {
   background: var(--color-third);
@@ -28,10 +20,6 @@
 .btn.primary:active {
   transform: scale(0.96);
 }
-
-/* ----------------------------------
-   OUTLINE BUTTON
-------------------------------------- */
 
 .btn.outline {
   background: transparent;
@@ -47,10 +35,6 @@
 .btn.outline:active {
   transform: scale(0.96);
 }
-
-/* ----------------------------------
-   DANGER BUTTON (Used in Cancel Order)
-------------------------------------- */
 
 .btn.danger {
   background: red;
