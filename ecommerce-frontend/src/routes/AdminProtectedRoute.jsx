@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-export default function AdminProtectedRoute({ children }) {
+export default function AdminProtectedRoute() {
   const { user, loading } = useSelector((state) => state.auth);
 
   if (loading) {
@@ -16,5 +16,5 @@ export default function AdminProtectedRoute({ children }) {
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return <Outlet />;
 }
