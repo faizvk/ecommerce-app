@@ -1,8 +1,6 @@
-/* --------------------------------------
-   SEARCH RESULTS PAGE
---------------------------------------- */
 .search-results {
   margin-top: 30px;
+  padding: 0 20px;
 }
 
 .title {
@@ -15,42 +13,10 @@
   color: var(--color-third);
 }
 
-.search-loading {
+.loading {
   margin-top: 40px;
-  font-size: 1.6rem;
-  color: var(--color-third);
-}
-
-/* No results message */
-.no-results {
-  margin-top: 25px;
   font-size: 1.2rem;
-  color: var(--color-fourth);
-  opacity: 0.7;
-}
-
-/* Product grid inherits site-wide grid style */
-.grid {
-  margin-top: 25px;
-}
-.filters-bar {
-  display: flex;
-  gap: 12px;
-  margin: 20px 0;
-  flex-wrap: wrap;
-}
-
-.filter-input {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f8f8f8;
-  font-size: 0.95rem;
-}
-
-.filter-input:focus {
-  border-color: #1a73e8;
-  outline: none;
+  text-align: center;
 }
 
 .no-results {
@@ -58,25 +24,22 @@
   text-align: center;
   font-size: 1.2rem;
   color: #666;
-}
-.apply-btn {
-  padding: 8px 14px;
-  border: none;
-  background: var(--color-fourth, #1a73e8);
-  color: white;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+  opacity: 0.7;
 }
 
-.apply-btn:hover {
-  background: #155ac4;
+.grid {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
+
 .pagination {
   display: flex;
   gap: 10px;
   justify-content: center;
-  margin: 25px 0;
+  margin: 40px 0;
+  flex-wrap: wrap;
 }
 
 .pg-btn {
@@ -86,9 +49,14 @@
   border: 1px solid #ccc;
   cursor: pointer;
   font-size: 0.95rem;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.pg-btn:hover {
+.pg-btn:hover:not(:disabled) {
   background: #ddd;
 }
 
@@ -103,9 +71,47 @@
   cursor: not-allowed;
 }
 
-/* Responsive */
-@media (max-width: 700px) {
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .search-results {
+    padding: 0 15px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
   .title {
     font-size: 1.6rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .pagination {
+    gap: 5px;
+  }
+
+  .pg-btn {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    flex: 1;
+    max-width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 1.4rem;
   }
 }

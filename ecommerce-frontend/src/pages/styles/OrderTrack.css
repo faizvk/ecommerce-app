@@ -1,10 +1,8 @@
-/* ===========================================================
-   ORDER TRACKING — PREMIUM UI
-=========================================================== */
 .ot-wrapper {
   padding: 25px 0;
   animation: fadeIn 0.3s ease;
   width: 60%;
+  margin: 0 auto;
 }
 
 .ot-title {
@@ -24,9 +22,17 @@
   font-size: 0.95rem;
 }
 
-/* ===========================================================
-   TOP SECTION (Timeline + Details)
-=========================================================== */
+.loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.ot-error {
+  text-align: center;
+  padding: 60px 20px;
+  color: #555;
+}
+
 .ot-top {
   display: grid;
   grid-template-columns: 0.8fr 1fr;
@@ -34,7 +40,6 @@
   margin-bottom: 30px;
 }
 
-/* ================= TIMELINE ================== */
 .ot-timeline {
   background: #fff;
   padding: 20px;
@@ -60,18 +65,15 @@
   margin-bottom: 8px;
 }
 
-/* step + line */
-/* container for each step */
-/* each step */
 .ot-step {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 28px; /* space between steps */
+  padding-bottom: 28px;
+  width: 100%;
 }
 
-/* label above circle */
 .ot-label {
   margin-bottom: 8px;
   color: #666;
@@ -85,7 +87,6 @@
   font-weight: 700;
 }
 
-/* circle */
 .ot-circle {
   width: 12px;
   height: 12px;
@@ -98,12 +99,11 @@
   background: #1a73e8;
 }
 
-/* vertical connector line */
 .ot-line {
   position: absolute;
   left: 50%;
-  top: calc(12px + 8px); /* label margin-bottom + circle height */
-  bottom: -14px; /* half of spacing between steps */
+  top: calc(12px + 8px);
+  bottom: -14px;
   width: 2px;
   background: #e8edf4;
   transform: translateX(-50%);
@@ -114,35 +114,29 @@
   background: #1a73e8;
 }
 
-/* fix extra bottom spacing on last step */
 .ot-step:last-child {
   padding-bottom: 0;
 }
 
-/* ================= DETAILS BOX ================== */
 .ot-details {
   background: #fff;
   padding: 20px;
   width: 100%;
   border-radius: 14px;
   font-size: 0.95rem;
+  box-sizing: border-box;
 }
 
-.ot-id-main {
-  font-size: 1rem;
+.ot-id-p {
+  margin-bottom: 10px;
 }
+
 .ot-id {
   font-size: 1.1rem;
-  font-weight: 800px;
+  font-weight: 800;
 }
 
-.ot-details h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #12395b;
-}
-.oy-amount {
+.ot-amount {
   margin: 10px 0;
 }
 
@@ -157,7 +151,7 @@
 
 .ot-status {
   display: inline-block;
-  margin: 10px 10px 10px 10px;
+  margin-left: 10px;
   padding: 4px 8px;
   border-radius: 6px;
   font-weight: 700;
@@ -185,10 +179,6 @@
   color: #ab0000;
 }
 
-/* ===========================================================
-   ITEMS SECTION
-=========================================================== */
-
 .ot-items-title {
   font-size: 1.4rem;
   font-weight: 700;
@@ -208,7 +198,6 @@
   gap: 18px;
   padding: 14px 0;
   border-bottom: 1px solid #eee;
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .ot-item:last-child {
@@ -244,9 +233,6 @@
   font-size: 1rem;
 }
 
-/* ===========================================================
-   ANIMATION
-=========================================================== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -258,22 +244,60 @@
   }
 }
 
-/* ===========================================================
-   RESPONSIVE
-=========================================================== */
+@media (max-width: 1024px) {
+  .ot-wrapper {
+    width: 80%;
+  }
+}
+
 @media (max-width: 900px) {
+  .ot-wrapper {
+    width: 90%;
+  }
   .ot-top {
     grid-template-columns: 1fr;
+  }
+  .ot-address {
+    width: 100%;
   }
 }
 
 @media (max-width: 600px) {
+  .ot-title {
+    font-size: 1.6rem;
+    text-align: center;
+  }
   .ot-timeline {
     padding: 16px;
   }
-
+  .ot-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
   .ot-item-img {
-    width: 70px;
-    height: 70px;
+    width: 100%;
+    height: 180px;
+  }
+  .ot-item-price {
+    margin-left: 0;
+    width: 100%;
+    text-align: right;
+  }
+  .ot-status {
+    margin-left: 0;
+    margin-top: 8px;
+    display: block;
+    width: fit-content;
+  }
+}
+
+@media (max-width: 480px) {
+  .ot-wrapper {
+    width: 95%;
+    padding: 15px 0;
+  }
+  .ot-items-box {
+    padding: 15px;
   }
 }

@@ -1,8 +1,3 @@
-import {
-  CLOUDINARY_UPLOAD_URL,
-  CLOUDINARY_UPLOAD_PRESET,
-} from "../config/cloudinary";
-
 export async function uploadImage(file) {
   if (!file) return null;
 
@@ -15,9 +10,15 @@ export async function uploadImage(file) {
     body: formData,
   });
 
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Cloudinary Error Response:", errorText);
+    throw new Error(`Upload failed with status: ${res.status}`);
+  }
+
   const data = await res.json();
 
-  if (!data.secure_url) throw new Error("Image upload failed");
+  if (!data.secure_url) throw new Error("Image upload failed: No URL returned");
 
   return data.secure_url;
 }

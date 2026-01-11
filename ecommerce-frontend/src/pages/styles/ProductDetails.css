@@ -1,6 +1,7 @@
-/* ===============================
-   PRODUCT DETAILS WRAPPER
-================================== */
+.pd-page {
+  padding: 20px;
+}
+
 .pd-wrapper {
   display: flex;
   gap: 40px;
@@ -10,31 +11,18 @@
 
 .pd-left {
   flex: 1;
+  min-width: 0;
 }
 
-.pd-right {
-  flex: 1.2;
-}
-.pd-page {
-  padding: 20px;
-}
-/* ===============================
-   IMAGE BOX
-================================== */
 .pd-image-box {
   width: 100%;
   border-radius: 14px;
   background: #fff;
   padding: 25px;
   position: relative;
+  box-sizing: border-box;
 }
 
-.pd-image-box img {
-  width: 100%;
-  border-radius: 12px;
-}
-
-/* Discount badge */
 .pd-discount-badge {
   position: absolute;
   top: 18px;
@@ -46,11 +34,49 @@
   border-radius: 6px;
   font-size: 0.9rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
-/* ===============================
-   TITLE
-================================== */
+.pd-main-img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+}
+
+.pd-thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.pd-thumb {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: 0.25s ease;
+  flex-shrink: 0;
+}
+
+.pd-thumb:hover {
+  transform: scale(1.05);
+}
+
+.pd-thumb.active {
+  border-color: #1a73e8;
+}
+
+.pd-right {
+  flex: 1.2;
+  min-width: 0;
+}
+
 .pd-title {
   font-size: 2rem;
   font-weight: 800;
@@ -58,7 +84,6 @@
   margin-bottom: 6px;
 }
 
-/* Rating */
 .pd-rating {
   font-size: 1.1rem;
   margin-bottom: 10px;
@@ -70,9 +95,6 @@
   margin-left: 5px;
 }
 
-/* ===============================
-   PRICE SECTION
-================================== */
 .pd-price-section {
   margin: 20px 0;
 }
@@ -81,6 +103,7 @@
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .pd-sale {
@@ -110,7 +133,6 @@
   margin-top: 4px;
 }
 
-/* STOCK */
 .pd-stock {
   margin: 10px 0 15px;
   font-size: 1rem;
@@ -125,55 +147,18 @@
   color: #b91c1c;
 }
 
-/* ===============================
-   DESCRIPTION
-================================== */
 .pd-description {
   margin: 18px 0 25px;
   line-height: 1.6;
   color: #444;
 }
 
-/* Success message */
 .pd-success {
   margin-top: 12px;
   color: #1a7f37;
   font-weight: 600;
 }
-/* ================================
-   PRODUCT GALLERY
-================================ */
-.pd-main-img {
-  width: 100%;
-  height: 380px;
-  object-fit: cover;
-  border-radius: 14px;
-  border: 1px solid #ddd;
-}
 
-.pd-thumbs {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.pd-thumb {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: 0.25s ease;
-}
-
-.pd-thumb:hover {
-  transform: scale(1.05);
-}
-
-.pd-thumb.active {
-  border-color: #1a73e8;
-}
 .pd-related-section {
   margin-top: 60px;
 }
@@ -186,23 +171,16 @@
 
 .pd-related-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-  .pd-main-img {
-    height: 260px;
-  }
-
-  .pd-thumb {
-    width: 55px;
-    height: 55px;
-  }
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
 }
 
-/* Fade */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -211,5 +189,67 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 1200px) {
+  .pd-related-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .pd-wrapper {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .pd-image-box {
+    padding: 15px;
+  }
+
+  .pd-related-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pd-page {
+    padding: 10px;
+  }
+
+  .pd-main-img {
+    height: 300px;
+  }
+
+  .pd-thumb {
+    width: 60px;
+    height: 60px;
+  }
+
+  .pd-title {
+    font-size: 1.6rem;
+  }
+
+  .pd-sale {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pd-main-img {
+    height: 240px;
+  }
+
+  .pd-related-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pd-price-row {
+    gap: 10px;
+  }
+
+  .pd-old {
+    font-size: 1rem;
   }
 }
