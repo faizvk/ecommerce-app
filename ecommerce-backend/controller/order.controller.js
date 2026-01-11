@@ -6,13 +6,7 @@ import User from "../model/user.model.js";
 
 const isValid = (id) => mongoose.Types.ObjectId.isValid(id);
 
-const validStatus = [
-  "pending",
-  "processing",
-  "shipped",
-  "delivered",
-  "cancelled",
-];
+import { validStatus } from "../utils/validStatus.js";
 
 /* PLACE ORDER */
 export const placeOrder = async (req, res) => {
