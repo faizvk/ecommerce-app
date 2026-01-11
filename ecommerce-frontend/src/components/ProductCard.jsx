@@ -20,7 +20,7 @@ export default function ProductCard({ product }) {
       return;
     }
 
-    // 🚫 Block admins
+    //  Block admins
     if (user.role !== "user") {
       alert("Only customers can add items to cart.");
       return;

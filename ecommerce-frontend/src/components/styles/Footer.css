@@ -77,6 +77,15 @@
   opacity: 0.85;
 }
 
+@media (max-width: 1024px) {
+  .footer-container {
+    padding: 60px 5% 40px;
+  }
+  .footer-sections {
+    gap: 20px;
+  }
+}
+
 @media (max-width: 900px) {
   .footer-sections {
     grid-template-columns: repeat(2, 1fr);
@@ -87,20 +96,29 @@
 @media (max-width: 600px) {
   .footer-container {
     padding: 40px 5% 30px;
+    text-align: center;
   }
 
   .footer-sections {
     grid-template-columns: 1fr;
     gap: 25px;
-    text-align: center;
   }
 
   .footer-col {
     align-items: center;
   }
 
+  .footer-col a {
+    width: auto;
+  }
+
+  .footer-col a:hover {
+    transform: scale(1.05);
+  }
+
   .footer-social {
     gap: 18px;
+    flex-wrap: wrap;
   }
 
   .footer-social a {

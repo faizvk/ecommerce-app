@@ -7,7 +7,6 @@
   margin-top: 30px;
 }
 
-/* Slide base */
 .carousel-slide {
   position: absolute;
   inset: 0;
@@ -27,7 +26,6 @@
   object-fit: cover;
 }
 
-/* Text overlay */
 .carousel-content {
   position: absolute;
   top: 50%;
@@ -36,11 +34,13 @@
   color: white;
   max-width: 450px;
   text-shadow: 0px 3px 8px rgba(0, 0, 0, 0.4);
+  z-index: 2;
 }
 
 .carousel-content h1 {
   font-size: 2.6rem;
   font-weight: 800;
+  line-height: 1.2;
 }
 
 .carousel-content h1 span {
@@ -64,6 +64,7 @@
   cursor: pointer;
   border-radius: 50%;
   transition: all 0.2s ease-in;
+  z-index: 3;
 }
 
 .carousel-btn:hover {
@@ -78,13 +79,14 @@
   right: 10px;
 }
 
-/* Dots */
 .carousel-dots {
   position: absolute;
   bottom: 12px;
   left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 8px;
+  z-index: 3;
 }
 
 .dot {
@@ -101,12 +103,62 @@
   transform: scale(1.2);
 }
 
-/* Responsive */
 @media (max-width: 900px) {
+  .carousel-container {
+    height: 400px;
+  }
+  .carousel-content {
+    left: 10%;
+    max-width: 320px;
+  }
   .carousel-content h1 {
     font-size: 1.8rem;
   }
+  .carousel-content p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .carousel-container {
+    height: 320px;
+    margin-top: 15px;
+  }
   .carousel-content {
-    max-width: 280px;
+    left: 5%;
+    right: 5%;
+    max-width: 100%;
+    text-align: center;
+    top: 50%;
+  }
+  .carousel-content h1 {
+    font-size: 1.5rem;
+  }
+  .carousel-content p {
+    font-size: 0.9rem;
+    margin: 8px 0 14px;
+  }
+  .carousel-btn {
+    font-size: 1.5rem;
+    padding: 5px 10px;
+  }
+  .carousel-slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+  }
+}
+
+@media (max-width: 400px) {
+  .carousel-container {
+    height: 250px;
+  }
+  .carousel-dots {
+    bottom: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
   }
 }

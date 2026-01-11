@@ -6,6 +6,9 @@
   border: none;
   transition: 0.3s ease;
   font-size: 1rem;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .btn.primary {
@@ -47,4 +50,19 @@
 
 .btn.danger:active {
   transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+  .btn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 12px 16px;
+    font-size: 1rem;
+  }
 }

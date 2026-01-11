@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
-import { LogOut, LogIn } from "lucide-react";
+import { LogOut, LogIn, Menu, X } from "lucide-react";
 import api from "../api/api";
 
 export default function Navbar() {
@@ -18,6 +18,7 @@ export default function Navbar() {
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // State for mobile menu
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/signup";
@@ -25,6 +26,11 @@ export default function Navbar() {
 
   const adminLinkLabel = isAdminPage ? "Home" : "Admin Panel";
   const adminLinkTarget = isAdminPage ? "/" : "/admin";
+
+  // Close menu when route changes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
 
   useEffect(() => {
     if (isAuthPage || isAdminPage) return;
@@ -60,7 +66,7 @@ export default function Navbar() {
     }
 
     dispatch(logout());
-    dispatch(clearCart()); // 🔥 important
+    dispatch(clearCart());
     navigate("/login", { replace: true });
   };
 
@@ -150,7 +156,17 @@ export default function Navbar() {
         </div>
       )}
 
-      <div className="navbar-right">
+      <button
+        className={`hamburger ${menuOpen ? "active" : ""}`}
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div className={`navbar-right ${menuOpen ? "active" : ""}`}>
         {user ? (
           <>
             <span className="nav-hello">Hello, {firstName}</span>
