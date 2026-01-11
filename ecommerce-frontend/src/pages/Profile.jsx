@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchProfileThunk } from "../redux/slice/userSlice";
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import "./styles/Form.css";
 
 export default function Profile() {

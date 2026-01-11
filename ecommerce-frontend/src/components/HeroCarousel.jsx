@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import "./styles/HeroCarousel.css";
 import { useNavigate } from "react-router-dom";
 

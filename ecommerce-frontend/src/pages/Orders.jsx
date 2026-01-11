@@ -2,7 +2,7 @@ import { useEffect, useMemo, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchOrdersThunk } from "../redux/slice/orderSlice";
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import "./styles/Orders.css";
 
 const OrderCard = memo(function OrderCard({ order }) {

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock, LogIn } from "lucide-react";
 import { loginSchema } from "../utils/signUpSchema";
 import { useNavigate, Link } from "react-router-dom";
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, loginSuccess } from "../redux/slice/authSlice";
 import { GoogleLogin } from "@react-oauth/google";

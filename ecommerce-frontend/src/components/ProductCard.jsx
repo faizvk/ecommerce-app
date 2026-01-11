@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Button from "./Button";
 import { addToCart } from "../api/cart.api";
 import { Link, useNavigate } from "react-router-dom";
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 
 import "./styles/ProductCard.css";

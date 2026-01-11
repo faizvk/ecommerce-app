@@ -11,7 +11,7 @@ import { addToCartThunk, fetchCartThunk } from "../redux/slice/cartItemsSlice";
 
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import Button from "../components/Button";
 import ProductCard from "../components/ProductCard";
 

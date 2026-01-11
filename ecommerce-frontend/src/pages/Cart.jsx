@@ -7,7 +7,7 @@ import {
   decreaseQtyThunk,
 } from "../redux/slice/cartItemsSlice";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import { Link } from "react-router-dom";
 import "./styles/Cart.css";
 

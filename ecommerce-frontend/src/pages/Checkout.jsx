@@ -8,7 +8,7 @@ import api from "../api/api";
 import Button from "../components/Button";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
-import { fadeIn } from "../animations/FadeIn";
+import { fadeIn } from "../animations/fadeIn";
 import "./styles/Checkout.css";
 
 export default function Checkout() {
