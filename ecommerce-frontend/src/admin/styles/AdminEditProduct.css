@@ -1,7 +1,3 @@
-/* ==============================================================
-   EDIT PRODUCT PAGE — UNIQUE EP-* CLASS NAMES
-============================================================== */
-
 .ep-wrapper {
   padding: 28px;
   animation: fadeIn 0.3s ease;
@@ -19,7 +15,6 @@
   margin-bottom: 25px;
 }
 
-/* GRID LAYOUT */
 .ep-grid {
   display: grid;
   grid-template-columns: 1fr 320px;
@@ -27,9 +22,6 @@
   margin-bottom: 30px;
 }
 
-/* =======================
-   LEFT FORM STYLING
-======================= */
 .ep-form {
   display: flex;
   flex-direction: column;
@@ -72,9 +64,6 @@
   gap: 18px;
 }
 
-/* =======================
-   IMAGE UPLOAD SECTION
-======================= */
 .ep-image-section {
   display: flex;
   flex-direction: column;
@@ -117,14 +106,12 @@
   border-color: #1a73e8;
 }
 
-/* Loading text */
 .ep-loading {
   color: #666;
   font-size: 1.1rem;
   padding: 20px;
 }
 
-/* Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;

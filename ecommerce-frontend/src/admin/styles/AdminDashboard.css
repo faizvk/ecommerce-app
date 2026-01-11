@@ -1,6 +1,3 @@
-/* ----------------------------------
-   ADMIN LAYOUT
----------------------------------- */
 .admin-layout {
   display: flex;
   width: 100%;
@@ -24,9 +21,6 @@
   background: #163650;
 }
 
-/* ----------------------------------
-   SIDEBAR
----------------------------------- */
 .admin-sidebar {
   width: 240px;
   background: var(--color-fourth);
@@ -35,10 +29,10 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
-  position: fixed; /* NEW */
-  top: 0; /* NEW */
-  left: 0; /* NEW */
-  height: 100vh; /* NEW – ensures full-height sidebar */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
   overflow-y: auto;
 }
 
@@ -75,11 +69,8 @@
   padding-left: 11px;
 }
 
-/* ----------------------------------
-   MAIN CONTENT (OUTLET AREA)
----------------------------------- */
 .admin-content {
-  flex: 1; /* 🔥 EXPAND OUTLET AREA */
+  flex: 1;
   padding: 30px;
   background: #ffffff;
   overflow-y: auto;
@@ -87,7 +78,6 @@
   margin-left: 240px;
 }
 
-/* Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;

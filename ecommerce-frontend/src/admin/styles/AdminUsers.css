@@ -1,13 +1,8 @@
-/* ============================================
-   PAGE LAYOUT
-============================================ */
-
 .admin-users-page {
   padding: 28px 30px;
   animation: fadeIn 0.35s ease;
 }
 
-/* Header */
 .admin-users-header {
   display: flex;
   justify-content: space-between;
@@ -21,10 +16,6 @@
   color: var(--color-fourth);
   letter-spacing: -0.5px;
 }
-
-/* ============================================
-   FILTER BOX
-============================================ */
 
 .filter-box {
   display: flex;
@@ -52,10 +43,6 @@
   border-color: var(--color-fourth);
   background: #f9f9f9;
 }
-
-/* ============================================
-   TABLE STYLING
-============================================ */
 
 .users-table {
   width: 100%;
@@ -90,10 +77,6 @@
   transition: background 0.2s ease;
 }
 
-/* ============================================
-   ROLE BADGES
-============================================ */
-
 .role-badge {
   padding: 6px 14px;
   border-radius: 30px;
@@ -112,10 +95,6 @@
   background: #2da44e;
   color: white;
 }
-
-/* ============================================
-   ACTION BUTTONS
-============================================ */
 
 .promote-btn,
 .demote-btn,
@@ -156,10 +135,6 @@
   opacity: 0.7;
 }
 
-/* ============================================
-   LOADING
-============================================ */
-
 .loading {
   padding: 45px;
   text-align: center;
@@ -167,10 +142,6 @@
   font-weight: 600;
   color: var(--color-fourth);
 }
-
-/* ============================================
-   SMOOTH ANIMATION
-============================================ */
 
 @keyframes fadeIn {
   from {

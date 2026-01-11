@@ -1,11 +1,3 @@
-/* ===========================================================================
-   ADMIN ORDERS — PREMIUM DASHBOARD UI
-   Clean spacing • Modern elevation • Consistent color hierarchy
-=========================================================================== */
-
-/* -----------------------------------------------
-   PAGE WRAPPER
------------------------------------------------- */
 .admin-orders-page {
   animation: fadeInUp 0.35s ease;
   padding-bottom: 35px;
@@ -19,9 +11,6 @@
   letter-spacing: -0.3px;
 }
 
-/* -----------------------------------------------
-   EMPTY STATE
------------------------------------------------- */
 .no-orders {
   text-align: center;
   padding: 45px;
@@ -60,24 +49,17 @@
   background: #e6f0ff;
 }
 
-/* -----------------------------------------------
-   LIST GRID
------------------------------------------------- */
 .admin-orders-list {
   display: grid;
   gap: 25px;
 }
 
-/* Two-column layout on wider screens */
 @media (min-width: 900px) {
   .admin-orders-list {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-/* ===========================================================================
-   ORDER CARD
-=========================================================================== */
 .admin-order-card {
   background: #fefbfb;
   padding: 26px 24px;
@@ -91,9 +73,6 @@
   box-shadow: 0px 16px 34px rgba(0, 0, 0, 0.13);
 }
 
-/* ===========================================================================
-   HEADER (Order ID + Date + Status badge)
-=========================================================================== */
 .order-header {
   display: flex;
   justify-content: space-between;
@@ -117,9 +96,6 @@
   letter-spacing: 0.4px;
 }
 
-/* ===========================================================================
-   STATUS BADGES — Soft pastel pill tags
-=========================================================================== */
 .order-status {
   padding: 7px 18px;
   border-radius: 50px;
@@ -151,9 +127,6 @@
   color: #c20000;
 }
 
-/* ===========================================================================
-   CUSTOMER + SECTIONS
-=========================================================================== */
 .order-section {
   margin-top: 22px;
 }
@@ -165,20 +138,16 @@
   margin-bottom: 10px;
 }
 
-/* Address */
 .order-address {
   margin-top: 10px;
   color: #444;
   font-size: 0.92rem;
   line-height: 1.45;
   white-space: normal;
-  overflow-wrap: break-word; /* modern */
+  overflow-wrap: break-word;
   word-break: break-word;
 }
 
-/* ===========================================================================
-   ITEMS LIST
-=========================================================================== */
 .order-items {
   margin-top: 14px;
   border-radius: 12px;
@@ -219,9 +188,6 @@
   color: #525252;
 }
 
-/* ===========================================================================
-   TOTAL AMOUNT
-=========================================================================== */
 .order-total {
   margin-top: 26px;
   padding-top: 16px;
@@ -233,9 +199,6 @@
   color: #10304d;
 }
 
-/* ===========================================================================
-   ACTION BUTTONS
-=========================================================================== */
 .order-actions {
   margin-top: 26px;
   display: flex;
@@ -250,9 +213,6 @@
   border-radius: 8px;
 }
 
-/* ===========================================================================
-   ANIMATIONS
-=========================================================================== */
 @keyframes fadeInUp {
   from {
     opacity: 0;
