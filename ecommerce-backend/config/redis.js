@@ -2,32 +2,46 @@ import { createClient } from "redis";
 
 const redisUrl = process.env.REDIS_URL;
 
-let redisClient = null;
-let isReady = false;
+let redisClient;
+let connecting;
 
 export const getRedisClient = async () => {
   if (!redisUrl) return null;
 
-  if (redisClient && isReady) {
+  if (redisClient?.isOpen) {
     return redisClient;
   }
 
-  try {
-    redisClient = createClient({ url: redisUrl });
+  if (connecting) {
+    await connecting;
+    return redisClient?.isOpen ? redisClient : null;
+  }
 
-    redisClient.on("error", (err) => {
-      console.warn("Redis error, cache disabled:", err.message);
-      isReady = false;
+  redisClient = createClient({
+    url: redisUrl,
+    socket: {
+      tls: true,
+      rejectUnauthorized: false,
+    },
+  });
+
+  redisClient.on("error", (err) => {
+    console.warn("Redis error, cache disabled:", err.message);
+  });
+
+  connecting = redisClient
+    .connect()
+    .then(() => {
+      console.log("✅ Redis connected");
+    })
+    .catch((err) => {
+      console.warn(" Redis connection failed:", err.message);
+      redisClient = null;
+    })
+    .finally(() => {
+      connecting = null;
     });
 
-    await redisClient.connect();
-    isReady = true;
-
-    console.log("Redis connected");
-    return redisClient;
-  } catch (err) {
-    console.warn("Redis connection failed, continuing without cache");
-    isReady = false;
-    return null;
-  }
+  await connecting;
+  return redisClient ?? null;
 };

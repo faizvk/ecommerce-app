@@ -14,29 +14,26 @@ const startServer = async () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
 
-    /* ---------- GRACEFUL SHUTDOWN ---------- */
     process.on("SIGTERM", () => {
-      console.log("🛑 SIGTERM received. Shutting down gracefully...");
+      console.log("🛑 SIGTERM received. Shutting down...");
 
       server.close(async () => {
         try {
           const redis = await getRedisClient();
           if (redis?.isOpen) {
             await redis.quit();
-            console.log("✅ Redis connection closed.");
+            console.log("✅ Redis closed");
           }
-        } catch (err) {
-          console.warn("⚠️ Redis shutdown error:", err.message);
-        }
+        } catch (_) {}
 
         mongoose.connection.close(false, () => {
-          console.log("✅ MongoDB connection closed.");
+          console.log("✅ MongoDB closed");
           process.exit(0);
         });
       });
     });
   } catch (err) {
-    console.error("❌ Server startup failed:", err.message);
+    console.error("❌ Startup failed:", err.message);
     process.exit(1);
   }
 };
