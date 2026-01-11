@@ -57,7 +57,6 @@ export default function HeroCarousel() {
 
             <button
               className="btn btn-primary"
-              onClick={() => navigate(`/search?category=${slide.category}`)}
               {...fadeIn({
                 direction: "right",
                 distance: 80,

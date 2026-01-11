@@ -9,62 +9,57 @@ import "./styles/SearchResults.css";
 export default function SearchResults() {
   const dispatch = useDispatch();
   const { search } = useLocation();
-  const url = new URLSearchParams(search);
 
-  const query = url.get("query") || "";
-  const defaultCategory = url.get("category") || "";
+  const queryParams = new URLSearchParams(search);
+  const urlQuery = queryParams.get("query") || "";
+  const urlCategory = queryParams.get("category") || "";
 
   const {
-    searchedProducts = [], // ✅ fallback
-    totalPages = 1, // ✅ fallback
-    loading = false, // ✅ fallback
+    searchedProducts = [],
+    totalPages = 1,
+    loading = false,
   } = useSelector((state) => state.product || {});
-
-  const products = searchedProducts;
 
   const [page, setPage] = useState(1);
 
   const [localFilters, setLocalFilters] = useState({
-    category: defaultCategory,
+    category: urlCategory,
     minPrice: "",
     maxPrice: "",
     sortBy: "createdAt",
     order: "desc",
   });
 
-  const [activeFilters, setActiveFilters] = useState({
-    category: defaultCategory,
-    minPrice: "",
-    maxPrice: "",
-    sortBy: "createdAt",
-    order: "desc",
-  });
+  useEffect(() => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      category: urlCategory,
+    }));
+    setPage(1);
+  }, [urlCategory]);
 
   useEffect(() => {
     dispatch(
       searchProductsThunk({
-        name: query,
+        name: urlQuery,
         page,
         limit: 12,
-        ...activeFilters,
+        ...localFilters,
+        category: urlCategory || localFilters.category,
       })
     );
-  }, [query, activeFilters, page, dispatch]);
-
-  useEffect(() => {
-    if (defaultCategory) {
-      setLocalFilters((prev) => ({ ...prev, category: defaultCategory }));
-      setActiveFilters((prev) => ({
-        ...prev,
-        category: defaultCategory,
-        _force: Date.now(),
-      }));
-    }
-  }, [defaultCategory]);
+  }, [urlQuery, urlCategory, page, dispatch]);
 
   const applyFilters = () => {
     setPage(1);
-    setActiveFilters({ ...localFilters, _force: Date.now() });
+    dispatch(
+      searchProductsThunk({
+        name: urlQuery,
+        page: 1,
+        limit: 12,
+        ...localFilters,
+      })
+    );
   };
 
   const goToPage = (p) => {
@@ -74,13 +69,14 @@ export default function SearchResults() {
   return (
     <div className="container search-results">
       <h2 className="title">
-        Search Results{" "}
-        {query && (
+        Search Results
+        {urlQuery && (
           <>
-            for: "<span>{query}</span>"
+            {" "}
+            for: "<span>{urlQuery}</span>"
           </>
         )}
-        {defaultCategory && <span> in {defaultCategory}</span>}
+        {urlCategory && <span> in {urlCategory}</span>}
       </h2>
 
       <SearchFilters
@@ -91,17 +87,16 @@ export default function SearchResults() {
 
       {loading ? (
         <p className="loading">Loading products...</p>
-      ) : products.length === 0 ? (
+      ) : searchedProducts.length === 0 ? (
         <p className="no-results">No products match your filters.</p>
       ) : (
         <>
           <div className="grid">
-            {products.map((p) => (
+            {searchedProducts.map((p) => (
               <ProductCard key={p._id} product={p} />
             ))}
           </div>
 
-          {/* PAGINATION */}
           <div className="pagination">
             <button
               className="pg-btn"
