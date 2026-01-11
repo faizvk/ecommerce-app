@@ -98,7 +98,7 @@ export default function Home() {
                 {label}
               </h2>
 
-              <div className="grid">
+              <div className="home-grid">
                 {preview.map((product) => (
                   <ProductCard
                     key={product._id}

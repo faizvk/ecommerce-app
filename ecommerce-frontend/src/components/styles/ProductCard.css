@@ -19,8 +19,8 @@
   position: relative;
   width: 100%;
   height: 230px;
-  overflow: hidden;
   background: #f6f7fb;
+  overflow: hidden;
 }
 
 .pc-image {
@@ -38,17 +38,13 @@
   opacity: 0.7;
 }
 
-.pc-card:hover .pc-info {
-  opacity: 0.95;
-}
-
 .pc-discount-badge {
   position: absolute;
   top: 12px;
   left: 12px;
   z-index: 5;
   background: #e53935;
-  color: white;
+  color: #ffffff;
   padding: 6px 10px;
   font-size: 0.85rem;
   border-radius: 6px;
@@ -57,28 +53,25 @@
 
 .pc-view-overlay {
   position: absolute;
-  bottom: -50px;
   left: 0;
   right: 0;
+  bottom: 0;
   z-index: 6;
-  padding: 12px 0;
-  background: rgba(17, 47, 74, 0.92);
-  color: #fff;
+  padding: 14px 0;
+  background: rgba(17, 47, 74, 0.95);
+  color: #ffffff;
   text-align: center;
   font-weight: 600;
   font-size: 0.95rem;
   opacity: 0;
-  transition: 0.3s ease;
+  transform: translateY(100%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
   text-decoration: none;
 }
 
 .pc-card:hover .pc-view-overlay {
-  bottom: 0;
   opacity: 1;
-}
-
-.pc-card:hover .pc-view-overlay:focus {
-  opacity: 0.9;
+  transform: translateY(0);
 }
 
 .pc-info {
@@ -108,7 +101,7 @@
 }
 
 .pc-rating-count {
-  color: #777;
+  color: #777777;
   font-size: 0.85rem;
 }
 
@@ -146,16 +139,14 @@
   }
 
   .pc-view-overlay {
-    bottom: 0;
     opacity: 1;
-    position: relative;
-    background: #112f4a;
-    margin-top: auto;
-    border-radius: 0 0 14px 14px;
+    transform: translateY(0);
   }
 
   .pc-card:hover {
     transform: none;
+    box-shadow: none;
+    opacity: 1;
   }
 }
 
@@ -169,7 +160,7 @@
   }
 
   .pc-price-row {
-    gap: 5px;
+    gap: 6px;
   }
 
   .pc-old-price {
