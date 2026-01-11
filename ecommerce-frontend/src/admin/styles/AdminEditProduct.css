@@ -44,6 +44,7 @@
   font-size: 1rem;
   margin-bottom: 18px;
   transition: 0.25s ease;
+  box-sizing: border-box;
 }
 
 .ep-input:focus,
@@ -51,6 +52,7 @@
 .ep-select:focus {
   border-color: #1a73e8;
   box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.18);
+  outline: none;
 }
 
 .ep-textarea {
@@ -95,11 +97,13 @@
 }
 
 .ep-file {
+  width: 100%;
   padding: 10px;
   border: 1px solid #d6dee9;
   border-radius: 10px;
   cursor: pointer;
   transition: 0.25s;
+  box-sizing: border-box;
 }
 
 .ep-file:hover {
@@ -119,5 +123,46 @@
   }
   to {
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 992px) {
+  .ep-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .ep-image-section {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .ep-wrapper {
+    padding: 20px;
+  }
+
+  .ep-title {
+    font-size: 1.75rem;
+  }
+
+  .ep-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .ep-wrapper {
+    padding: 15px;
+  }
+
+  .ep-title {
+    font-size: 1.5rem;
+  }
+
+  .ep-image-box {
+    height: 200px;
   }
 }

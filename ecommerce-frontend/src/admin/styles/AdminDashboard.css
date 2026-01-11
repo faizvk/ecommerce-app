@@ -25,7 +25,7 @@
   width: 240px;
   background: var(--color-fourth);
   color: white;
-  padding: 25px 20px;
+  padding: 100px 20px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -34,12 +34,8 @@
   left: 0;
   height: 100vh;
   overflow-y: auto;
-}
-
-.admin-logo {
-  font-size: 1.7rem;
-  font-weight: 800;
-  text-align: center;
+  z-index: 10;
+  transition: transform 0.3s ease;
 }
 
 .admin-nav {
@@ -76,6 +72,7 @@
   overflow-y: auto;
   animation: fadeIn 0.25s ease;
   margin-left: 240px;
+  min-width: 0;
 }
 
 @keyframes fadeIn {
@@ -86,5 +83,78 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 200px;
+  }
+  .admin-content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .admin-logo {
+    font-size: 1.4rem;
+    text-align: left;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    gap: 8px;
+    scrollbar-width: none;
+  }
+
+  .admin-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-link {
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+
+  .admin-content {
+    margin-left: 0;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-back-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-sidebar {
+    padding: 10px;
+  }
+
+  .admin-content {
+    padding: 15px;
+  }
+
+  .admin-logo {
+    font-size: 1.2rem;
   }
 }

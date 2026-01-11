@@ -22,6 +22,8 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .admin-add-product-form input,
@@ -34,6 +36,7 @@
   font-size: 1rem;
   background: #fff;
   transition: border 0.25s ease, box-shadow 0.25s ease;
+  box-sizing: border-box;
 }
 
 .admin-add-product-form input:focus,
@@ -57,12 +60,14 @@
 }
 
 input[type="file"] {
+  width: 100%;
   padding: 12px;
   border: 1px dashed #a7b4c2;
   border-radius: 10px;
   background: #f1f5fb;
   cursor: pointer;
   transition: 0.25s ease;
+  box-sizing: border-box;
 }
 
 input[type="file"]:hover {
@@ -89,8 +94,9 @@ input[type="file"]:disabled {
 }
 
 .admin-add-product-preview-images img {
-  width: 110px;
-  height: 110px;
+  width: 100%;
+  max-width: 110px;
+  aspect-ratio: 1/1;
   object-fit: cover;
   border-radius: 10px;
   border: 1px solid #d9dfe7;
@@ -137,6 +143,8 @@ input[type="file"]:disabled {
   transition: 0.25s ease;
   margin-bottom: 8px;
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .admin-add-product-upload-dropzone:hover {
@@ -163,13 +171,6 @@ input[type="file"]:disabled {
   top: 0;
   left: 0;
   cursor: pointer;
-}
-
-.admin-add-product-preview-images {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 18px;
 }
 
 .admin-add-product-preview-box {
@@ -209,6 +210,7 @@ input[type="file"]:disabled {
   justify-content: center;
   transition: 0.25s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  z-index: 2;
 }
 
 .admin-add-product-remove-image:hover {
@@ -223,5 +225,46 @@ input[type="file"]:disabled {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-add-product-page {
+    padding: 15px;
+  }
+
+  .admin-add-product-page h1 {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .admin-add-product-form {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .admin-add-product-btn.admin-add-product-btn--submit {
+    width: 100%;
+  }
+
+  .admin-add-product-upload-dropzone {
+    padding: 20px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-add-product-preview-images {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .admin-add-product-preview-box img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1/1;
+  }
+
+  .admin-add-product-form label {
+    font-size: 0.9rem;
   }
 }

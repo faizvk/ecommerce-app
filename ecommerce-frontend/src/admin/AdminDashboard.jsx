@@ -6,8 +6,6 @@ export default function AdminDashboard() {
     <div className="admin-layout">
       {/* Sidebar */}
       <aside className="admin-sidebar">
-        <h2 className="admin-logo">Admin Panel</h2>
-
         <nav className="admin-nav">
           <NavLink
             to="/admin/products"

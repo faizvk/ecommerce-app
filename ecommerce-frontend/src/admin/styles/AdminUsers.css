@@ -8,6 +8,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  gap: 20px;
 }
 
 .admin-users-header h1 {
@@ -84,6 +85,7 @@
   text-transform: capitalize;
   font-size: 0.85rem;
   letter-spacing: 0.4px;
+  display: inline-block;
 }
 
 .role-badge.admin {
@@ -106,6 +108,7 @@
   font-weight: 600;
   transition: 0.25s ease;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .promote-btn {
@@ -151,5 +154,57 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 992px) {
+  .admin-users-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .users-table thead {
+    display: none;
+  }
+  .users-table,
+  .users-table tbody,
+  .users-table tr,
+  .users-table td {
+    display: block;
+    width: 100%;
+  }
+  .users-table tr {
+    margin-bottom: 20px;
+    border: 1px solid var(--color-third);
+    border-radius: 12px;
+  }
+  .users-table td {
+    text-align: right;
+    padding: 12px 16px;
+    position: relative;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .users-table td:last-child {
+    border-bottom: none;
+    text-align: center;
+    padding-top: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-users-page {
+    padding: 20px 15px;
+  }
+  .admin-users-header h1 {
+    font-size: 1.7rem;
+  }
+  .filter-box {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .promote-btn,
+  .demote-btn,
+  .disabled-btn {
+    width: 100%;
+    margin-top: 5px;
   }
 }
