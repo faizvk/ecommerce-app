@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { fadeIn } from "../animations/FadeIn";
 import "./styles/HeroCarousel.css";
+import { useNavigate } from "react-router-dom";
 
 import { slides } from "../utils/slides";
 
 export default function HeroCarousel() {
   const [index, setIndex] = useState(0);
+  const navigate = useNavigate();
 
   // Auto-slide every 4 seconds
   useEffect(() => {
@@ -55,7 +57,7 @@ export default function HeroCarousel() {
 
             <button
               className="btn btn-primary"
-              onClick={() => (window.location.href = "/#products")}
+              onClick={() => navigate(`/search?category=${slide.category}`)}
               {...fadeIn({
                 direction: "right",
                 distance: 80,

@@ -86,16 +86,7 @@ export default function ProductCard({ product }) {
         </div>
 
         {user?.role === "user" && (
-          <Button
-            onClick={handleAdd}
-            {...fadeIn({
-              direction: "left",
-              distance: 80,
-              duration: 0.7,
-            })}
-          >
-            Add to Cart
-          </Button>
+          <Button onClick={handleAdd}>Add to Cart</Button>
         )}
       </div>
     </div>
