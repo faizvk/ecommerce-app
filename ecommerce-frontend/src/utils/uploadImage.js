@@ -1,9 +1,12 @@
+import { CLOUDINARY_UPLOAD_URL, CLOUDINARY_UPLOAD_PRESET } from "./cloudinery";
+
 export async function uploadImage(file) {
   if (!file) return null;
 
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+  formData.append("folder", "ecommerce");
 
   const res = await fetch(CLOUDINARY_UPLOAD_URL, {
     method: "POST",

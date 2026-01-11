@@ -6,4 +6,4 @@ export const CATEGORY_CONFIG = [
   { key: "home appliances", label: "Home Appliances" },
 ];
 
-export const PREVIEW_LIMIT = 12;
+export const PREVIEW_LIMIT = 8;

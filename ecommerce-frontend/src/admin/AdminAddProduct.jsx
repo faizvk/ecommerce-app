@@ -70,17 +70,6 @@ export default function AdminAddProduct() {
       await dispatch(adminAddProductThunk(payload)).unwrap();
 
       alert("Product added successfully!");
-
-      setForm({
-        name: "",
-        description: "",
-        category: "electronics",
-        costPrice: "",
-        salePrice: "",
-        stock: "",
-      });
-
-      setImages([]);
     } catch (err) {
       console.error(err);
       alert(err || "Failed to add product");
