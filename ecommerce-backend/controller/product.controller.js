@@ -112,12 +112,7 @@ export const searchProducts = async (req, res) => {
 export const getProducts = async (req, res) => {
   try {
     const redis = await getRedisClient();
-    let { page = 1, limit = 20 } = req.query;
-
-    page = Number(page);
-    limit = Number(limit);
-
-    const cacheKey = `products:page:${page}:limit:${limit}`;
+    const cacheKey = "products:all";
 
     if (redis) {
       const cached = await redis.get(cacheKey);
@@ -125,27 +120,15 @@ export const getProducts = async (req, res) => {
         return res.status(200).json({
           success: true,
           source: "cache",
-          ...JSON.parse(cached),
+          products: JSON.parse(cached),
         });
       }
     }
 
-    const products = await Product.find()
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .lean();
-
-    const total = await Product.countDocuments();
-
-    const response = {
-      page,
-      totalPages: Math.ceil(total / limit),
-      products,
-    };
+    const products = await Product.find().sort({ createdAt: -1 }).lean();
 
     if (redis) {
-      await redis.set(cacheKey, JSON.stringify(response), {
+      await redis.set(cacheKey, JSON.stringify(products), {
         EX: CACHE_TTL,
       });
     }
@@ -153,7 +136,7 @@ export const getProducts = async (req, res) => {
     res.status(200).json({
       success: true,
       source: "db",
-      ...response,
+      products,
     });
   } catch (error) {
     res.status(500).json({
