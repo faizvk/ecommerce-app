@@ -1,7 +1,7 @@
 import "./globalStyles/App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
-import { useFadeInScroll } from "./animations/useFadeInScroll";
+import { useFadeInScroll } from "./animations/UseFadeInScroll";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
