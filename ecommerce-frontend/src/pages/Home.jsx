@@ -32,12 +32,9 @@ export default function Home() {
     return map;
   }, [products]);
 
-  const goToCategory = useCallback(
-    (category) => {
-      navigate(`/search?category=${encodeURIComponent(category)}`);
-    },
-    [navigate]
-  );
+  const goToCategory = (category) => {
+    navigate(`/search?category=${encodeURIComponent(category)}`);
+  };
 
   if (loading) {
     return (
