@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toast";
 
 import {
   fetchProductByIdThunk,
@@ -64,11 +65,11 @@ export default function ProductDetails() {
     try {
       await dispatch(addToCartThunk({ productId: product._id })).unwrap();
 
-      // 🔥 Sync cart state everywhere
       dispatch(fetchCartThunk());
       dispatch(refreshCartCountThunk());
 
       setMsg("Added to cart!");
+      toast("Added to cart!");
       setTimeout(() => setMsg(""), 1500);
     } catch {
       setMsg("Failed to add to cart.");
@@ -93,7 +94,6 @@ export default function ProductDetails() {
     <div className="pd-page">
       {/* TOP SECTION */}
       <div className="pd-wrapper">
-        {/* LEFT — IMAGES */}
         <div
           className="pd-left"
           {...fadeIn({ direction: "right", distance: 80, duration: 0.9 })}
@@ -172,6 +172,7 @@ export default function ProductDetails() {
               {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </Button>
           )}
+          <ToastContainer position="top-center" />
 
           {msg && <p className="pd-success">{msg}</p>}
         </div>
