@@ -69,7 +69,7 @@ export default function ProductDetails() {
       dispatch(refreshCartCountThunk());
 
       setMsg("Added to cart!");
-      toast("Added to cart!");
+      toast.success("Added to cart!");
       setTimeout(() => setMsg(""), 1500);
     } catch {
       setMsg("Failed to add to cart.");
