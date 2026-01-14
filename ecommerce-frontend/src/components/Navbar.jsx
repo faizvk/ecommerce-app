@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
-import { LogOut, LogIn, Menu, X } from "lucide-react";
+import { LogOut, LogIn } from "lucide-react";
 import api from "../api/api";
 
 export default function Navbar() {
@@ -18,7 +18,7 @@ export default function Navbar() {
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // State for mobile menu
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/signup";
@@ -27,7 +27,6 @@ export default function Navbar() {
   const adminLinkLabel = isAdminPage ? "Home" : "Admin Panel";
   const adminLinkTarget = isAdminPage ? "/" : "/admin";
 
-  // Close menu when route changes
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
@@ -62,7 +61,7 @@ export default function Navbar() {
     try {
       await api.post("/logout");
     } catch {
-      // ignore backend failure
+      //ignore backend failure
     }
 
     dispatch(logout());

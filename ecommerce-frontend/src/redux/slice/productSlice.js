@@ -10,7 +10,6 @@ import {
   updateStock,
 } from "../../api/product.api";
 
-/* FETCH ALL PRODUCTS (Home, Admin) */
 export const fetchProductsThunk = createAsyncThunk(
   "product/fetchAll",
   async (_, { rejectWithValue }) => {
@@ -23,7 +22,6 @@ export const fetchProductsThunk = createAsyncThunk(
   }
 );
 
-/* FETCH SINGLE PRODUCT (ProductDetails) */
 export const fetchProductByIdThunk = createAsyncThunk(
   "product/fetchById",
   async (id, { rejectWithValue }) => {
@@ -36,7 +34,6 @@ export const fetchProductByIdThunk = createAsyncThunk(
   }
 );
 
-/* SEARCH PRODUCTS (SearchResults) */
 export const searchProductsThunk = createAsyncThunk(
   "product/search",
   async (params, { rejectWithValue }) => {
@@ -52,7 +49,6 @@ export const searchProductsThunk = createAsyncThunk(
   }
 );
 
-/* FETCH RELATED PRODUCTS (ProductDetails) */
 export const fetchRelatedProductsThunk = createAsyncThunk(
   "product/fetchRelated",
   async ({ category, excludeId, limit = 6 }, { rejectWithValue }) => {
@@ -69,7 +65,6 @@ export const fetchRelatedProductsThunk = createAsyncThunk(
   }
 );
 
-/* PAGINATED PRODUCTS (Optional / Admin) */
 export const fetchPaginatedProductsThunk = createAsyncThunk(
   "product/fetchPaginated",
   async ({ page, limit }, { rejectWithValue }) => {
@@ -133,20 +128,15 @@ export const updateStockThunk = createAsyncThunk(
 const productSlice = createSlice({
   name: "product",
   initialState: {
-    /* ALL PRODUCTS */
     products: [],
 
-    /* SINGLE PRODUCT */
     currentProduct: null,
 
-    /* SEARCH */
     searchedProducts: [],
     totalPages: 1,
 
-    /* RELATED PRODUCTS */
     relatedProducts: [],
 
-    /* STATUS */
     loading: false,
     error: null,
   },
