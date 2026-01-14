@@ -1,4 +1,0 @@
-export const CLOUDINARY_UPLOAD_URL = import.meta.env.CLOUDINARY_UPLOAD_URL;
-
-export const CLOUDINARY_UPLOAD_PRESET = import.meta.env
-  .CLOUDINARY_UPLOAD_PRESET;

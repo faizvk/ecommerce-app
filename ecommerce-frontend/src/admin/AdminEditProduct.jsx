@@ -7,7 +7,7 @@ import {
   adminUpdateProductThunk,
 } from "../redux/slice/productSlice";
 import Button from "../components/Button";
-import { uploadImage } from "../utils/uploadImage";
+import { uploadImage } from "./utils/uploadImage";
 import "./styles/AdminEditProduct.css";
 
 export default function AdminEditProduct() {

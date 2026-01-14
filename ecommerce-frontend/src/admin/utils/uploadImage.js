@@ -1,4 +1,4 @@
-import { CLOUDINARY_UPLOAD_URL, CLOUDINARY_UPLOAD_PRESET } from "./cloudinery";
+import { CLOUDINARY_UPLOAD_URL, CLOUDINARY_UPLOAD_PRESET } from "./cloudinary";
 
 export async function uploadImage(file) {
   if (!file) return null;

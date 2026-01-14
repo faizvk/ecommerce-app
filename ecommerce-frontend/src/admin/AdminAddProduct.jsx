@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { adminAddProductThunk } from "../redux/slice/productSlice";
-import { uploadImage } from "../utils/uploadImage";
+import { uploadImage } from "./utils/uploadImage";
 import "./styles/AdminAddProduct.css";
 
 export default function AdminAddProduct() {
