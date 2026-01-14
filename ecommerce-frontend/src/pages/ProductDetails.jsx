@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { ToastContainer, toast } from "react-toast";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   fetchProductByIdThunk,
@@ -172,7 +173,6 @@ export default function ProductDetails() {
               {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </Button>
           )}
-          <ToastContainer position="top-center" />
 
           {msg && <p className="pd-success">{msg}</p>}
         </div>

@@ -1,4 +1,6 @@
 import "./globalStyles/App.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 import { useFadeInScroll } from "./animations/useFadeInScroll";
@@ -103,7 +105,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
-
+      <ToastContainer position="top-center" />
       <Footer />
     </div>
   );
