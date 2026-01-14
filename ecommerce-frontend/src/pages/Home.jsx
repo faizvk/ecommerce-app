@@ -17,7 +17,6 @@ export default function Home() {
 
   const { products, loading, error } = useSelector((state) => state.product);
 
-  // Run once on mount
   useEffect(() => {
     dispatch(refreshCartCountThunk());
     dispatch(fetchProductsThunk());
