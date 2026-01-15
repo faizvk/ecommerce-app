@@ -30,6 +30,7 @@ export default function SearchResults() {
     order: "desc",
   });
 
+  //whenever product category changes set page to 1
   useEffect(() => {
     setLocalFilters((prev) => ({
       ...prev,
@@ -42,7 +43,7 @@ export default function SearchResults() {
     dispatch(
       searchProductsThunk({
         name: urlQuery,
-        page,
+        page, //pagination
         limit: 12,
         ...localFilters,
         category: urlCategory || localFilters.category,
