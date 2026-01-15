@@ -67,7 +67,9 @@ export const searchProducts = async (req, res) => {
       if (maxPrice) filter.salePrice.$lte = Number(maxPrice);
     }
 
-    const cacheKey = `products:search:${hashQuery({
+    const CACHE_VERSION = "v2";
+
+    const cacheKey = `products:search:${CACHE_VERSION}:${hashQuery({
       ...req.query,
       page,
       limit,
