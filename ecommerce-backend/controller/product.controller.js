@@ -44,8 +44,6 @@ export const createProduct = async (req, res) => {
 /* ---------------- SEARCH ---------------- */
 export const searchProducts = async (req, res) => {
   try {
-    const redis = await getRedisClient();
-
     const {
       name,
       category,
@@ -58,6 +56,7 @@ export const searchProducts = async (req, res) => {
     } = req.query;
 
     const filter = {};
+
     if (name) filter.name = { $regex: name, $options: "i" };
     if (category) filter.category = category;
 
@@ -65,27 +64,6 @@ export const searchProducts = async (req, res) => {
       filter.salePrice = {};
       if (minPrice) filter.salePrice.$gte = Number(minPrice);
       if (maxPrice) filter.salePrice.$lte = Number(maxPrice);
-    }
-
-    const CACHE_VERSION = "v2";
-
-    const cacheKey = `products:search:${CACHE_VERSION}:${hashQuery({
-      ...req.query,
-      page,
-      limit,
-    })}`;
-
-    if (redis) {
-      const versionedKey = await getVersionedKey(cacheKey);
-      const cached = await redis.get(versionedKey);
-
-      if (cached) {
-        return res.json({
-          success: true,
-          source: "cache",
-          ...JSON.parse(cached),
-        });
-      }
     }
 
     const skip = (page - 1) * limit;
@@ -100,21 +78,13 @@ export const searchProducts = async (req, res) => {
 
     const totalPages = Math.ceil(totalCount / limit);
 
-    const response = {
+    res.json({
+      success: true,
+      source: "db",
       products,
       totalPages,
       totalCount,
       page: Number(page),
-    };
-
-    if (redis) {
-      await redis.set(cacheKey, JSON.stringify(response), { EX: CACHE_TTL });
-    }
-
-    res.json({
-      success: true,
-      source: "db",
-      ...response,
     });
   } catch (error) {
     res.status(500).json({
