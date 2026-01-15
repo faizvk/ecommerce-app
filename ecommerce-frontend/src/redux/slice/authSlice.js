@@ -50,10 +50,12 @@ export const restoreSession = createAsyncThunk(
 
 /* ---------- LOGOUT ---------- */
 export const logoutThunk = createAsyncThunk("auth/logout", async () => {
-  await api.post("/logout");
-  localStorage.clear();
+  try {
+    await api.post("/logout");
+  } finally {
+    localStorage.clear();
+  }
 });
-
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -114,6 +116,10 @@ const authSlice = createSlice({
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(logoutThunk.fulfilled, (state) => {
+        state.user = null;
+        state.accessToken = null;
       });
   },
 });

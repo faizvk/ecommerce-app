@@ -2,7 +2,7 @@ import "./styles/Navbar.css";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/slice/authSlice";
+import { logoutThunk } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
 import { LogOut, LogIn } from "lucide-react";
 import api from "../api/api";
@@ -59,12 +59,11 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await api.post("/logout");
+      await dispatch(logoutThunk()).unwrap();
     } catch {
-      //ignore backend failure
+      // ignore backend failure
     }
 
-    dispatch(logout());
     dispatch(clearCart());
     navigate("/login", { replace: true });
   };
