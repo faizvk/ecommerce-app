@@ -55,6 +55,9 @@ export const searchProducts = async (req, res) => {
       limit = 12,
     } = req.query;
 
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+
     const filter = {};
 
     if (name) filter.name = { $regex: name, $options: "i" };
@@ -66,17 +69,17 @@ export const searchProducts = async (req, res) => {
       if (maxPrice) filter.salePrice.$lte = Number(maxPrice);
     }
 
-    const skip = (page - 1) * limit;
+    const skip = (pageNum - 1) * limitNum;
 
     const totalCount = await Product.countDocuments(filter);
 
     const products = await Product.find(filter)
       .sort({ [sortBy]: order === "desc" ? -1 : 1 })
       .skip(skip)
-      .limit(Number(limit))
+      .limit(limitNum)
       .lean();
 
-    const totalPages = Math.ceil(totalCount / limit);
+    const totalPages = Math.ceil(totalCount / limitNum);
 
     res.json({
       success: true,
@@ -84,7 +87,7 @@ export const searchProducts = async (req, res) => {
       products,
       totalPages,
       totalCount,
-      page: Number(page),
+      page: pageNum,
     });
   } catch (error) {
     res.status(500).json({
