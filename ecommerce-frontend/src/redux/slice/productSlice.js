@@ -3,7 +3,6 @@ import {
   getProducts,
   getProduct,
   searchProducts,
-  getPaginatedProducts,
   adminAddProduct,
   adminUpdateProduct,
   adminDeleteProduct,
@@ -61,18 +60,6 @@ export const fetchRelatedProductsThunk = createAsyncThunk(
       return filtered;
     } catch {
       return rejectWithValue("Failed to load related products");
-    }
-  }
-);
-
-export const fetchPaginatedProductsThunk = createAsyncThunk(
-  "product/fetchPaginated",
-  async ({ page, limit }, { rejectWithValue }) => {
-    try {
-      const res = await getPaginatedProducts(page, limit);
-      return res.data.products;
-    } catch {
-      return rejectWithValue("Failed to load paginated products");
     }
   }
 );
