@@ -12,7 +12,6 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
         onChange={(e) => update("category", e.target.value)}
         className="filter-input"
       >
-        <option value="">All Categories</option>
         <option value="electronics">Electronics</option>
         <option value="fashion">Fashion</option>
         <option value="dairy">Dairy</option>
