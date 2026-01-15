@@ -45,19 +45,6 @@ export const createProduct = async (req, res) => {
 export const searchProducts = async (req, res) => {
   try {
     const redis = await getRedisClient();
-    let cacheKey = `products:search:${hashQuery(req.query)}`;
-
-    if (redis) {
-      cacheKey = await getVersionedKey(cacheKey);
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        return res.json({
-          success: true,
-          source: "cache",
-          products: JSON.parse(cached),
-        });
-      }
-    }
 
     const {
       name,
@@ -66,6 +53,8 @@ export const searchProducts = async (req, res) => {
       maxPrice,
       sortBy = "createdAt",
       order = "desc",
+      page = 1,
+      limit = 12,
     } = req.query;
 
     const filter = {};
@@ -78,19 +67,58 @@ export const searchProducts = async (req, res) => {
       if (maxPrice) filter.salePrice.$lte = Number(maxPrice);
     }
 
-    const products = await Product.find(filter)
-      .sort({ [sortBy]: order === "desc" ? -1 : 1 })
-      .lean();
+    const cacheKey = `products:search:${hashQuery({
+      ...req.query,
+      page,
+      limit,
+    })}`;
 
     if (redis) {
-      await redis.set(cacheKey, JSON.stringify(products), { EX: CACHE_TTL });
+      const versionedKey = await getVersionedKey(cacheKey);
+      const cached = await redis.get(versionedKey);
+
+      if (cached) {
+        return res.json({
+          success: true,
+          source: "cache",
+          ...JSON.parse(cached),
+        });
+      }
     }
 
-    res.json({ success: true, source: "db", products });
+    const skip = (page - 1) * limit;
+
+    const totalCount = await Product.countDocuments(filter);
+
+    const products = await Product.find(filter)
+      .sort({ [sortBy]: order === "desc" ? -1 : 1 })
+      .skip(skip)
+      .limit(Number(limit))
+      .lean();
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const response = {
+      products,
+      totalPages,
+      totalCount,
+      page: Number(page),
+    };
+
+    if (redis) {
+      await redis.set(cacheKey, JSON.stringify(response), { EX: CACHE_TTL });
+    }
+
+    res.json({
+      success: true,
+      source: "db",
+      ...response,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Product search failed", error: error.message });
+    res.status(500).json({
+      message: "Product search failed",
+      error: error.message,
+    });
   }
 };
 
