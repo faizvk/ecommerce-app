@@ -34,6 +34,14 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
+app.options(
+  "/api/refresh",
+  cors({
+    origin: CLIENT_URL,
+    credentials: true,
+  })
+);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,

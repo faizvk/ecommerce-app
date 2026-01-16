@@ -111,7 +111,13 @@ export const refreshToken = async (req, res) => {
 
 /* LOGOUT */
 export const logout = (req, res) => {
-  res.clearCookie("refreshToken");
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    path: "/",
+  });
+
   res.status(200).json({ message: "Logged out successfully", success: true });
 };
 
