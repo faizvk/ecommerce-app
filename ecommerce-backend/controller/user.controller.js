@@ -74,6 +74,7 @@ export const login = async (req, res) => {
       sameSite: "none",
       secure: true,
       path: "/",
+      domain: ".onrender.com",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -116,6 +117,7 @@ export const logout = (req, res) => {
     sameSite: "none",
     secure: true,
     path: "/",
+    domain: ".onrender.com",
   });
 
   res.status(200).json({ message: "Logged out successfully", success: true });
