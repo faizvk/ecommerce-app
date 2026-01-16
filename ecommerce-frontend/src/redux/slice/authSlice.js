@@ -7,7 +7,6 @@ export const loginThunk = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const res = await api.post("/login", credentials);
-
       const { user, accessToken } = res.data;
 
       localStorage.setItem("user", JSON.stringify(user));
@@ -24,17 +23,13 @@ export const loginThunk = createAsyncThunk(
 export const restoreSession = createAsyncThunk(
   "auth/restoreSession",
   async (_, { rejectWithValue }) => {
-    const storedUser = localStorage.getItem("user");
-
-    if (!storedUser) {
-      return rejectWithValue("No session");
-    }
-
     try {
-      // Let cookies + interceptor handle auth
-      const res = await api.post("/refresh");
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) throw new Error("No session");
 
+      const res = await api.post("/refresh");
       const newAccessToken = res.data.accessToken;
+
       localStorage.setItem("accessToken", newAccessToken);
 
       return {
@@ -56,27 +51,16 @@ export const logoutThunk = createAsyncThunk("auth/logout", async () => {
     localStorage.clear();
   }
 });
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
     accessToken: null,
-    loading: false,
+    loading: true, // FIX
     error: null,
   },
   reducers: {
-    loginSuccess: (state, action) => {
-      const { user, accessToken } = action.payload;
-
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("accessToken", accessToken);
-
-      state.user = user;
-      state.accessToken = accessToken;
-      state.loading = false;
-      state.error = null;
-    },
-
     logout: (state) => {
       localStorage.clear();
       state.user = null;
@@ -87,42 +71,43 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      /* Restore */
       .addCase(restoreSession.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(restoreSession.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.loading = false;
       })
-      .addCase(restoreSession.rejected, (state, action) => {
+      .addCase(restoreSession.rejected, (state) => {
         state.user = null;
         state.accessToken = null;
         state.loading = false;
-        state.error = action.payload;
       })
 
+      /* Login */
       .addCase(loginThunk.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.loading = false;
-        state.error = null;
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+
+      /* Logout */
       .addCase(logoutThunk.fulfilled, (state) => {
         state.user = null;
         state.accessToken = null;
+        state.loading = false;
       });
   },
 });
 
-export const { logout, loginSuccess } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

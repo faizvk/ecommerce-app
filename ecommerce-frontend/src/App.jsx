@@ -47,12 +47,7 @@ export default function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const token = localStorage.getItem("accessToken");
-
-    if (user && token) {
-      dispatch(restoreSession());
-    }
+    dispatch(restoreSession());
   }, [dispatch]);
 
   return (
@@ -62,7 +57,7 @@ export default function App() {
       <main className="main-content">
         <Suspense fallback={<LoadingScreen />}>
           <Routes>
-            {/* Public Routes */}
+            {/* Public */}
             <Route path="/" element={<Home />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/search" element={<SearchResults />} />
@@ -73,7 +68,7 @@ export default function App() {
               <Route path="/signup" element={<Signup />} />
             </Route>
 
-            {/* Authenticated Users */}
+            {/* Auth */}
             <Route element={<ProtectedRoute />}>
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
@@ -100,11 +95,11 @@ export default function App() {
               </Route>
             </Route>
 
-            {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </main>
+
       <ToastContainer position="top-center" />
       <Footer />
     </div>
