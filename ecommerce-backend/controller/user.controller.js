@@ -52,6 +52,7 @@ export const login = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Google-only account fallback
     if (user.provider === "google" && !user.password) {
       return res.status(403).json({
         message: "ACCOUNT_HAS_NO_PASSWORD",
@@ -60,28 +61,35 @@ export const login = async (req, res) => {
     }
 
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) return res.status(401).json({ message: "Invalid password" });
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
 
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
-    // OPTIONAL: save refresh token hash in DB (recommended)
-    user.refreshToken = refreshToken;
-    await user.save();
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      path: "/",
+      domain: ".onrender.com",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     user = user.toObject();
     delete user.password;
-    delete user.refreshToken;
 
     res.status(200).json({
-      success: true,
       message: "Login successful",
+      success: true,
       accessToken,
-      refreshToken,
       user,
     });
-  } catch (err) {
-    res.status(500).json({ message: "Login failed" });
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    res.status(500).json({ message: "Login failed", error: error.message });
   }
 };
 
