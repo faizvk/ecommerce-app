@@ -59,10 +59,6 @@ const userSchema = new mongoose.Schema(
         "Please enter a stronger password",
       ],
     },
-    refreshToken: {
-      type: String,
-      select: false,
-    },
 
     googleId: {
       type: String,

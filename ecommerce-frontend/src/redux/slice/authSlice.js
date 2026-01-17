@@ -8,11 +8,10 @@ export const loginThunk = createAsyncThunk(
     try {
       const res = await api.post("/login", credentials);
 
-      const { user, accessToken, refreshToken } = res.data;
+      const { user, accessToken } = res.data;
 
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
 
       return { user, accessToken };
     } catch (err) {
@@ -27,22 +26,16 @@ export const restoreSession = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const storedUser = localStorage.getItem("user");
-      const refreshToken = localStorage.getItem("refreshToken");
+      if (!storedUser) throw new Error("No session");
 
-      if (!storedUser || !refreshToken) throw new Error("No session");
+      const res = await api.post("/refresh");
+      const newAccessToken = res.data.accessToken;
 
-      const res = await api.post("/refresh", {
-        refreshToken,
-      });
-
-      const { accessToken, refreshToken: newRefreshToken } = res.data;
-
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", newRefreshToken);
+      localStorage.setItem("accessToken", newAccessToken);
 
       return {
         user: JSON.parse(storedUser),
-        accessToken,
+        accessToken: newAccessToken,
       };
     } catch {
       localStorage.clear();
@@ -54,10 +47,7 @@ export const restoreSession = createAsyncThunk(
 /* ---------- LOGOUT ---------- */
 export const logoutThunk = createAsyncThunk("auth/logout", async () => {
   try {
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (refreshToken) {
-      await api.post("/logout", { refreshToken });
-    }
+    await api.post("/logout");
   } finally {
     localStorage.clear();
   }
@@ -68,17 +58,16 @@ const authSlice = createSlice({
   initialState: {
     user: null,
     accessToken: null,
-    loading: true,
+    loading: true, // IMPORTANT FIX
     error: null,
   },
   reducers: {
     /* Used by Google login */
     loginSuccess: (state, action) => {
-      const { user, accessToken, refreshToken } = action.payload;
+      const { user, accessToken } = action.payload;
 
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
 
       state.user = user;
       state.accessToken = accessToken;

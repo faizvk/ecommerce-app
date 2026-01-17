@@ -14,7 +14,7 @@ import {
 } from "../controller/user.controller.js";
 import { googleLogin } from "../controller/googleAuth.controller.js";
 
-import { verifyToken } from "../auth/auth.middleware.js";
+import { verifyToken, verifyRefreshToken } from "../auth/auth.middleware.js";
 
 import AutherizeRole from "../auth/role.middleware.js";
 
@@ -24,7 +24,7 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/google", googleLogin);
 
-router.post("/refresh", refreshToken);
+router.post("/refresh", verifyRefreshToken, refreshToken);
 
 router.post("/logout", logout);
 

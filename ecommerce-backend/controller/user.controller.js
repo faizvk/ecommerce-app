@@ -4,7 +4,6 @@ import {
   createAccessToken,
   createRefreshToken,
 } from "../auth/auth.middleware.js";
-import { REFRESH_SECRET_KEY } from "../config/env.js";
 
 /* SIGNUP */
 export const signup = async (req, res) => {
@@ -88,52 +87,32 @@ export const login = async (req, res) => {
 
 /* REFRESH ACCESS TOKEN */
 export const refreshToken = async (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(401).json({ message: "Refresh token missing" });
-  }
-
   try {
-    const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
+    const user = await User.findById(req.refreshUser.id);
 
-    const user = await User.findById(decoded.id).select("+refreshToken");
-
-    if (!user || user.refreshToken !== refreshToken) {
-      return res.status(403).json({ message: "Invalid refresh token" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
     const newAccessToken = createAccessToken(user);
-    const newRefreshToken = createRefreshToken(user);
 
-    // Rotate refresh token
-    user.refreshToken = newRefreshToken;
-    await user.save();
-
-    res.status(200).json({
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    });
-  } catch {
-    res.status(403).json({ message: "Invalid or expired refresh token" });
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    res.status(500).json({ message: "Refresh failed" });
   }
 };
 
 /* LOGOUT */
-export const logout = async (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (refreshToken) {
-    await User.findOneAndUpdate(
-      { refreshToken },
-      { $unset: { refreshToken: 1 } },
-    );
-  }
-
-  res.status(200).json({
-    success: true,
-    message: "Logged out successfully",
+export const logout = (req, res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    path: "/",
+    domain: ".onrender.com",
   });
+
+  res.status(200).json({ message: "Logged out successfully", success: true });
 };
 
 /* UPDATE PASSWORD */
