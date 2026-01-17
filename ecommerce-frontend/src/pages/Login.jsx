@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginThunk, loginSuccess } from "../redux/slice/authSlice";
 import { GoogleLogin } from "@react-oauth/google";
 import { googleLogin } from "../api/user.api";
+import { useState } from "react";
 
 import "./styles/Form.css";
 
@@ -16,6 +17,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   const { loading } = useSelector((state) => state.auth);
+  const [googleOnly, setGoogleOnly] = useState(false);
 
   const {
     register,
