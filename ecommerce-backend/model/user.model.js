@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       validate: {
         validator: function (email) {
           return /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/.test(
-            email
+            email,
           );
         },
         message: "{VALUE} is not a valid email",
@@ -59,6 +59,10 @@ const userSchema = new mongoose.Schema(
         "Please enter a stronger password",
       ],
     },
+    refreshToken: {
+      type: String,
+      select: false,
+    },
 
     googleId: {
       type: String,
@@ -74,7 +78,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 userSchema.pre("save", async function () {
