@@ -4,6 +4,7 @@ import {
   createAccessToken,
   createRefreshToken,
 } from "../auth/auth.middleware.js";
+import { REFRESH_SECRET_KEY } from "../config/env.js";
 
 /* SIGNUP */
 export const signup = async (req, res) => {
@@ -89,11 +90,12 @@ export const login = async (req, res) => {
 export const refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
-  if (!refreshToken)
+  if (!refreshToken) {
     return res.status(401).json({ message: "Refresh token missing" });
+  }
 
   try {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET_KEY);
 
     const user = await User.findById(decoded.id).select("+refreshToken");
 
@@ -115,6 +117,23 @@ export const refreshToken = async (req, res) => {
   } catch {
     res.status(403).json({ message: "Invalid or expired refresh token" });
   }
+};
+
+/* LOGOUT */
+export const logout = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (refreshToken) {
+    await User.findOneAndUpdate(
+      { refreshToken },
+      { $unset: { refreshToken: 1 } },
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 };
 
 /* UPDATE PASSWORD */
