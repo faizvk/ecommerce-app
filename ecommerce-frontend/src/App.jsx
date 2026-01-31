@@ -2,7 +2,7 @@ import "./globalStyles/App.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useFadeInScroll } from "./animations/useFadeInScroll";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 import GuestRoute from "./routes/GuestRoute";
+import ServerLoadingScreen from "./components/ServerLoadingScreen";
 
 import { useDispatch } from "react-redux";
 import { restoreSession } from "./redux/slice/authSlice";
@@ -38,24 +39,52 @@ const AdminEditProduct = lazy(() => import("./admin/AdminEditProduct"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders"));
 const AdminUsers = lazy(() => import("./admin/AdminUsers"));
 
-function LoadingScreen() {
-  return <p className="loading">Loading...</p>;
-}
-
 export default function App() {
   useFadeInScroll();
   const dispatch = useDispatch();
 
+  const [backendReady, setBackendReady] = useState(false);
+
   useEffect(() => {
     dispatch(restoreSession());
   }, [dispatch]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const checkBackend = async () => {
+      if (!mounted) return;
+
+      try {
+        const res = await fetch(
+          "https://ecommerce-app-8sgn.onrender.com/api/health",
+        );
+
+        if (res.ok && mounted) {
+          setBackendReady(true);
+        } else {
+          setTimeout(checkBackend, 3000);
+        }
+      } catch {
+        setTimeout(checkBackend, 3000);
+      }
+    };
+
+    checkBackend();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (!backendReady) return <ServerLoadingScreen />;
 
   return (
     <div className="app-layout">
       <Navbar />
 
       <main className="main-content">
-        <Suspense fallback={<LoadingScreen />}>
+        <Suspense fallback={<ServerLoadingScreen />}>
           <Routes>
             {/* Public */}
             <Route path="/" element={<Home />} />
