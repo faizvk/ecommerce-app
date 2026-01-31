@@ -74,7 +74,6 @@ export const login = async (req, res) => {
       sameSite: "none",
       secure: true,
       path: "/",
-      domain: ".onrender.com",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -117,7 +116,6 @@ export const logout = (req, res) => {
     sameSite: "none",
     secure: true,
     path: "/",
-    domain: ".onrender.com",
   });
 
   res.status(200).json({ message: "Logged out successfully", success: true });
@@ -230,7 +228,7 @@ export const updateProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(req.user.id, updates, {
       new: true,
       runValidators: true,
-    }).select("-password");
+    });
 
     if (!updatedUser)
       return res.status(404).json({ message: "User not found" });
@@ -271,7 +269,7 @@ export const updateUserRole = async (req, res) => {
       req.params.id,
       { role },
       { new: true },
-    ).select("-password");
+    );
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
