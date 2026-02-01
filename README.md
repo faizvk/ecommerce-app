@@ -168,6 +168,14 @@ Frontend runs on http://localhost:5173
 
 ![orders](ecommerce-frontend/public/six.png)
 
+### admin
+
+![admin](ecommerce-frontend/public/seven.png)
+
+![admin](ecommerce-frontend/public/eight.png)
+
+![admin](ecommerce-frontend/public/nine.png)
+
 ---
 
 ## 🤝 Contributing
