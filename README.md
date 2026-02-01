@@ -148,6 +148,28 @@ Frontend runs on http://localhost:5173
 
 ---
 
+## 📸 UI Screenshots
+
+### Home page
+
+![Home page](ecommerce-frontend/public/one.png)
+
+![Home page](ecommerce-frontend/public/two.png)
+
+### cart
+
+![cart](ecommerce-frontend/public/three.png)
+
+![cart](ecommerce-frontend/public/four.png)
+
+![cart](ecommerce-frontend/public/five.png)
+
+### orders
+
+![orders](ecommerce-frontend/public/six.png)
+
+---
+
 ## 🤝 Contributing
 
 1. Fork the repository
