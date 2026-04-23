@@ -77,6 +77,11 @@ export default function AdminHome() {
       })
       .filter(Boolean);
 
+    const lowStock = products
+      .filter((p) => !p.deleted && p.stock <= 10)
+      .sort((a, b) => a.stock - b.stock)
+      .slice(0, 8);
+
     setStats({
       users: users.length,
       products: products.length,
@@ -88,6 +93,7 @@ export default function AdminHome() {
       ordersByDay,
       recentUsers: users.slice(0, 5),
       topProducts,
+      lowStock,
     });
   }, [users, products, adminOrders]);
 
@@ -146,6 +152,36 @@ export default function AdminHome() {
           ))}
         </ul>
       </div>
+
+      {/* LOW STOCK ALERTS */}
+      {stats.lowStock.length > 0 && (
+        <div className="bg-white rounded-2xl border border-red-200 p-5 shadow-card">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-lg font-bold text-red-600">Low Stock Alert</h2>
+            <span className="text-[0.75rem] bg-red-100 text-red-600 font-bold px-2.5 py-1 rounded-full">
+              {stats.lowStock.length} products
+            </span>
+          </div>
+          <div className="flex flex-col gap-3">
+            {stats.lowStock.map((p) => (
+              <div key={p._id} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                <img src={p.image?.[0] || "/placeholder.jpg"} alt={p.name} className="w-10 h-10 object-cover rounded-lg bg-gray-100 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[0.875rem] font-semibold text-gray-900 truncate">{p.name}</p>
+                  <p className="text-[0.75rem] text-gray-400 capitalize">{p.category}</p>
+                </div>
+                <span className={`text-[0.8rem] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${
+                  p.stock === 0
+                    ? "bg-red-100 text-red-600"
+                    : "bg-yellow-100 text-yellow-700"
+                }`}>
+                  {p.stock === 0 ? "Out of stock" : `${p.stock} left`}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* TOP PRODUCTS */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-5 shadow-card">
