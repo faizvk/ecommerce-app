@@ -1,6 +1,4 @@
-import React from "react";
 import { useLocation, Link } from "react-router-dom";
-import "./styles/Footer.css";
 import {
   FaFacebookF,
   FaInstagram,
@@ -11,69 +9,74 @@ import {
 
 export default function Footer() {
   const location = useLocation();
-
-  // Hide footer on admin routes
-  const isAdminPage = location.pathname.startsWith("/admin");
-  if (isAdminPage) return null;
+  if (location.pathname.startsWith("/admin")) return null;
 
   return (
-    <footer className="footer-container">
-      {/* TOP SECTION */}
-      <div className="footer-sections">
-        <div className="footer-col">
-          <h3>MyStore</h3>
-          <p>Your trusted destination for premium products.</p>
+    <footer className="bg-brand-dark text-white pt-14 pb-8 px-[8%] mt-14 shadow-[0_-4px_10px_rgba(0,0,0,0.08)]">
+      {/* GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+        <div className="flex flex-col">
+          <h3 className="font-bold text-lg mb-3">MyStore</h3>
+          <p className="text-[#dcdcdc] text-sm leading-relaxed">Your trusted destination for premium products.</p>
         </div>
 
-        <div className="footer-col">
-          <h4>Quick Links</h4>
-          <Link to="/">Home</Link>
-          <Link to="/cart">My Cart</Link>
-          <Link to="/orders">My Orders</Link>
-          <Link to="/profile">My Profile</Link>
+        <div className="flex flex-col">
+          <h4 className="font-bold mb-3">Quick Links</h4>
+          {[["Home", "/"], ["My Cart", "/cart"], ["My Orders", "/orders"], ["My Profile", "/profile"]].map(([label, to]) => (
+            <Link
+              key={to}
+              to={to}
+              className="text-[#f0f0f0] text-sm my-1 w-fit transition-all duration-200 hover:text-brand hover:translate-x-1"
+            >
+              {label}
+            </Link>
+          ))}
         </div>
 
-        <div className="footer-col">
-          <h4>Support</h4>
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            Help Center
-          </a>
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            Refund Policy
-          </a>
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            Shipping Info
-          </a>
+        <div className="flex flex-col">
+          <h4 className="font-bold mb-3">Support</h4>
+          {["Help Center", "Refund Policy", "Shipping Info"].map((label) => (
+            <a
+              key={label}
+              href="#"
+              onClick={(e) => e.preventDefault()}
+              className="text-[#f0f0f0] text-sm my-1 w-fit transition-all duration-200 hover:text-brand hover:translate-x-1"
+            >
+              {label}
+            </a>
+          ))}
         </div>
 
-        <div className="footer-col">
-          <h4>Contact Us</h4>
-          <p>Email: support@mystore.com</p>
-          <p>Phone: +91-9876543210</p>
+        <div className="flex flex-col">
+          <h4 className="font-bold mb-3">Contact Us</h4>
+          <p className="text-[#dcdcdc] text-sm mb-2">Email: support@mystore.com</p>
+          <p className="text-[#dcdcdc] text-sm">Phone: +91-9876543210</p>
         </div>
       </div>
 
-      {/* SOCIAL ICONS */}
-      <div className="footer-social">
-        <a href="https://facebook.com" target="_blank" rel="noreferrer">
-          <FaFacebookF />
-        </a>
-        <a href="https://instagram.com" target="_blank" rel="noreferrer">
-          <FaInstagram />
-        </a>
-        <a href="https://twitter.com" target="_blank" rel="noreferrer">
-          <FaTwitter />
-        </a>
-        <a href="https://linkedin.com" target="_blank" rel="noreferrer">
-          <FaLinkedinIn />
-        </a>
-        <a href="https://youtube.com" target="_blank" rel="noreferrer">
-          <FaYoutube />
-        </a>
+      {/* SOCIAL */}
+      <div className="flex justify-center gap-6 my-6 flex-wrap">
+        {[
+          [FaFacebookF, "https://facebook.com"],
+          [FaInstagram, "https://instagram.com"],
+          [FaTwitter, "https://twitter.com"],
+          [FaLinkedinIn, "https://linkedin.com"],
+          [FaYoutube, "https://youtube.com"],
+        ].map(([Icon, href], i) => (
+          <a
+            key={i}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="text-white text-xl flex items-center justify-center transition-all duration-300 hover:text-brand hover:-translate-y-1"
+          >
+            <Icon />
+          </a>
+        ))}
       </div>
 
-      {/* COPYRIGHT */}
-      <div className="footer-bottom">
+      {/* BOTTOM */}
+      <div className="text-center border-t border-white/20 pt-5 text-sm opacity-85">
         <p>© {new Date().getFullYear()} MyStore. All rights reserved.</p>
       </div>
     </footer>
