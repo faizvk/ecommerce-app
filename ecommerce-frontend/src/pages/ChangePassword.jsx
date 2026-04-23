@@ -4,237 +4,189 @@ import { useNavigate } from "react-router-dom";
 import {
   updatePasswordThunk,
   clearUserState,
-  setPasswordThunk, // <-- make sure this exists in your slice
+  setPasswordThunk,
 } from "../redux/slice/userSlice";
-import Button from "../components/Button";
-import "./styles/Form.css";
+
+const inputCls = "w-full py-3.5 px-4 rounded-xl border border-black/15 bg-[#f9f9fb] text-[0.95rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(56,89,139,0.15)]";
 
 export default function ChangePassword() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { loading, error, success, profile } = useSelector(
-    (state) => state.user
-  );
+  const { loading, error, success, profile } = useSelector((state) => state.user);
 
   const [googleOnly, setGoogleOnly] = useState(false);
   const [showSetPassword, setShowSetPassword] = useState(false);
-
-  const [data, setData] = useState({
-    oldPassword: "",
-    newPassword: "",
-  });
-
+  const [data, setData] = useState({ oldPassword: "", newPassword: "" });
   const [localError, setLocalError] = useState("");
 
-  /* Clear redux messages on unmount */
   useEffect(() => {
-    return () => {
-      dispatch(clearUserState());
-    };
+    return () => { dispatch(clearUserState()); };
   }, [dispatch]);
 
-  /* Detect Google-only accounts */
   useEffect(() => {
-    if (profile?.provider === "google") {
-      setGoogleOnly(true);
-    }
+    if (profile?.provider === "google") setGoogleOnly(true);
   }, [profile]);
 
-  /* Password strength validation */
   const validatePassword = (pass) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
-    return regex.test(pass);
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/.test(pass);
   };
 
-  /* Handle normal password change */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError("");
-
     if (!validatePassword(data.newPassword)) {
-      setLocalError(
-        "Password must be 8–16 chars and include uppercase, lowercase, number & symbol."
-      );
+      setLocalError("Password must be 8–16 chars and include uppercase, lowercase, number & symbol.");
       return;
     }
-
     const res = await dispatch(updatePasswordThunk(data));
-
-    if (updatePasswordThunk.rejected.match(res)) {
-      if (res.payload === "GOOGLE_ACCOUNT_NO_PASSWORD") {
-        setGoogleOnly(true);
-        return;
-      }
+    if (updatePasswordThunk.rejected.match(res) && res.payload === "GOOGLE_ACCOUNT_NO_PASSWORD") {
+      setGoogleOnly(true);
+      return;
     }
-
     if (updatePasswordThunk.fulfilled.match(res)) {
       setTimeout(() => navigate("/profile"), 1200);
     }
   };
 
-  /* Handle setting a password for Google users */
   const handleSetPassword = async (e) => {
     e.preventDefault();
     setLocalError("");
-
     if (!validatePassword(data.newPassword)) {
-      setLocalError(
-        "Password must be 8–16 chars and include uppercase, lowercase, number & symbol."
-      );
+      setLocalError("Password must be 8–16 chars and include uppercase, lowercase, number & symbol.");
       return;
     }
-
-    const res = await dispatch(
-      setPasswordThunk({ newPassword: data.newPassword })
-    );
-
+    const res = await dispatch(setPasswordThunk({ newPassword: data.newPassword }));
     if (setPasswordThunk.fulfilled.match(res)) {
       setTimeout(() => navigate("/profile"), 1200);
     }
   };
 
   return (
-    <div className="form-main">
+    <div className="flex w-full max-w-[1100px] min-h-[600px] bg-white border border-black/[0.08] rounded-xl mx-auto my-5 overflow-hidden shadow-card md:flex-col md:max-w-[500px] md:min-h-0 md:mx-4 sm:mx-2.5 sm:rounded-lg">
       {/* LEFT PANEL */}
-      <div className="form-head">
-        <div className="head-content">
-          <span className="badge">Security</span>
-          <h1>Update your password</h1>
-          <p>
-            Keep your account secure by choosing a strong and unique password.
-          </p>
-        </div>
+      <div className="flex-[1.1] p-12 flex flex-col justify-center bg-brand-dark text-white md:hidden">
+        <span className="inline-flex items-center px-4 py-2 bg-white/15 border border-white/30 rounded-full text-[0.7rem] font-bold tracking-[0.15em] uppercase mb-6">
+          Security
+        </span>
+        <h1 className="text-[2.8rem] font-extrabold leading-[1.1] mb-5 tracking-tight">
+          Update your password
+        </h1>
+        <p className="text-[1.05rem] leading-relaxed text-white/85 max-w-[420px]">
+          Keep your account secure by choosing a strong and unique password.
+        </p>
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="form-container">
+      <div className="flex-1 p-12 bg-white flex items-center border-l border-black/[0.06] md:border-l-0 md:p-8 sm:p-6">
         {googleOnly ? (
-          <div className="auth-form">
-            <h2>Password Not Available</h2>
-
-            <p className="footer-text">
-              This account was created using Google sign-in. You do not have a
-              password yet.
+          <div className="w-full flex flex-col gap-4">
+            <h2 className="text-2xl font-bold text-gray-900">Password Not Available</h2>
+            <p className="text-[0.9rem] text-black/60">
+              This account was created using Google sign-in. You do not have a password yet.
             </p>
 
             {!showSetPassword ? (
               <>
-                <p className="footer-text">
-                  You can continue using Google, or create a password for email
-                  login.
+                <p className="text-[0.9rem] text-black/60">
+                  You can continue using Google, or create a password for email login.
                 </p>
-
-                <Button
-                  variant="primary"
+                <button
+                  className="bg-brand text-white py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer transition-all hover:bg-brand-dark hover:-translate-y-px"
                   onClick={() => setShowSetPassword(true)}
-                  style={{ marginTop: "12px" }}
                 >
                   Set a Password
-                </Button>
-
-                <Button
-                  variant="secondary"
+                </button>
+                <button
+                  className="bg-gray-100 text-gray-700 py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer transition-all hover:bg-gray-200"
                   onClick={() => navigate("/profile")}
-                  style={{ marginTop: "10px" }}
                 >
                   Back to Profile
-                </Button>
+                </button>
               </>
             ) : (
-              <form onSubmit={handleSetPassword} className="auth-form">
-                {localError && <span className="error-text">{localError}</span>}
-                {error && <span className="error-text">{error}</span>}
-                {success && <span className="success-text">{success}</span>}
+              <form onSubmit={handleSetPassword} className="flex flex-col gap-4">
+                {localError && <span className="text-[0.75rem] font-medium text-red-500">{localError}</span>}
+                {error && <span className="text-[0.75rem] font-medium text-red-500">{error}</span>}
+                {success && <span className="text-[0.75rem] font-medium text-green-600">{success}</span>}
 
-                <div className="input-group">
-                  <label>New Password</label>
-                  <div className="input-wrapper">
-                    <input
-                      type="password"
-                      className="form-input"
-                      placeholder="Create a password"
-                      value={data.newPassword}
-                      onChange={(e) =>
-                        setData({ ...data, newPassword: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[0.85rem] font-semibold text-gray-900">New Password</label>
+                  <input
+                    type="password"
+                    className={inputCls}
+                    placeholder="Create a password"
+                    value={data.newPassword}
+                    onChange={(e) => setData({ ...data, newPassword: e.target.value })}
+                    required
+                  />
                 </div>
 
-                <button className="submit-btn" disabled={loading}>
+                <button
+                  className="mt-1 bg-brand text-white py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer transition-all hover:bg-brand-dark hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={loading}
+                >
                   {loading ? "Setting..." : "Set Password"}
                 </button>
-
-                <Button
-                  variant="secondary"
+                <button
                   type="button"
+                  className="bg-gray-100 text-gray-700 py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer transition-all hover:bg-gray-200"
                   onClick={() => setShowSetPassword(false)}
-                  style={{ marginTop: "10px" }}
                 >
                   Cancel
-                </Button>
+                </button>
               </form>
             )}
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-header-mobile">
-              <h2>Change Password</h2>
-              <p>Update your account security</p>
+          <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
+            {/* Mobile header */}
+            <div className="hidden md:block text-center mb-4">
+              <h2 className="text-2xl font-bold mb-1">Change Password</h2>
+              <p className="text-black/60">Update your account security</p>
             </div>
 
-            {localError && <span className="error-text">{localError}</span>}
-            {error && <span className="error-text">{error}</span>}
-            {success && <span className="success-text">{success}</span>}
+            {localError && <span className="text-[0.75rem] font-medium text-red-500">{localError}</span>}
+            {error && <span className="text-[0.75rem] font-medium text-red-500">{error}</span>}
+            {success && <span className="text-[0.75rem] font-medium text-green-600">{success}</span>}
 
-            {/* OLD PASSWORD */}
-            <div className="input-group">
-              <label>Old Password</label>
-              <div className="input-wrapper">
-                <input
-                  type="password"
-                  placeholder="Enter old password"
-                  className="form-input"
-                  value={data.oldPassword}
-                  onChange={(e) =>
-                    setData({ ...data, oldPassword: e.target.value })
-                  }
-                  required
-                />
-              </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[0.85rem] font-semibold text-gray-900">Old Password</label>
+              <input
+                type="password"
+                className={inputCls}
+                placeholder="Enter old password"
+                value={data.oldPassword}
+                onChange={(e) => setData({ ...data, oldPassword: e.target.value })}
+                required
+              />
             </div>
 
-            {/* NEW PASSWORD */}
-            <div className="input-group">
-              <label>New Password</label>
-              <div className="input-wrapper">
-                <input
-                  type="password"
-                  placeholder="Enter new password"
-                  className="form-input"
-                  value={data.newPassword}
-                  onChange={(e) =>
-                    setData({ ...data, newPassword: e.target.value })
-                  }
-                  required
-                />
-              </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[0.85rem] font-semibold text-gray-900">New Password</label>
+              <input
+                type="password"
+                className={inputCls}
+                placeholder="Enter new password"
+                value={data.newPassword}
+                onChange={(e) => setData({ ...data, newPassword: e.target.value })}
+                required
+              />
             </div>
 
-            <button className="submit-btn" disabled={loading}>
+            <button
+              className="mt-3 bg-brand text-white py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer flex items-center justify-center gap-2 transition-all hover:bg-brand-dark hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={loading}
+            >
               {loading ? "Updating..." : "Update Password"}
             </button>
-
-            <Button
-              variant="secondary"
+            <button
               type="button"
+              className="bg-gray-100 text-gray-700 py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer transition-all hover:bg-gray-200"
               onClick={() => navigate("/profile")}
-              style={{ marginTop: "10px" }}
             >
               Cancel
-            </Button>
+            </button>
           </form>
         )}
       </div>
