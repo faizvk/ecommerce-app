@@ -6,20 +6,18 @@ import {
   adminDeleteProductThunk,
   updateStockThunk,
 } from "../redux/slice/productSlice";
-import "./styles/AdminProducts.css";
 
-const CATEGORY_TABS = [
-  "all",
-  "electronics",
-  "fashion",
-  "dairy",
-  "technology",
-  "home appliances",
-];
+const CATEGORY_TABS = ["all", "electronics", "fashion", "dairy", "technology", "home appliances"];
+
+const stockCls = (stock) =>
+  stock > 10
+    ? "border-green-300 bg-green-50 text-green-700"
+    : stock > 0
+    ? "border-yellow-300 bg-yellow-50 text-yellow-700"
+    : "border-red-300 bg-red-50 text-red-600";
 
 export default function AdminProducts() {
   const dispatch = useDispatch();
-
   const { products, loading } = useSelector((state) => state.product);
 
   const [updating, setUpdating] = useState(null);
@@ -35,27 +33,16 @@ export default function AdminProducts() {
   }, [products, activeCategory]);
 
   const deleteProduct = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-    if (!confirmed) return;
-
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
     dispatch(adminDeleteProductThunk(id));
   };
 
   const handleStockChange = async (id, value) => {
     const stock = Number(value);
     if (Number.isNaN(stock) || stock < 0) return;
-
     setUpdating(id);
-
     try {
-      await dispatch(
-        updateStockThunk({
-          productId: id,
-          stock,
-        })
-      ).unwrap();
+      await dispatch(updateStockThunk({ productId: id, stock })).unwrap();
     } catch {
       alert("Stock update failed");
     } finally {
@@ -64,23 +51,27 @@ export default function AdminProducts() {
   };
 
   return (
-    <div className="admin-products-page">
+    <div className="flex flex-col gap-6">
       {/* HEADER */}
-      <div className="admin-products-header">
-        <h1>Manage Products</h1>
-
-        <Link to="/admin/products/add" className="btn-primary add-product-btn">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h1 className="text-2xl font-extrabold text-brand-dark">Manage Products</h1>
+        <Link
+          to="/admin/products/add"
+          className="px-5 py-2.5 bg-brand text-white rounded-xl font-semibold text-sm no-underline transition-all hover:bg-brand-dark"
+        >
           + Add Product
         </Link>
       </div>
 
       {/* CATEGORY TABS */}
-      <div className="admin-category-tabs">
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
         {CATEGORY_TABS.map((cat) => (
           <button
             key={cat}
-            className={`admin-category-tab ${
-              activeCategory === cat ? "active" : ""
+            className={`px-4 py-2 rounded-full text-sm font-semibold border-0 cursor-pointer whitespace-nowrap transition-all ${
+              activeCategory === cat
+                ? "bg-brand text-white shadow-md"
+                : "bg-white text-gray-600 hover:bg-gray-100 shadow-sm"
             }`}
             onClick={() => setActiveCategory(cat)}
           >
@@ -91,97 +82,81 @@ export default function AdminProducts() {
 
       {/* CONTENT */}
       {loading ? (
-        <p className="loading">Loading products...</p>
+        <p className="text-center py-12 text-brand text-xl">Loading products...</p>
       ) : filteredProducts.length === 0 ? (
-        <p className="empty-text">No products found.</p>
+        <p className="text-center py-12 text-gray-400">No products found.</p>
       ) : (
-        <div className="products-table-wrapper">
-          <table className="products-table">
+        <div className="overflow-x-auto rounded-2xl border border-black/[0.06] shadow-card bg-white">
+          <table className="w-full text-[0.875rem]">
             <thead>
-              <tr>
-                <th>Product</th>
-                <th>Sale Price</th>
-                <th width="130">Stock</th>
-                <th>Category</th>
-                <th width="160">Actions</th>
+              <tr className="border-b border-gray-100 bg-gray-50">
+                <th className="text-left py-3 px-4 font-semibold text-gray-600">Product</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-600">Sale Price</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-600 w-32">Stock</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-600">Category</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-600 w-36">Actions</th>
               </tr>
             </thead>
-
             <tbody>
               {filteredProducts.map((p) => {
                 const isUpdating = updating === p._id;
-
                 return (
-                  <tr key={p._id}>
-                    {/* PRODUCT */}
-                    <td className="product-info-cell">
-                      <img
-                        src={p.image?.[0] || "/placeholder.jpg"}
-                        className="product-thumb"
-                        alt={p.name}
-                      />
-                      <div className="product-info">
-                        <strong className="product-name">{p.name}</strong>
+                  <tr key={p._id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={p.image?.[0] || "/placeholder.jpg"}
+                          alt={p.name}
+                          className="w-10 h-10 rounded-lg object-cover bg-gray-100 flex-shrink-0"
+                        />
+                        <span className="font-semibold text-gray-900 line-clamp-2 max-w-[200px]">{p.name}</span>
                       </div>
                     </td>
 
-                    {/* PRICE */}
-                    <td>
-                      <span className="price-tag">₹{p.salePrice}</span>
-
+                    <td className="py-3 px-4">
+                      <span className="font-bold text-brand">₹{p.salePrice}</span>
                       {p.costPrice && p.salePrice < p.costPrice && (
-                        <small className="discount">
-                          {Math.round(
-                            ((p.costPrice - p.salePrice) / p.costPrice) * 100
-                          )}
-                          % OFF
-                        </small>
+                        <span className="block text-[0.75rem] text-red-500 font-semibold">
+                          {Math.round(((p.costPrice - p.salePrice) / p.costPrice) * 100)}% OFF
+                        </span>
                       )}
                     </td>
 
-                    {/* STOCK */}
-                    <td className="stock-col">
-                      <input
-                        type="number"
-                        min="0"
-                        value={p.stock ?? 0}
-                        disabled={isUpdating}
-                        className={`stock-input ${
-                          p.stock > 10
-                            ? "in-stock"
-                            : p.stock > 0
-                            ? "low-stock"
-                            : "out-stock"
-                        }`}
-                        onChange={(e) =>
-                          handleStockChange(p._id, e.target.value)
-                        }
-                      />
-                      {isUpdating && (
-                        <span className="stock-loading">Saving...</span>
-                      )}
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          value={p.stock ?? 0}
+                          disabled={isUpdating}
+                          className={`w-20 px-2 py-1.5 text-sm rounded-lg border outline-none transition-all focus:shadow-[0_0_0_2px_rgba(56,89,139,0.2)] disabled:opacity-60 ${stockCls(p.stock)}`}
+                          onChange={(e) => handleStockChange(p._id, e.target.value)}
+                        />
+                        {isUpdating && <span className="text-[0.75rem] text-gray-400 animate-pulse">Saving...</span>}
+                      </div>
                     </td>
 
-                    {/* CATEGORY */}
-                    <td className="category-col">
-                      <span className="category-badge">{p.category}</span>
+                    <td className="py-3 px-4">
+                      <span className="text-[0.75rem] bg-brand-light text-brand font-semibold px-2.5 py-1 rounded-full capitalize">
+                        {p.category}
+                      </span>
                     </td>
 
-                    {/* ACTIONS */}
-                    <td className="actions-cell">
-                      <Link
-                        to={`/admin/products/edit/${p._id}`}
-                        className="btn-edit"
-                      >
-                        Edit
-                      </Link>
-
-                      <button
-                        className="btn-delete"
-                        onClick={() => deleteProduct(p._id)}
-                      >
-                        Delete
-                      </button>
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2">
+                        <Link
+                          to={`/admin/products/edit/${p._id}`}
+                          className="px-3 py-1.5 bg-brand-light text-brand rounded-lg text-[0.8rem] font-semibold no-underline transition-all hover:bg-brand hover:text-white"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          className="px-3 py-1.5 bg-red-50 text-red-500 border-0 rounded-lg text-[0.8rem] font-semibold cursor-pointer transition-all hover:bg-red-500 hover:text-white"
+                          onClick={() => deleteProduct(p._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
