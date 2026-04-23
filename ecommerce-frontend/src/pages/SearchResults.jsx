@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { searchProductsThunk } from "../redux/slice/productSlice";
 import ProductCard from "../components/ProductCard";
 import SearchFilters from "../components/SearchFilters";
-import "./styles/SearchResults.css";
 
 export default function SearchResults() {
   const dispatch = useDispatch();
@@ -21,7 +20,6 @@ export default function SearchResults() {
   } = useSelector((state) => state.product || {});
 
   const [page, setPage] = useState(1);
-
   const [localFilters, setLocalFilters] = useState({
     category: urlCategory,
     minPrice: "",
@@ -30,12 +28,8 @@ export default function SearchResults() {
     order: "desc",
   });
 
-  //whenever product category changes set page to 1
   useEffect(() => {
-    setLocalFilters((prev) => ({
-      ...prev,
-      category: urlCategory,
-    }));
+    setLocalFilters((prev) => ({ ...prev, category: urlCategory }));
     setPage(1);
   }, [urlCategory]);
 
@@ -43,7 +37,7 @@ export default function SearchResults() {
     dispatch(
       searchProductsThunk({
         name: urlQuery,
-        page, //pagination
+        page,
         limit: 12,
         ...localFilters,
         category: urlCategory || localFilters.category,
@@ -53,31 +47,23 @@ export default function SearchResults() {
 
   const applyFilters = () => {
     setPage(1);
-    dispatch(
-      searchProductsThunk({
-        name: urlQuery,
-        page: 1,
-        limit: 12,
-        ...localFilters,
-      })
-    );
+    dispatch(searchProductsThunk({ name: urlQuery, page: 1, limit: 12, ...localFilters }));
   };
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setPage(p);
   };
 
+  const pageNumbers = [...Array(totalPages)].map((_, i) => i + 1);
+
   return (
-    <div className="container search-results">
-      <h2 className="title">
+    <div className="max-w-[1200px] mx-auto px-5 py-8 sm:px-4 sm:py-6">
+      <h2 className="text-2xl font-bold text-brand-dark mb-2 sm:text-xl">
         Search Results
         {urlQuery && (
-          <>
-            {" "}
-            for: "<span>{urlQuery}</span>"
-          </>
+          <> for: "<span className="text-brand">{urlQuery}</span>"</>
         )}
-        {urlCategory && <span> in {urlCategory}</span>}
+        {urlCategory && <span className="text-brand"> in {urlCategory}</span>}
       </h2>
 
       <SearchFilters
@@ -87,44 +73,53 @@ export default function SearchResults() {
       />
 
       {loading ? (
-        <p className="loading">Loading products...</p>
+        <p className="text-center py-12 text-xl text-brand">Loading products...</p>
       ) : searchedProducts.length === 0 ? (
-        <p className="no-results">No products match your filters.</p>
+        <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+          <p className="text-xl text-gray-400">No products match your filters.</p>
+        </div>
       ) : (
         <>
-          <div className="grid">
+          <div className="grid grid-cols-4 gap-6 mt-2 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 sm:gap-3.5">
             {searchedProducts.map((p) => (
               <ProductCard key={p._id} product={p} />
             ))}
           </div>
 
-          <div className="pagination">
-            <button
-              className="pg-btn"
-              disabled={page === 1}
-              onClick={() => goToPage(page - 1)}
-            >
-              Prev
-            </button>
-
-            {[...Array(totalPages)].map((_, i) => (
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
               <button
-                key={i}
-                className={`pg-btn ${page === i + 1 ? "active" : ""}`}
-                onClick={() => goToPage(i + 1)}
+                className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-600 font-semibold text-sm cursor-pointer transition-all hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={page === 1}
+                onClick={() => goToPage(page - 1)}
               >
-                {i + 1}
+                Prev
               </button>
-            ))}
 
-            <button
-              className="pg-btn"
-              disabled={page === totalPages}
-              onClick={() => goToPage(page + 1)}
-            >
-              Next
-            </button>
-          </div>
+              {pageNumbers.map((num) => (
+                <button
+                  key={num}
+                  className={`w-10 h-10 rounded-lg font-semibold text-sm cursor-pointer border transition-all ${
+                    page === num
+                      ? "bg-brand text-white border-brand shadow-md"
+                      : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                  }`}
+                  onClick={() => goToPage(num)}
+                >
+                  {num}
+                </button>
+              ))}
+
+              <button
+                className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-600 font-semibold text-sm cursor-pointer transition-all hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={page === totalPages}
+                onClick={() => goToPage(page + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>
