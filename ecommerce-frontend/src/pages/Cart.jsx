@@ -6,7 +6,6 @@ import {
   increaseQtyThunk,
   decreaseQtyThunk,
 } from "../redux/slice/cartItemsSlice";
-import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 import { fadeIn } from "../animations/fadeIn";
 import { Link } from "react-router-dom";
 
@@ -19,7 +18,6 @@ export default function Cart() {
   useEffect(() => {
     if (!authLoading && user) {
       dispatch(fetchCartThunk());
-      dispatch(refreshCartCountThunk());
     }
   }, [authLoading, user, dispatch]);
 
@@ -88,8 +86,8 @@ export default function Cart() {
                     </Link>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-brand">₹{product.salePrice}</span>
-                      {product.costPrice && (
+                      <span className="text-lg font-bold text-brand">₹{item.price}</span>
+                      {product.costPrice && product.costPrice > item.price && (
                         <span className="text-sm text-gray-400 line-through">₹{product.costPrice}</span>
                       )}
                     </div>
@@ -99,11 +97,7 @@ export default function Cart() {
                       <button
                         className="w-8 h-8 rounded-full bg-gray-100 border-0 text-gray-700 font-bold text-lg cursor-pointer transition-all hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                         disabled={item.quantity <= 1}
-                        onClick={async () => {
-                          await dispatch(decreaseQtyThunk(product._id));
-                          await dispatch(fetchCartThunk());
-                          await dispatch(refreshCartCountThunk());
-                        }}
+                        onClick={() => dispatch(decreaseQtyThunk(product._id))}
                       >
                         −
                       </button>
@@ -111,11 +105,7 @@ export default function Cart() {
                       <button
                         className="w-8 h-8 rounded-full bg-gray-100 border-0 text-gray-700 font-bold text-lg cursor-pointer transition-all hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
                         disabled={item.quantity >= product.stock}
-                        onClick={async () => {
-                          await dispatch(increaseQtyThunk(product._id));
-                          await dispatch(fetchCartThunk());
-                          await dispatch(refreshCartCountThunk());
-                        }}
+                        onClick={() => dispatch(increaseQtyThunk(product._id))}
                       >
                         +
                       </button>
@@ -128,11 +118,7 @@ export default function Cart() {
 
                   <button
                     className="self-start px-4 py-1.5 text-sm font-semibold text-red-500 border border-red-200 rounded-lg cursor-pointer bg-red-50 transition-all hover:bg-red-100 sm:self-stretch sm:text-center"
-                    onClick={async () => {
-                      await dispatch(removeFromCartThunk(product._id));
-                      await dispatch(fetchCartThunk());
-                      await dispatch(refreshCartCountThunk());
-                    }}
+                    onClick={() => dispatch(removeFromCartThunk(product._id))}
                   >
                     Remove
                   </button>
