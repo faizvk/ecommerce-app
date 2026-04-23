@@ -1,8 +1,8 @@
 import api from "./api";
 
 /* USER */
-export const placeOrder = (shippingAddress) =>
-  api.post("/order/place", { shippingAddress });
+export const placeOrder = (shippingAddress, razorpayPaymentId, razorpayOrderId) =>
+  api.post("/order/place", { shippingAddress, razorpayPaymentId, razorpayOrderId });
 
 export const getOrders = () => api.get("/orders");
 
