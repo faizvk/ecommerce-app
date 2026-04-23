@@ -5,12 +5,15 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const inputCls =
+    "px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-700 transition-all focus:border-blue-500 focus:outline-none focus:bg-white focus:shadow-[0_0_0_3px_rgba(26,115,232,0.1)] sm:w-full";
+
   return (
-    <div className="filters-bar">
+    <div className="flex gap-3 my-5 flex-wrap items-center sm:flex-col sm:items-stretch">
       <select
         value={localFilters.category}
         onChange={(e) => update("category", e.target.value)}
-        className="filter-input"
+        className={inputCls}
       >
         <option value="electronics">Electronics</option>
         <option value="fashion">Fashion</option>
@@ -22,7 +25,7 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
       <input
         type="number"
         placeholder="Min Price"
-        className="filter-input"
+        className={inputCls}
         value={localFilters.minPrice}
         onChange={(e) => update("minPrice", e.target.value)}
       />
@@ -30,7 +33,7 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
       <input
         type="number"
         placeholder="Max Price"
-        className="filter-input"
+        className={inputCls}
         value={localFilters.maxPrice}
         onChange={(e) => update("maxPrice", e.target.value)}
       />
@@ -38,7 +41,7 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
       <select
         value={localFilters.sortBy}
         onChange={(e) => update("sortBy", e.target.value)}
-        className="filter-input"
+        className={inputCls}
       >
         <option value="createdAt">Newest</option>
         <option value="salePrice">Price</option>
@@ -48,13 +51,16 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
       <select
         value={localFilters.order}
         onChange={(e) => update("order", e.target.value)}
-        className="filter-input"
+        className={inputCls}
       >
         <option value="desc">Desc</option>
         <option value="asc">Asc</option>
       </select>
 
-      <button className="apply-btn" onClick={applyFilters}>
+      <button
+        onClick={applyFilters}
+        className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-semibold text-sm transition-all hover:bg-blue-700 active:scale-[0.98] sm:w-full"
+      >
         Apply Filters
       </button>
     </div>
