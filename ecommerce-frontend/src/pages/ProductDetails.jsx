@@ -116,11 +116,6 @@ export default function ProductDetails() {
             {product.name}
           </h1>
 
-          <div className="flex items-center gap-2 text-base">
-            <span>⭐⭐⭐⭐☆</span>
-            <span className="text-gray-500 text-[0.85rem]">(120 reviews)</span>
-          </div>
-
           <div className="flex flex-col gap-2 p-4 bg-brand-light rounded-xl">
             <div className="flex items-baseline gap-3 flex-wrap">
               <span className="text-3xl font-extrabold text-brand">₹{product.salePrice}</span>
