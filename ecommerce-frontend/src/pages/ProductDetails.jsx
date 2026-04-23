@@ -82,11 +82,12 @@ export default function ProductDetails() {
     return <p className="loading">Loading...</p>;
   }
 
-  const discount = product.costPrice
-    ? Math.round(
-        ((product.costPrice - product.salePrice) / product.costPrice) * 100
-      )
-    : 0;
+  const discount =
+    product.costPrice && product.costPrice > 0
+      ? Math.round(
+          ((product.costPrice - product.salePrice) / product.costPrice) * 100
+        )
+      : 0;
 
   const isOutOfStock = product.stock === 0;
   const isUser = user?.role === "user";

@@ -8,8 +8,8 @@ export const authBaseSchema = {
     .min(8, "Password must be at least 8 characters")
     .max(16, "Password must be at most 16 characters")
     .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])/,
-      "Password must include uppercase, lowercase, number & symbol"
+      /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])/,
+      "Password must include uppercase, lowercase, number & symbol (not a colon)"
     ),
 };
 

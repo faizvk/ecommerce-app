@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import Order from "./order.model.js";
+import Cart from "./cart.model.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -92,6 +94,11 @@ userSchema.methods.comparePassword = async function (plainPassword) {
 userSchema.methods.isProfileComplete = function () {
   return Boolean(this.age && this.address && this.contact);
 };
+
+userSchema.pre("deleteOne", { document: true, query: false }, async function () {
+  await Order.deleteMany({ userId: this._id });
+  await Cart.deleteOne({ userId: this._id });
+});
 
 const User = mongoose.model("User", userSchema);
 

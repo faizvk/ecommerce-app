@@ -4,7 +4,7 @@ const productSchema = mongoose.Schema(
   {
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "User",
       required: true,
     },
     name: {
@@ -33,7 +33,7 @@ const productSchema = mongoose.Schema(
         validator: function (value) {
           return value >= this.costPrice;
         },
-        message: "Sale price must be equal or lesser than cost price",
+        message: "Sale price must be greater than or equal to cost price",
       },
     },
     category: {

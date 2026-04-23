@@ -16,6 +16,15 @@ const app = express();
 
 app.set("trust proxy", 1);
 
+if (process.env.NODE_ENV === "production") {
+  app.use((req, res, next) => {
+    if (!req.secure && req.get("x-forwarded-proto") !== "https") {
+      return res.redirect(301, "https://" + req.get("host") + req.url);
+    }
+    next();
+  });
+}
+
 app.use(
   helmet({
     crossOriginResourcePolicy: false,

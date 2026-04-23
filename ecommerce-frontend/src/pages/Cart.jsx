@@ -104,8 +104,8 @@ export default function Cart() {
                         disabled={item.quantity <= 1}
                         onClick={async () => {
                           await dispatch(decreaseQtyThunk(product._id));
-                          dispatch(fetchCartThunk());
-                          dispatch(refreshCartCountThunk());
+                          await dispatch(fetchCartThunk());
+                          await dispatch(refreshCartCountThunk());
                         }}
                       >
                         -
@@ -118,8 +118,8 @@ export default function Cart() {
                         disabled={item.quantity >= product.stock}
                         onClick={async () => {
                           await dispatch(increaseQtyThunk(product._id));
-                          dispatch(fetchCartThunk());
-                          dispatch(refreshCartCountThunk());
+                          await dispatch(fetchCartThunk());
+                          await dispatch(refreshCartCountThunk());
                         }}
                       >
                         +
@@ -135,8 +135,8 @@ export default function Cart() {
                     className="cart-remove-btn"
                     onClick={async () => {
                       await dispatch(removeFromCartThunk(product._id));
-                      dispatch(fetchCartThunk());
-                      dispatch(refreshCartCountThunk());
+                      await dispatch(fetchCartThunk());
+                      await dispatch(refreshCartCountThunk());
                     }}
                   >
                     Remove

@@ -55,12 +55,15 @@ export const searchProducts = async (req, res) => {
       limit = 12,
     } = req.query;
 
-    const pageNum = Number(page);
-    const limitNum = Number(limit);
+    const pageNum = Math.max(1, Number(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, Number(limit) || 12));
 
     const filter = {};
 
-    if (name) filter.name = { $regex: name, $options: "i" };
+    if (name) {
+      const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.name = { $regex: escapedName, $options: "i" };
+    }
     if (category) filter.category = category;
 
     if (minPrice || maxPrice) {

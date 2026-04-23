@@ -57,7 +57,7 @@ export default function App() {
 
       try {
         const res = await fetch(
-          "https://ecommerce-app-8sgn.onrender.com/api/health",
+          `${import.meta.env.VITE_BASE_URL}/api/health`,
         );
 
         if (res.ok && mounted) {

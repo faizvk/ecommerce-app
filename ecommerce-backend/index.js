@@ -8,7 +8,9 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    getRedisClient().catch(() => {});
+    getRedisClient().catch((err) => {
+      console.warn("Redis connection failed:", err.message);
+    });
 
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
@@ -24,7 +26,9 @@ const startServer = async () => {
             await redis.quit();
             console.log("✅ Redis closed");
           }
-        } catch (_) {}
+        } catch (err) {
+          console.warn("Redis shutdown error:", err.message);
+        }
 
         mongoose.connection.close(false, () => {
           console.log("✅ MongoDB closed");

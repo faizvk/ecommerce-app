@@ -18,5 +18,7 @@ export const invalidateProductCache = async () => {
     if (!redis) return;
 
     await redis.incr(PRODUCT_CACHE_VERSION_KEY);
-  } catch (_) {}
+  } catch (err) {
+    console.warn("Failed to invalidate product cache:", err.message);
+  }
 };

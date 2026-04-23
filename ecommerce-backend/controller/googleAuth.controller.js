@@ -42,10 +42,12 @@ export const googleLogin = async (req, res) => {
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
+      path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

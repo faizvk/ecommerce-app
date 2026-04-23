@@ -44,6 +44,10 @@ export const updateCartItem = async (req, res) => {
     if (!productId)
       return res.status(400).json({ message: "Product ID is required" });
 
+    if (!Number.isInteger(Number(quantity)) || Number(quantity) < 1) {
+      return res.status(400).json({ message: "Quantity must be a positive integer" });
+    }
+
     if (!isValid(productId))
       return res.status(400).json({ message: "Invalid product ID" });
 
