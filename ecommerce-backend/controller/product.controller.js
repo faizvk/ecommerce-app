@@ -58,7 +58,7 @@ export const searchProducts = async (req, res) => {
     const pageNum = Math.max(1, Number(page) || 1);
     const limitNum = Math.min(100, Math.max(1, Number(limit) || 12));
 
-    const filter = {};
+    const filter = { deleted: { $ne: true } };
 
     if (name) {
       const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -118,7 +118,7 @@ export const getProducts = async (req, res) => {
       }
     }
 
-    const products = await Product.find().sort({ createdAt: -1 }).lean();
+    const products = await Product.find({ deleted: { $ne: true } }).sort({ createdAt: -1 }).lean();
 
     if (redis) {
       await redis.set(cacheKey, JSON.stringify(products), { EX: CACHE_TTL });
@@ -156,7 +156,7 @@ export const getProductById = async (req, res) => {
       }
     }
 
-    const product = await Product.findById(id).lean();
+    const product = await Product.findOne({ _id: id, deleted: { $ne: true } }).lean();
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     if (redis) {
@@ -205,7 +205,7 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-/* ---------------- DELETE ---------------- */
+/* ---------------- DELETE (soft) ---------------- */
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -214,15 +214,20 @@ export const deleteProduct = async (req, res) => {
       return res.status(400).json({ message: "Invalid product ID" });
     }
 
-    const deleted = await Product.findByIdAndDelete(id);
-    if (!deleted) return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findOneAndUpdate(
+      { _id: id, deleted: { $ne: true } },
+      { deleted: true },
+      { new: true }
+    );
+
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
     await invalidateProductCache();
 
     res.json({
       success: true,
       message: "Product deleted successfully",
-      product: deleted,
+      product,
     });
   } catch (error) {
     res
