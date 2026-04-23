@@ -68,14 +68,22 @@ export default function Checkout() {
         name: "MyStore",
         description: "Order Payment",
         order_id: order.id,
-        handler: async function () {
+        handler: async function (response) {
           try {
-            const res = await placeOrder(address);
+            // 1. Verify payment signature on the server before creating order
+            await api.post("/payment/verify", {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            // 2. Place order with verified payment details
+            const res = await placeOrder(address, response.razorpay_payment_id, response.razorpay_order_id);
             dispatch(refreshCartCountThunk());
             navigate(`/track/${res.data.order._id}`, { replace: true });
           } catch (err) {
             console.error(err);
-            setError(err.response?.data?.message || "Payment done, but order failed.");
+            setError(err.response?.data?.message || "Payment verification failed. Contact support.");
           } finally {
             setProcessing(false);
           }
