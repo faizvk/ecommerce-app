@@ -107,7 +107,12 @@ export default function Login() {
 
           {/* PASSWORD */}
           <div className="flex flex-col gap-2">
-            <label className="text-[0.85rem] font-semibold text-gray-900">Password</label>
+            <div className="flex items-center justify-between">
+              <label className="text-[0.85rem] font-semibold text-gray-900">Password</label>
+              <Link to="/forgot-password" className="text-[0.8rem] text-brand font-semibold no-underline hover:opacity-70">
+                Forgot password?
+              </Link>
+            </div>
             <div className="relative flex items-center">
               <Lock size={18} className="absolute left-4 text-black/45 transition-all" />
               <input
