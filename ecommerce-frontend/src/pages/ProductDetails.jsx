@@ -8,16 +8,10 @@ import {
   fetchProductByIdThunk,
   fetchRelatedProductsThunk,
 } from "../redux/slice/productSlice";
-
 import { addToCartThunk, fetchCartThunk } from "../redux/slice/cartItemsSlice";
-
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
-
 import { fadeIn } from "../animations/fadeIn";
-import Button from "../components/Button";
 import ProductCard from "../components/ProductCard";
-
-import "./styles/ProductDetails.css";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -25,12 +19,7 @@ export default function ProductDetails() {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
-
-  const {
-    currentProduct: product,
-    relatedProducts: related,
-    loading,
-  } = useSelector((state) => state.product);
+  const { currentProduct: product, relatedProducts: related, loading } = useSelector((state) => state.product);
 
   const [activeImage, setActiveImage] = useState(0);
   const [msg, setMsg] = useState("");
@@ -41,14 +30,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     if (!product?.category) return;
-
-    dispatch(
-      fetchRelatedProductsThunk({
-        category: product.category,
-        excludeId: product._id,
-        limit: 6,
-      })
-    );
+    dispatch(fetchRelatedProductsThunk({ category: product.category, excludeId: product._id, limit: 6 }));
   }, [product, dispatch]);
 
   const handleAdd = async () => {
@@ -57,18 +39,14 @@ export default function ProductDetails() {
       navigate("/login");
       return;
     }
-
     if (user.role !== "user") {
       alert("Only customers can add items to cart.");
       return;
     }
-
     try {
       await dispatch(addToCartThunk({ productId: product._id })).unwrap();
-
       dispatch(fetchCartThunk());
       dispatch(refreshCartCountThunk());
-
       setMsg("Added to cart!");
       toast.success("Added to cart!");
       setTimeout(() => setMsg(""), 1500);
@@ -79,48 +57,50 @@ export default function ProductDetails() {
   };
 
   if (loading || !product) {
-    return <p className="loading">Loading...</p>;
+    return <p className="text-center py-12 text-xl text-brand">Loading...</p>;
   }
 
   const discount =
     product.costPrice && product.costPrice > 0
-      ? Math.round(
-          ((product.costPrice - product.salePrice) / product.costPrice) * 100
-        )
+      ? Math.round(((product.costPrice - product.salePrice) / product.costPrice) * 100)
       : 0;
 
   const isOutOfStock = product.stock === 0;
   const isUser = user?.role === "user";
 
   return (
-    <div className="pd-page">
+    <div className="max-w-[1200px] mx-auto px-5 py-8 sm:px-4 sm:py-6">
       {/* TOP SECTION */}
-      <div className="pd-wrapper">
+      <div className="flex gap-10 items-start lg:flex-col lg:gap-6">
+        {/* LEFT — IMAGES */}
         <div
-          className="pd-left"
+          className="flex flex-col gap-4 w-[45%] lg:w-full"
           {...fadeIn({ direction: "right", distance: 80, duration: 0.9 })}
         >
-          <div className="pd-image-box">
+          <div className="relative rounded-2xl overflow-hidden bg-gray-50 border border-black/[0.06] aspect-square">
             {discount > 0 && (
-              <span className="pd-discount-badge">-{discount}%</span>
+              <span className="absolute top-4 left-4 z-10 bg-red-500 text-white text-[0.75rem] font-bold px-3 py-1 rounded-full">
+                -{discount}%
+              </span>
             )}
-
             <img
               src={product.image?.[activeImage] || "/placeholder.jpg"}
               alt={product.name}
-              className="pd-main-img"
+              className="w-full h-full object-contain p-4"
             />
           </div>
 
           {product.image?.length > 1 && (
-            <div className="pd-thumbs">
+            <div className="flex gap-2.5 flex-wrap">
               {product.image.map((img, i) => (
                 <img
                   key={i}
                   src={img}
                   alt=""
-                  className={`pd-thumb ${activeImage === i ? "active" : ""}`}
                   onClick={() => setActiveImage(i)}
+                  className={`w-16 h-16 object-cover rounded-xl cursor-pointer border-2 transition-all ${
+                    activeImage === i ? "border-brand shadow-md" : "border-transparent hover:border-gray-300"
+                  }`}
                 />
               ))}
             </div>
@@ -129,64 +109,72 @@ export default function ProductDetails() {
 
         {/* RIGHT — DETAILS */}
         <div
-          className="pd-right"
+          className="flex-1 flex flex-col gap-5"
           {...fadeIn({ direction: "left", distance: 80, duration: 0.9 })}
         >
-          <h1 className="pd-title">{product.name}</h1>
+          <h1 className="text-[1.9rem] font-extrabold text-gray-900 leading-snug md:text-2xl sm:text-xl">
+            {product.name}
+          </h1>
 
-          <div className="pd-rating">
-            ⭐⭐⭐⭐☆ <span className="pd-rating-count">(120 reviews)</span>
+          <div className="flex items-center gap-2 text-base">
+            <span>⭐⭐⭐⭐☆</span>
+            <span className="text-gray-500 text-[0.85rem]">(120 reviews)</span>
           </div>
 
-          <div className="pd-price-section">
-            <div className="pd-price-row">
-              <h2 className="pd-sale">₹{product.salePrice}</h2>
+          <div className="flex flex-col gap-2 p-4 bg-brand-light rounded-xl">
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <span className="text-3xl font-extrabold text-brand">₹{product.salePrice}</span>
               {product.costPrice && (
                 <>
-                  <p className="pd-old">₹{product.costPrice}</p>
-                  <span className="pd-offer-tag">{discount}% OFF</span>
+                  <span className="text-lg text-gray-400 line-through">₹{product.costPrice}</span>
+                  <span className="bg-red-100 text-red-600 text-[0.8rem] font-bold px-2.5 py-1 rounded-full">
+                    {discount}% OFF
+                  </span>
                 </>
               )}
             </div>
-            <p className="pd-special-offer">
-              🔥 Special Offer – Limited Stock!
-            </p>
+            <p className="text-[0.875rem] text-brand-dark font-medium">🔥 Special Offer – Limited Stock!</p>
           </div>
 
-          <div className="pd-stock">
+          <div>
             {product.stock > 0 ? (
-              <span className="in-stock">
+              <span className="inline-flex items-center gap-1.5 text-green-700 bg-green-50 border border-green-200 rounded-full px-3.5 py-1.5 text-[0.85rem] font-semibold">
                 ✔ In Stock ({product.stock} available)
               </span>
             ) : (
-              <span className="out-stock">❌ Out of Stock</span>
+              <span className="inline-flex items-center gap-1.5 text-red-600 bg-red-50 border border-red-200 rounded-full px-3.5 py-1.5 text-[0.85rem] font-semibold">
+                ✕ Out of Stock
+              </span>
             )}
           </div>
 
-          <p className="pd-description">{product.description}</p>
+          <p className="text-[0.95rem] text-gray-600 leading-relaxed">{product.description}</p>
 
           {isUser && (
-            <Button
-              variant="primary"
+            <button
+              className="py-4 px-6 bg-brand text-white border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer transition-all hover:bg-brand-dark hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isOutOfStock}
               onClick={handleAdd}
             >
               {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-            </Button>
+            </button>
           )}
 
-          {msg && <p className="pd-success">{msg}</p>}
+          {msg && (
+            <p className="text-[0.85rem] font-semibold text-green-600 bg-green-50 border border-green-200 rounded-lg px-4 py-2.5">
+              {msg}
+            </p>
+          )}
         </div>
       </div>
 
       {/* RELATED PRODUCTS */}
       {related.length > 0 && (
-        <div className="pd-related-section">
-          <h2 className="pd-related-title">
+        <div className="mt-16 sm:mt-10">
+          <h2 className="text-2xl font-bold text-brand-dark mb-6 sm:text-xl">
             Related Products in "{product.category}"
           </h2>
-
-          <div className="pd-related-grid">
+          <div className="grid grid-cols-4 gap-6 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 sm:gap-3.5">
             {related.map((item) => (
               <ProductCard key={item._id} product={item} />
             ))}
