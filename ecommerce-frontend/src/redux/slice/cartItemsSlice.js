@@ -7,6 +7,8 @@ import {
   decreaseQty,
 } from "../../api/cart.api";
 
+const extractCart = (res) => res.data.cart;
+
 /* ================= FETCH CART ================= */
 export const fetchCartThunk = createAsyncThunk(
   "cartItems/fetch",
@@ -25,7 +27,8 @@ export const addToCartThunk = createAsyncThunk(
   "cartItems/add",
   async ({ productId, quantity = 1 }, { rejectWithValue }) => {
     try {
-      await addToCart(productId, quantity);
+      const res = await addToCart(productId, quantity);
+      return extractCart(res);
     } catch {
       return rejectWithValue("Failed to add item");
     }
@@ -37,7 +40,8 @@ export const removeFromCartThunk = createAsyncThunk(
   "cartItems/remove",
   async (productId, { rejectWithValue }) => {
     try {
-      await removeFromCart(productId);
+      const res = await removeFromCart(productId);
+      return extractCart(res);
     } catch {
       return rejectWithValue("Failed to remove item");
     }
@@ -49,7 +53,8 @@ export const increaseQtyThunk = createAsyncThunk(
   "cartItems/increaseQty",
   async (productId, { rejectWithValue }) => {
     try {
-      await increaseQty(productId);
+      const res = await increaseQty(productId);
+      return extractCart(res);
     } catch {
       return rejectWithValue("Failed to increase quantity");
     }
@@ -61,12 +66,21 @@ export const decreaseQtyThunk = createAsyncThunk(
   "cartItems/decreaseQty",
   async (productId, { rejectWithValue }) => {
     try {
-      await decreaseQty(productId);
+      const res = await decreaseQty(productId);
+      return extractCart(res);
     } catch {
       return rejectWithValue("Failed to decrease quantity");
     }
   }
 );
+
+/* ================= HELPERS ================= */
+const applyCart = (state, cart) => {
+  state.loading = false;
+  state.cart = cart || null;
+  state.items = cart?.products ?? [];
+  state.totalAmount = cart?.totalAmount ?? 0;
+};
 
 /* ================= SLICE ================= */
 const cartItemsSlice = createSlice({
@@ -91,19 +105,12 @@ const cartItemsSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    builder
+    const pending = (state) => { state.loading = true; state.error = null; };
+    const rejected = (state, action) => { state.loading = false; state.error = action.payload; };
 
-      /* ---------- FETCH CART ---------- */
-      .addCase(fetchCartThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchCartThunk.fulfilled, (state, action) => {
-        state.loading = false;
-        state.cart = action.payload || null;
-        state.items = action.payload?.products ?? [];
-        state.totalAmount = action.payload?.totalAmount ?? 0;
-      })
+    builder
+      .addCase(fetchCartThunk.pending, pending)
+      .addCase(fetchCartThunk.fulfilled, (state, action) => { applyCart(state, action.payload); })
       .addCase(fetchCartThunk.rejected, (state, action) => {
         state.loading = false;
         state.items = [];
@@ -111,34 +118,21 @@ const cartItemsSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* ---------- MUTATIONS (REFRESH AFTER) ---------- */
-      .addCase(addToCartThunk.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(addToCartThunk.fulfilled, (state) => {
-        state.loading = false;
-      })
+      .addCase(addToCartThunk.pending, pending)
+      .addCase(addToCartThunk.fulfilled, (state, action) => { applyCart(state, action.payload); })
+      .addCase(addToCartThunk.rejected, rejected)
 
-      .addCase(removeFromCartThunk.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(removeFromCartThunk.fulfilled, (state) => {
-        state.loading = false;
-      })
+      .addCase(removeFromCartThunk.pending, pending)
+      .addCase(removeFromCartThunk.fulfilled, (state, action) => { applyCart(state, action.payload); })
+      .addCase(removeFromCartThunk.rejected, rejected)
 
-      .addCase(increaseQtyThunk.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(increaseQtyThunk.fulfilled, (state) => {
-        state.loading = false;
-      })
+      .addCase(increaseQtyThunk.pending, pending)
+      .addCase(increaseQtyThunk.fulfilled, (state, action) => { applyCart(state, action.payload); })
+      .addCase(increaseQtyThunk.rejected, rejected)
 
-      .addCase(decreaseQtyThunk.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(decreaseQtyThunk.fulfilled, (state) => {
-        state.loading = false;
-      });
+      .addCase(decreaseQtyThunk.pending, pending)
+      .addCase(decreaseQtyThunk.fulfilled, (state, action) => { applyCart(state, action.payload); })
+      .addCase(decreaseQtyThunk.rejected, rejected);
   },
 });
 
