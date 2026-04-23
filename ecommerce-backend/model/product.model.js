@@ -58,6 +58,11 @@ const productSchema = mongoose.Schema(
         type: String,
       },
     ],
+    deleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   {
     timestamps: true,
