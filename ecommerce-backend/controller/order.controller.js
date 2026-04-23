@@ -11,11 +11,14 @@ import { validStatus } from "../utils/validStatus.js";
 /* PLACE ORDER */
 export const placeOrder = async (req, res) => {
   try {
-    const { shippingAddress } = req.body;
+    const { shippingAddress, razorpayPaymentId, razorpayOrderId } = req.body;
     const userId = req.user.id;
 
     if (!shippingAddress)
       return res.status(400).json({ message: "Shipping address is required" });
+
+    if (!razorpayPaymentId || !razorpayOrderId)
+      return res.status(400).json({ message: "Payment details are required" });
 
     /* 🔒 PROFILE COMPLETION ENFORCEMENT */
     const user = await User.findById(userId);
@@ -40,6 +43,9 @@ export const placeOrder = async (req, res) => {
       totalAmount: cart.totalAmount,
       shippingAddress,
       status: "pending",
+      paymentId: razorpayPaymentId,
+      razorpayOrderId,
+      paymentStatus: "paid",
     });
 
     // Clear cart
