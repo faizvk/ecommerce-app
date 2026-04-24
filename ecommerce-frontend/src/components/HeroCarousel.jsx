@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { fadeIn } from "../animations/fadeIn";
 import { slides } from "../utils/slides";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function HeroCarousel() {
   const [index, setIndex] = useState(0);
@@ -8,48 +9,46 @@ export default function HeroCarousel() {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % slides.length);
-    }, 4000);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
   const nextSlide = () => setIndex((prev) => (prev + 1) % slides.length);
-  const prevSlide = () =>
-    setIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  const prevSlide = () => setIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
 
   return (
-    <div className="relative w-full h-[520px] overflow-hidden shadow-card mt-6 md:h-[400px] sm:h-[320px] xs:h-[250px]">
+    <div className="relative w-full h-[500px] overflow-hidden md:h-[380px] sm:h-[280px]">
       {/* Slides */}
       {slides.map((slide, i) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-all duration-700 ${
-            i === index ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            i === index ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
           <img
             src={slide.image}
             alt=""
             className="w-full h-full object-cover"
-            {...fadeIn({ direction: "up", distance: 80, duration: 0.9 })}
           />
 
-          {/* Overlay on small screens */}
-          <div className="absolute inset-0 bg-black/0 sm:bg-black/30" />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent sm:from-black/60 sm:via-black/40" />
 
-          <div className="absolute top-1/2 left-[8%] -translate-y-1/2 text-white max-w-[450px] [text-shadow:0_3px_8px_rgba(0,0,0,0.4)] z-10 md:max-w-[320px] sm:left-[5%] sm:right-[5%] sm:max-w-full sm:text-center">
+          <div className="absolute top-1/2 left-[8%] -translate-y-1/2 text-white max-w-[480px] z-10 md:max-w-[340px] sm:left-5 sm:right-5 sm:max-w-full">
             <h1
-              className="text-[2.6rem] font-extrabold leading-tight md:text-3xl sm:text-2xl"
-              {...fadeIn({ direction: "left", distance: 80, duration: 0.9 })}
+              className="text-[2.8rem] font-extrabold leading-tight mb-4 md:text-2xl sm:text-xl sm:mb-2"
+              {...fadeIn({ direction: "left", distance: 40, duration: 0.7 })}
             >
-              {slide.title.split(" ").slice(0, 3).join(" ")}{" "}
-              <span className="text-brand">{slide.title.split(" ").slice(3).join(" ")}</span>
+              {slide.title}
             </h1>
 
-            <p className="my-3 text-[1.1rem] md:text-base sm:text-sm sm:my-2">{slide.text}</p>
+            <p className="text-[1.05rem] text-white/90 mb-6 md:text-sm sm:text-sm sm:mb-4 sm:hidden">
+              {slide.text}
+            </p>
 
             <button
-              className="bg-brand text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 hover:bg-brand-dark"
-              {...fadeIn({ direction: "right", distance: 80, duration: 0.9 })}
+              className="bg-white text-brand-dark py-3 px-8 rounded-full font-bold text-[0.95rem] transition-all duration-200 hover:bg-brand hover:text-white sm:py-2.5 sm:px-6 sm:text-sm"
             >
               {slide.button}
             </button>
@@ -60,27 +59,30 @@ export default function HeroCarousel() {
       {/* Prev / Next */}
       <button
         onClick={prevSlide}
-        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white text-3xl px-3.5 py-2 bg-transparent border-0 rounded-full cursor-pointer z-20 transition-all duration-200 hover:bg-gray-500/55 sm:text-2xl sm:px-2.5 sm:py-1"
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-sm text-white rounded-full border border-white/30 cursor-pointer z-20 transition-all duration-200 hover:bg-white/40 sm:w-8 sm:h-8"
+        aria-label="Previous slide"
       >
-        ❮
+        <ChevronLeft size={20} />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white text-3xl px-3.5 py-2 bg-transparent border-0 rounded-full cursor-pointer z-20 transition-all duration-200 hover:bg-gray-500/55 sm:text-2xl sm:px-2.5 sm:py-1"
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-sm text-white rounded-full border border-white/30 cursor-pointer z-20 transition-all duration-200 hover:bg-white/40 sm:w-8 sm:h-8"
+        aria-label="Next slide"
       >
-        ❯
+        <ChevronRight size={20} />
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2 z-20">
         {slides.map((_, i) => (
-          <span
+          <button
             key={i}
             onClick={() => setIndex(i)}
-            className={`block rounded-full cursor-pointer transition-all duration-300 ${
+            aria-label={`Go to slide ${i + 1}`}
+            className={`rounded-full cursor-pointer transition-all duration-300 border-0 p-0 ${
               i === index
-                ? "w-3 h-3 bg-brand scale-125"
-                : "w-3 h-3 bg-white/50"
+                ? "w-6 h-2.5 bg-white"
+                : "w-2.5 h-2.5 bg-white/50 hover:bg-white/75"
             }`}
           />
         ))}
