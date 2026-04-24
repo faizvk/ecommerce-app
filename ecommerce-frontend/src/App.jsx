@@ -54,13 +54,14 @@ export default function App() {
   useEffect(() => {
     let mounted = true;
 
+    // Strip trailing slash so both "" and "http://localhost:5000" work correctly
+    const base = (import.meta.env.VITE_BASE_URL || "").replace(/\/$/, "");
+
     const checkBackend = async () => {
       if (!mounted) return;
 
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_BASE_URL}/api/health`,
-        );
+        const res = await fetch(`${base}/api/health`);
 
         if (res.ok && mounted) {
           setBackendReady(true);
