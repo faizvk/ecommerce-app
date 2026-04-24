@@ -1,17 +1,21 @@
 export default function ServerLoadingScreen() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-brand-light px-6 text-center">
-      <div className="animate-spin w-14 h-14 rounded-full border-4 border-brand-medium border-t-brand mb-6" />
-      <h2 className="text-2xl font-bold text-brand-dark mb-2">Starting backend…</h2>
-      <p className="text-gray-600 mb-1">Render free tier sleeps after inactivity. Please wait.</p>
-      <p className="text-gray-600 mb-1">Meanwhile UI screenshots are available in my GitHub repo.</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-brand-dark px-6 text-center">
+      <div className="animate-spin w-14 h-14 rounded-full border-[3px] border-white/20 border-t-white mb-8" />
+      <h2 className="text-2xl font-bold text-white mb-2">Starting backend…</h2>
+      <p className="text-white/60 text-sm mb-1 max-w-xs">
+        Render free tier sleeps after inactivity. Please wait a moment.
+      </p>
+      <p className="text-white/60 text-sm mb-6 max-w-xs">
+        Meanwhile, UI screenshots are available in the GitHub repo.
+      </p>
       <a
         href="https://github.com/faizvk/ecommerce-app"
         target="_blank"
         rel="noreferrer"
-        className="mt-2 text-brand hover:text-brand-dark font-medium underline break-all"
+        className="px-5 py-2.5 bg-white/10 border border-white/20 text-white/80 rounded-full text-sm font-medium hover:bg-white/20 transition-all no-underline"
       >
-        https://github.com/faizvk/ecommerce-app
+        View on GitHub
       </a>
     </div>
   );
