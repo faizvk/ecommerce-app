@@ -82,7 +82,11 @@ export default function AdminEditProduct() {
   };
 
   if (loading || !form) {
-    return <p className="text-center py-12 text-xl text-brand">Loading...</p>;
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin w-10 h-10 rounded-full border-4 border-brand-medium border-t-brand" />
+      </div>
+    );
   }
 
   return (
