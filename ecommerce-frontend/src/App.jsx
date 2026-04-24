@@ -46,6 +46,7 @@ export default function App() {
   const dispatch = useDispatch();
 
   const [backendReady, setBackendReady] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     dispatch(restoreSession());
@@ -53,34 +54,51 @@ export default function App() {
 
   useEffect(() => {
     let mounted = true;
+    let attempts = 0;
 
-    // Strip trailing slash so both "" and "http://localhost:5000" work correctly
+    // Strip trailing slash so both "" and "https://backend.onrender.com" work
     const base = (import.meta.env.VITE_BASE_URL || "").replace(/\/$/, "");
+
+    // Tick the elapsed counter every second for the loading screen
+    const ticker = setInterval(() => {
+      if (mounted) setElapsed((s) => s + 1);
+    }, 1000);
 
     const checkBackend = async () => {
       if (!mounted) return;
+      attempts++;
 
       try {
         const res = await fetch(`${base}/api/health`);
-
         if (res.ok && mounted) {
+          clearInterval(ticker);
           setBackendReady(true);
-        } else {
-          setTimeout(checkBackend, 3000);
+          return;
         }
       } catch {
-        setTimeout(checkBackend, 3000);
+        // network error or CORS — keep retrying
       }
+
+      // Give up after ~90 s and show the app anyway
+      // (individual pages have their own error states)
+      if (attempts >= 30 && mounted) {
+        clearInterval(ticker);
+        setBackendReady(true);
+        return;
+      }
+
+      setTimeout(checkBackend, 3000);
     };
 
     checkBackend();
 
     return () => {
       mounted = false;
+      clearInterval(ticker);
     };
   }, []);
 
-  if (!backendReady) return <ServerLoadingScreen />;
+  if (!backendReady) return <ServerLoadingScreen elapsed={elapsed} />;
 
   return (
     <div className="app-layout">

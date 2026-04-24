@@ -70,12 +70,12 @@ app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", paymentRoutes);
 
-app.get("/api/health", (_, res) =>
-  res.status(200).json({
-    success: true,
-    message: "Server is healthy",
-  })
-);
+// Health check — allow any origin so Vercel frontend can reach Render backend
+// regardless of CLIENT_URL configuration
+app.get("/api/health", (_, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.status(200).json({ success: true, message: "Server is healthy" });
+});
 
 app.use((req, res) => {
   res.status(404).json({
