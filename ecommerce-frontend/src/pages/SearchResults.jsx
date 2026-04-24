@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { searchProductsThunk } from "../redux/slice/productSlice";
 import ProductCard from "../components/ProductCard";
 import SearchFilters from "../components/SearchFilters";
+import { Search } from "lucide-react";
 
 export default function SearchResults() {
   const dispatch = useDispatch();
@@ -52,19 +53,37 @@ export default function SearchResults() {
 
   const goToPage = (p) => {
     if (p >= 1 && p <= totalPages) setPage(p);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const pageNumbers = [...Array(totalPages)].map((_, i) => i + 1);
 
   return (
-    <div className="max-w-[1200px] mx-auto px-5 py-8 sm:px-4 sm:py-6">
-      <h2 className="text-2xl font-bold text-brand-dark mb-2 sm:text-xl">
-        Search Results
-        {urlQuery && (
-          <> for: "<span className="text-brand">{urlQuery}</span>"</>
+    <div className="max-w-[1200px] mx-auto px-6 py-8 sm:px-4 sm:py-6">
+      {/* TITLE */}
+      <div className="mb-1">
+        <h2 className="text-2xl font-extrabold text-brand-dark sm:text-xl">
+          {urlQuery ? (
+            <>
+              Results for{" "}
+              <span className="text-brand">"{urlQuery}"</span>
+            </>
+          ) : urlCategory ? (
+            <>
+              <span className="capitalize">{urlCategory}</span>
+            </>
+          ) : (
+            "All Products"
+          )}
+        </h2>
+        {!loading && (
+          <p className="text-[0.85rem] text-gray-400 mt-0.5">
+            {searchedProducts.length > 0
+              ? `${searchedProducts.length} product${searchedProducts.length !== 1 ? "s" : ""} found`
+              : "No products found"}
+          </p>
         )}
-        {urlCategory && <span className="text-brand"> in {urlCategory}</span>}
-      </h2>
+      </div>
 
       <SearchFilters
         localFilters={localFilters}
@@ -73,14 +92,22 @@ export default function SearchResults() {
       />
 
       {loading ? (
-        <p className="text-center py-12 text-xl text-brand">Loading products...</p>
+        <div className="flex justify-center py-20">
+          <div className="animate-spin w-10 h-10 rounded-full border-4 border-brand-medium border-t-brand" />
+        </div>
       ) : searchedProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
-          <p className="text-xl text-gray-400">No products match your filters.</p>
+        <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+            <Search size={26} className="text-gray-400" />
+          </div>
+          <div>
+            <p className="text-base font-semibold text-gray-600">No products match your filters</p>
+            <p className="text-sm text-gray-400 mt-0.5">Try adjusting your search or removing some filters.</p>
+          </div>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-4 gap-6 mt-2 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 sm:gap-3.5">
+          <div className="grid grid-cols-4 gap-6 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 sm:gap-3">
             {searchedProducts.map((p) => (
               <ProductCard key={p._id} product={p} />
             ))}
@@ -90,11 +117,11 @@ export default function SearchResults() {
           {totalPages > 1 && (
             <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
               <button
-                className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-600 font-semibold text-sm cursor-pointer transition-all hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-600 font-semibold text-sm cursor-pointer transition-all hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                 disabled={page === 1}
                 onClick={() => goToPage(page - 1)}
               >
-                Prev
+                ← Prev
               </button>
 
               {pageNumbers.map((num) => (
@@ -103,7 +130,7 @@ export default function SearchResults() {
                   className={`w-10 h-10 rounded-lg font-semibold text-sm cursor-pointer border transition-all ${
                     page === num
                       ? "bg-brand text-white border-brand shadow-md"
-                      : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+                      : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                   }`}
                   onClick={() => goToPage(num)}
                 >
@@ -112,11 +139,11 @@ export default function SearchResults() {
               ))}
 
               <button
-                className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-600 font-semibold text-sm cursor-pointer transition-all hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-600 font-semibold text-sm cursor-pointer transition-all hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                 disabled={page === totalPages}
                 onClick={() => goToPage(page + 1)}
               >
-                Next
+                Next →
               </button>
             </div>
           )}
