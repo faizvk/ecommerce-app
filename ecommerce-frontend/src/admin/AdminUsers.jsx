@@ -58,7 +58,9 @@ export default function AdminUsers() {
       </div>
 
       {loading ? (
-        <p className="text-center py-12 text-brand text-xl">Loading users...</p>
+        <div className="flex justify-center py-20">
+          <div className="animate-spin w-10 h-10 rounded-full border-4 border-brand-medium border-t-brand" />
+        </div>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-black/[0.06] shadow-card bg-white">
           <table className="w-full text-[0.875rem]">
