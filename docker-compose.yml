@@ -1,0 +1,115 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MyStore – full-stack docker-compose
+#
+# Services:
+#   mongo    – MongoDB 7  (local dev database)
+#   redis    – Redis 7    (optional cache / session store)
+#   backend  – Node/Express API
+#   frontend – React SPA served by nginx (proxies /api → backend)
+#
+# Quick start:
+#   1. cp .env.example .env   # fill in your secrets
+#   2. docker compose up --build
+#   3. Open http://localhost
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── MongoDB ────────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: mystore_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ecommerce
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"      # optional: expose for local GUI clients (Compass)
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: mystore_redis
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"        # optional: expose for local debugging
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ── Backend ────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./ecommerce-backend
+      dockerfile: Dockerfile
+    container_name: mystore_backend
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      # Override these via .env if using external MongoDB / Redis
+      MONGOOSE_URI: ${MONGOOSE_URI:-mongodb://mongo:27017/ecommerce}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      # These must be set in .env
+      ACCESS_SECRET_KEY: ${ACCESS_SECRET_KEY}
+      REFRESH_SECRET_KEY: ${REFRESH_SECRET_KEY}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    expose:
+      - "5000"             # internal only — nginx proxies; not exposed to host
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── Frontend (nginx) ───────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./ecommerce-frontend
+      dockerfile: Dockerfile
+      args:
+        # Vite bakes these at build time.
+        # Leave VITE_BASE_URL empty — nginx proxies /api to the backend.
+        VITE_BASE_URL: ""
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_CLOUDINARY_UPLOAD_URL: ${VITE_CLOUDINARY_UPLOAD_URL:-}
+        VITE_CLOUDINARY_UPLOAD_PRESET: ${VITE_CLOUDINARY_UPLOAD_PRESET:-}
+    container_name: mystore_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"            # http://localhost
+
+volumes:
+  mongo_data:
+  redis_data:
