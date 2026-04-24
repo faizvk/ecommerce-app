@@ -7,77 +7,98 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 
+const socialLinks = [
+  [FaInstagram, "https://instagram.com"],
+  [FaFacebookF, "https://facebook.com"],
+  [FaTwitter, "https://twitter.com"],
+  [FaLinkedinIn, "https://linkedin.com"],
+  [FaYoutube, "https://youtube.com"],
+];
+
 export default function Footer() {
   const location = useLocation();
   if (location.pathname.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-brand-dark text-white pt-14 pb-8 px-[8%] mt-14 shadow-[0_-4px_10px_rgba(0,0,0,0.08)]">
+    <footer className="bg-brand-dark text-white pt-12 pb-6 px-[6%] mt-16">
       {/* GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-        <div className="flex flex-col">
-          <h3 className="font-bold text-lg mb-3">MyStore</h3>
-          <p className="text-[#dcdcdc] text-sm leading-relaxed">Your trusted destination for premium products.</p>
+      <div className="grid grid-cols-4 gap-8 mb-10 lg:grid-cols-2 sm:grid-cols-1">
+        {/* BRAND */}
+        <div>
+          <h3 className="text-xl font-extrabold mb-3 tracking-wide">MyStore</h3>
+          <p className="text-white/60 text-sm leading-relaxed max-w-[220px]">
+            Your trusted destination for quality products at the best prices.
+          </p>
+          {/* Social */}
+          <div className="flex gap-3 mt-5">
+            {socialLinks.map(([Icon, href], i) => (
+              <a
+                key={i}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 text-sm transition-all hover:bg-brand hover:text-white"
+              >
+                <Icon />
+              </a>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col">
-          <h4 className="font-bold mb-3">Quick Links</h4>
-          {[["Home", "/"], ["My Cart", "/cart"], ["My Orders", "/orders"], ["My Profile", "/profile"]].map(([label, to]) => (
-            <Link
-              key={to}
-              to={to}
-              className="text-[#f0f0f0] text-sm my-1 w-fit transition-all duration-200 hover:text-brand hover:translate-x-1"
-            >
-              {label}
-            </Link>
-          ))}
+        {/* QUICK LINKS */}
+        <div>
+          <h4 className="font-bold text-sm uppercase tracking-wider text-white/50 mb-4">Quick Links</h4>
+          <div className="flex flex-col gap-2.5">
+            {[["Home", "/"], ["My Cart", "/cart"], ["My Orders", "/orders"], ["My Profile", "/profile"]].map(([label, to]) => (
+              <Link
+                key={to}
+                to={to}
+                className="text-white/65 text-sm w-fit no-underline transition-all hover:text-white hover:translate-x-1"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col">
-          <h4 className="font-bold mb-3">Support</h4>
-          {["Help Center", "Refund Policy", "Shipping Info"].map((label) => (
-            <a
-              key={label}
-              href="#"
-              onClick={(e) => e.preventDefault()}
-              className="text-[#f0f0f0] text-sm my-1 w-fit transition-all duration-200 hover:text-brand hover:translate-x-1"
-            >
-              {label}
-            </a>
-          ))}
+        {/* SUPPORT */}
+        <div>
+          <h4 className="font-bold text-sm uppercase tracking-wider text-white/50 mb-4">Support</h4>
+          <div className="flex flex-col gap-2.5">
+            {["Help Center", "Refund Policy", "Shipping Info", "Privacy Policy"].map((label) => (
+              <a
+                key={label}
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                className="text-white/65 text-sm w-fit no-underline transition-all hover:text-white hover:translate-x-1"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col">
-          <h4 className="font-bold mb-3">Contact Us</h4>
-          <p className="text-[#dcdcdc] text-sm mb-2">Email: support@mystore.com</p>
-          <p className="text-[#dcdcdc] text-sm">Phone: +91-9876543210</p>
+        {/* CONTACT */}
+        <div>
+          <h4 className="font-bold text-sm uppercase tracking-wider text-white/50 mb-4">Contact</h4>
+          <div className="flex flex-col gap-2.5 text-white/65 text-sm">
+            <span>support@mystore.com</span>
+            <span>+91-9876543210</span>
+            <span className="mt-1 text-white/40 text-xs leading-relaxed">
+              Mon–Sat, 9am–6pm IST
+            </span>
+          </div>
         </div>
-      </div>
-
-      {/* SOCIAL */}
-      <div className="flex justify-center gap-6 my-6 flex-wrap">
-        {[
-          [FaFacebookF, "https://facebook.com"],
-          [FaInstagram, "https://instagram.com"],
-          [FaTwitter, "https://twitter.com"],
-          [FaLinkedinIn, "https://linkedin.com"],
-          [FaYoutube, "https://youtube.com"],
-        ].map(([Icon, href], i) => (
-          <a
-            key={i}
-            href={href}
-            target="_blank"
-            rel="noreferrer"
-            className="text-white text-xl flex items-center justify-center transition-all duration-300 hover:text-brand hover:-translate-y-1"
-          >
-            <Icon />
-          </a>
-        ))}
       </div>
 
       {/* BOTTOM */}
-      <div className="text-center border-t border-white/20 pt-5 text-sm opacity-85">
-        <p>© {new Date().getFullYear()} MyStore. All rights reserved.</p>
+      <div className="flex items-center justify-between border-t border-white/10 pt-6 flex-wrap gap-3">
+        <p className="text-white/40 text-xs">
+          © {new Date().getFullYear()} MyStore. All rights reserved.
+        </p>
+        <p className="text-white/30 text-xs">
+          Made with ♥ in India
+        </p>
       </div>
     </footer>
   );
