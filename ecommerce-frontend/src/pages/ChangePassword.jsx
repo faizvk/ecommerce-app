@@ -106,9 +106,16 @@ export default function ChangePassword() {
               </>
             ) : (
               <form onSubmit={handleSetPassword} className="flex flex-col gap-4">
-                {localError && <span className="text-[0.75rem] font-medium text-red-500">{localError}</span>}
-                {error && <span className="text-[0.75rem] font-medium text-red-500">{error}</span>}
-                {success && <span className="text-[0.75rem] font-medium text-green-600">{success}</span>}
+                {(localError || error) && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <span className="text-[0.75rem] font-medium text-red-600">{localError || error}</span>
+                  </div>
+                )}
+                {success && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <span className="text-[0.75rem] font-medium text-green-700">{success}</span>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[0.85rem] font-semibold text-gray-900">New Password</label>
@@ -146,9 +153,16 @@ export default function ChangePassword() {
               <p className="text-black/60">Update your account security</p>
             </div>
 
-            {localError && <span className="text-[0.75rem] font-medium text-red-500">{localError}</span>}
-            {error && <span className="text-[0.75rem] font-medium text-red-500">{error}</span>}
-            {success && <span className="text-[0.75rem] font-medium text-green-600">{success}</span>}
+            {(localError || error) && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <span className="text-[0.75rem] font-medium text-red-600">{localError || error}</span>
+              </div>
+            )}
+            {success && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <span className="text-[0.75rem] font-medium text-green-700">{success}</span>
+              </div>
+            )}
 
             <div className="flex flex-col gap-1.5">
               <label className="text-[0.85rem] font-semibold text-gray-900">Old Password</label>
