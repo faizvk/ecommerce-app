@@ -61,9 +61,13 @@ export default function Cart() {
   if (error) return <p className="text-center py-12 text-red-500">{error}</p>;
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8 sm:px-4 sm:py-6">
-      <h1 className="text-2xl font-extrabold text-brand-dark mb-6 sm:text-xl">
-        Your Cart{items.length > 0 && <span className="text-gray-400 font-medium ml-2 text-lg">({items.length} {items.length === 1 ? "item" : "items"})</span>}
+    <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 md:py-8">
+      <h1 className="text-xl md:text-2xl font-extrabold text-brand-dark mb-6">
+        Your Cart{items.length > 0 && (
+          <span className="text-gray-400 font-medium ml-2 text-lg">
+            ({items.length} {items.length === 1 ? "item" : "items"})
+          </span>
+        )}
       </h1>
 
       {items.length === 0 ? (
@@ -83,8 +87,9 @@ export default function Cart() {
           </Link>
         </div>
       ) : (
+        /* Stack on mobile, side-by-side on desktop */
         <div
-          className="flex gap-8 items-start lg:flex-col"
+          className="flex flex-col gap-6 lg:flex-row lg:items-start"
           {...fadeIn({ direction: "up", distance: 40, duration: 0.6 })}
         >
           {/* CART ITEMS */}
@@ -94,14 +99,14 @@ export default function Cart() {
               return (
                 <div
                   key={product._id}
-                  className="flex gap-4 bg-white rounded-2xl border border-black/[0.07] p-5 shadow-card sm:flex-col sm:gap-3"
+                  className="flex flex-col gap-3 bg-white rounded-2xl border border-black/[0.07] p-4 shadow-card sm:flex-row sm:gap-4 sm:p-5"
                 >
                   {/* IMAGE */}
                   <Link to={`/product/${product._id}`} className="flex-shrink-0">
                     <img
                       src={product.image?.[0] || "/placeholder.jpg"}
                       alt={product.name}
-                      className="w-28 h-28 object-cover rounded-xl bg-gray-100 sm:w-full sm:h-48 transition-opacity hover:opacity-90"
+                      className="w-full h-44 object-cover rounded-xl bg-gray-100 sm:w-28 sm:h-28 transition-opacity hover:opacity-90"
                     />
                   </Link>
 
@@ -148,20 +153,20 @@ export default function Cart() {
                   </div>
 
                   <button
-                    className="self-start p-2 text-red-400 rounded-lg cursor-pointer bg-transparent border-0 transition-all hover:bg-red-50 hover:text-red-600 sm:self-auto sm:flex sm:items-center sm:gap-1.5 sm:text-sm sm:font-medium sm:px-3 sm:py-1.5"
+                    className="self-start flex items-center gap-1.5 px-3 py-1.5 text-red-400 rounded-lg cursor-pointer bg-transparent border-0 transition-all hover:bg-red-50 hover:text-red-600 text-sm font-medium"
                     onClick={() => dispatch(removeFromCartThunk(product._id))}
                     title="Remove item"
                   >
-                    <Trash2 size={16} />
-                    <span className="hidden sm:inline">Remove</span>
+                    <Trash2 size={15} />
+                    Remove
                   </button>
                 </div>
               );
             })}
           </div>
 
-          {/* ORDER SUMMARY */}
-          <div className="w-[300px] bg-white rounded-2xl border border-black/[0.07] p-6 shadow-card sticky top-24 lg:w-full lg:static">
+          {/* ORDER SUMMARY — full width on mobile, fixed width on desktop */}
+          <div className="w-full lg:w-[300px] bg-white rounded-2xl border border-black/[0.07] p-6 shadow-card lg:sticky lg:top-24">
             <h2 className="text-lg font-bold text-gray-900 mb-5">Order Summary</h2>
 
             <div className="flex justify-between items-center py-3 border-b border-gray-100 text-[0.9rem]">
