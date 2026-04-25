@@ -49,7 +49,7 @@ export default function OrderTrack() {
 
   if (!order) {
     return (
-      <div className="max-w-[900px] mx-auto px-6 py-16 sm:px-4 text-center">
+      <div className="max-w-[900px] mx-auto px-4 py-16 md:px-6 text-center">
         <XCircle size={48} className="text-red-400 mx-auto mb-4" />
         <h2 className="text-xl font-bold text-gray-800 mb-2">Order Not Found</h2>
         <p className="text-gray-500 text-sm mb-6">{error || "The order ID may be invalid or removed."}</p>
@@ -67,9 +67,9 @@ export default function OrderTrack() {
     : -1;
 
   return (
-    <div className="max-w-[900px] mx-auto px-6 py-8 sm:px-4 sm:py-6">
+    <div className="max-w-[900px] mx-auto px-4 py-6 md:px-6 md:py-8">
       <div className="flex items-center gap-3 mb-6 flex-wrap">
-        <h1 className="text-2xl font-extrabold text-brand-dark sm:text-xl">Track Order</h1>
+        <h1 className="text-xl md:text-2xl font-extrabold text-brand-dark">Track Order</h1>
         <span className={`text-[0.75rem] font-bold px-3 py-1 rounded-full border ${statusStyle[order.status] || statusStyle.pending}`}>
           {order.status.toUpperCase()}
         </span>
@@ -82,9 +82,10 @@ export default function OrderTrack() {
         </div>
       )}
 
-      <div className="flex gap-5 items-start lg:flex-col">
+      {/* Stack on mobile, side-by-side on desktop */}
+      <div className="flex flex-col gap-5 md:flex-row md:items-start">
         {/* ORDER TIMELINE */}
-        <div className="w-[260px] bg-white rounded-2xl border border-black/[0.07] p-5 shadow-card lg:w-full">
+        <div className="w-full md:w-[260px] bg-white rounded-2xl border border-black/[0.07] p-5 shadow-card flex-shrink-0">
           <h2 className="text-[0.9rem] font-bold text-gray-800 mb-5">Order Status</h2>
 
           {order.status === "cancelled" ? (
@@ -146,7 +147,7 @@ export default function OrderTrack() {
             <p className="text-[0.9rem] text-gray-700 leading-relaxed">{order.shippingAddress}</p>
           </div>
 
-          <div className="flex gap-3 mt-1 sm:flex-col">
+          <div className="flex flex-col gap-2 mt-1 sm:flex-row">
             <Link
               to={`/orders/${order._id}`}
               className="flex-1 py-2.5 text-center bg-gray-100 text-gray-700 rounded-xl text-sm font-semibold no-underline transition-all hover:bg-gray-200"
