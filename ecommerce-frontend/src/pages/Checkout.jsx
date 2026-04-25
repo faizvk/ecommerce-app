@@ -75,7 +75,6 @@ export default function Checkout() {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_signature: response.razorpay_signature,
             });
-
             const res = await placeOrder(address, response.razorpay_payment_id, response.razorpay_order_id);
             dispatch(refreshCartCountThunk());
             navigate(`/track/${res.data.order._id}`, { replace: true });
@@ -133,8 +132,8 @@ export default function Checkout() {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8 sm:px-4 sm:py-6">
-      <h1 className="text-2xl font-extrabold text-brand-dark mb-6 sm:text-xl">Checkout</h1>
+    <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 md:py-8">
+      <h1 className="text-xl md:text-2xl font-extrabold text-brand-dark mb-6">Checkout</h1>
 
       {error && (
         <div className="mb-5 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -142,9 +141,10 @@ export default function Checkout() {
         </div>
       )}
 
-      <div className="flex gap-8 items-start lg:flex-col">
+      {/* Stack on mobile, side-by-side on desktop */}
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         {/* LEFT — ORDER SUMMARY */}
-        <div className="flex-1 bg-white rounded-2xl border border-black/[0.07] p-6 shadow-card">
+        <div className="flex-1 bg-white rounded-2xl border border-black/[0.07] p-5 md:p-6 shadow-card">
           <div className="flex items-center gap-2 mb-5">
             <ShoppingBag size={18} className="text-brand" />
             <h2 className="text-lg font-bold text-gray-900">Order Summary</h2>
@@ -177,8 +177,8 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* RIGHT — SHIPPING + PAYMENT */}
-        <div className="w-[320px] lg:w-full bg-white rounded-2xl border border-black/[0.07] p-6 shadow-card">
+        {/* RIGHT — SHIPPING + PAYMENT — full width mobile, fixed width desktop */}
+        <div className="w-full lg:w-[320px] bg-white rounded-2xl border border-black/[0.07] p-5 md:p-6 shadow-card">
           <div className="flex items-center gap-2 mb-4">
             <MapPin size={18} className="text-brand" />
             <h2 className="text-lg font-bold text-gray-900">Shipping Address</h2>
