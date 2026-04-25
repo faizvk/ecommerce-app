@@ -151,14 +151,14 @@ export default function AdminHome() {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6 md:gap-8">
       <div>
-        <h1 className="text-2xl font-extrabold text-brand-dark">Dashboard</h1>
+        <h1 className="text-xl md:text-2xl font-extrabold text-brand-dark">Dashboard</h1>
         <p className="text-[0.875rem] text-gray-400 mt-0.5">Store performance overview</p>
       </div>
 
-      {/* STATS GRID */}
-      <div className="grid grid-cols-3 gap-4 lg:grid-cols-2 sm:grid-cols-1">
+      {/* STATS GRID — 1 col mobile → 2 cols tablet → 3 cols desktop */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard value={stats.products} label="Total Products" icon={Package} />
         <StatCard value={stats.orders} label="Total Orders" icon={ShoppingCart} />
         <StatCard value={stats.users} label="Total Users" icon={Users} />
@@ -167,8 +167,8 @@ export default function AdminHome() {
         <StatCard value={`₹${stats.weeklyRevenue.toLocaleString("en-IN")}`} label="Weekly Revenue" icon={TrendingUp} color="text-green-600" />
       </div>
 
-      {/* CHARTS */}
-      <div className="grid grid-cols-2 gap-5 lg:grid-cols-1">
+      {/* CHARTS — 1 col mobile → 2 cols desktop */}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div className="bg-white rounded-2xl border border-black/[0.06] p-5 shadow-card">
           <h3 className="text-[0.9rem] font-bold text-gray-700 mb-4">Weekly Revenue</h3>
           <Bar data={revenueChartData} options={CHART_OPTIONS} />
@@ -184,14 +184,14 @@ export default function AdminHome() {
         <h2 className="text-[0.9rem] font-bold text-gray-700 mb-4">Recent Users</h2>
         <ul className="flex flex-col">
           {stats.recentUsers.map((u) => (
-            <li key={u._id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
-              <div className="flex items-center gap-3">
+            <li key={u._id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0 gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <div className="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand font-bold text-sm flex-shrink-0">
                   {u.name?.[0]?.toUpperCase() || "U"}
                 </div>
-                <span className="font-semibold text-[0.875rem] text-gray-900">{u.name}</span>
+                <span className="font-semibold text-[0.875rem] text-gray-900 truncate">{u.name}</span>
               </div>
-              <span className="text-[0.82rem] text-gray-400">{u.email}</span>
+              <span className="text-[0.82rem] text-gray-400 truncate hidden sm:block">{u.email}</span>
             </li>
           ))}
         </ul>
@@ -235,7 +235,7 @@ export default function AdminHome() {
           <ul className="flex flex-col">
             {stats.topProducts.map((p, i) => (
               <li key={p.id} className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0">
-                <span className="w-6 text-center text-[0.75rem] font-bold text-gray-400">{i + 1}</span>
+                <span className="w-6 text-center text-[0.75rem] font-bold text-gray-400 flex-shrink-0">{i + 1}</span>
                 <img src={p.image} alt={p.name} className="w-10 h-10 object-cover rounded-xl bg-gray-100 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[0.875rem] font-semibold text-gray-900 truncate">{p.name}</p>
