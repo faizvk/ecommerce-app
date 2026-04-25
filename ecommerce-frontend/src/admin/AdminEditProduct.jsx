@@ -92,7 +92,7 @@ export default function AdminEditProduct() {
   return (
     <div className="flex flex-col gap-6 max-w-[900px]">
       <div>
-        <h1 className="text-2xl font-extrabold text-brand-dark">Edit Product</h1>
+        <h1 className="text-xl md:text-2xl font-extrabold text-brand-dark">Edit Product</h1>
         <p className="text-[0.875rem] text-gray-500 mt-1">Modify details and update product information</p>
       </div>
 
@@ -102,9 +102,10 @@ export default function AdminEditProduct() {
         </div>
       )}
 
-      <div className="flex gap-6 items-start lg:flex-col">
+      {/* Stack on mobile, side-by-side on desktop */}
+      <div className="flex flex-col gap-5 md:flex-row md:items-start">
         {/* LEFT FORM */}
-        <div className="flex-1 bg-white rounded-2xl border border-black/[0.06] p-6 shadow-card flex flex-col gap-4">
+        <div className="flex-1 bg-white rounded-2xl border border-black/[0.06] p-5 md:p-6 shadow-card flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>Name</label>
             <input name="name" value={form.name} onChange={handleChange} className={inputCls} />
@@ -120,7 +121,7 @@ export default function AdminEditProduct() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-1">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>Cost Price</label>
               <input name="costPrice" type="number" value={form.costPrice} onChange={handleChange} className={inputCls} />
@@ -148,8 +149,8 @@ export default function AdminEditProduct() {
           </div>
         </div>
 
-        {/* IMAGE */}
-        <div className="w-64 lg:w-full bg-white rounded-2xl border border-black/[0.06] p-6 shadow-card flex flex-col gap-4">
+        {/* IMAGE — full width mobile, fixed width desktop */}
+        <div className="w-full md:w-64 bg-white rounded-2xl border border-black/[0.06] p-5 md:p-6 shadow-card flex flex-col gap-4">
           <p className={labelCls}>Product Image</p>
           <div className="rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-50">
             <img src={preview || "/placeholder.jpg"} alt="preview" className="w-full h-full object-contain p-2" />
