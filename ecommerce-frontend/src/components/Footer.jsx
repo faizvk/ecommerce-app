@@ -20,16 +20,15 @@ export default function Footer() {
   if (location.pathname.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-brand-dark text-white pt-12 pb-6 px-[6%] mt-16">
-      {/* GRID */}
-      <div className="grid grid-cols-4 gap-8 mb-10 lg:grid-cols-2 sm:grid-cols-1">
+    <footer className="bg-brand-dark text-white pt-10 pb-6 px-5 md:px-[6%] mt-16">
+      {/* GRID — 1 col mobile → 2 cols tablet → 4 cols desktop */}
+      <div className="grid grid-cols-1 gap-8 mb-10 sm:grid-cols-2 lg:grid-cols-4">
         {/* BRAND */}
         <div>
           <h3 className="text-xl font-extrabold mb-3 tracking-wide">MyStore</h3>
           <p className="text-white/60 text-sm leading-relaxed max-w-[220px]">
             Your trusted destination for quality products at the best prices.
           </p>
-          {/* Social */}
           <div className="flex gap-3 mt-5">
             {socialLinks.map(([Icon, href], i) => (
               <a

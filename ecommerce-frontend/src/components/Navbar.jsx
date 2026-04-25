@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutThunk } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
-import { LogOut, LogIn, ShoppingCart, X } from "lucide-react";
+import { LogOut, LogIn, ShoppingCart, X, Menu } from "lucide-react";
 import api from "../api/api";
 
 export default function Navbar() {
@@ -50,19 +50,19 @@ export default function Navbar() {
   const firstName = user?.name ? user.name.split(" ")[0] : "";
 
   return (
-    <nav className="w-full px-[4%] py-4 flex items-center justify-between bg-brand-dark text-white sticky top-0 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.25)] flex-wrap gap-y-3">
+    <nav className="w-full px-4 md:px-[4%] py-3 md:py-4 flex flex-wrap items-center gap-x-3 gap-y-2 bg-brand-dark text-white sticky top-0 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
       {/* LOGO */}
       <Link
         to={isAdminPage ? "/admin" : "/"}
-        className="text-[1.75rem] font-extrabold text-white no-underline tracking-wide transition-opacity hover:opacity-80 z-[101] sm:text-xl"
+        className="order-1 flex-shrink-0 text-xl md:text-[1.75rem] font-extrabold text-white no-underline tracking-wide transition-opacity hover:opacity-80 z-[101]"
       >
         {isAdminPage ? "Admin Panel" : "MyStore"}
       </Link>
 
-      {/* SEARCH */}
+      {/* SEARCH — wraps to row 2 on mobile, middle of row 1 on desktop */}
       {!isAdminPage && (
         <div
-          className="relative w-[40%] md:w-full md:order-3"
+          className="order-3 w-full md:order-2 md:w-[42%] md:flex-1 md:max-w-[520px] relative"
           onMouseEnter={() => { clearTimeout(hideTimeout); setShowSuggestions(true); }}
           onMouseLeave={() => { hideTimeout = setTimeout(() => setShowSuggestions(false), 150); }}
         >
@@ -80,17 +80,16 @@ export default function Navbar() {
               placeholder="Search products..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-l-lg border-0 bg-white/95 text-gray-900 text-[0.9rem] outline-none placeholder:text-gray-400"
+              className="w-full px-4 py-2 md:py-2.5 rounded-l-lg border-0 bg-white/95 text-gray-900 text-[0.9rem] outline-none placeholder:text-gray-400"
             />
             <button
               type="submit"
-              className="px-4 py-[11px] bg-brand text-white rounded-r-lg border-0 font-semibold text-sm cursor-pointer transition-all hover:bg-white hover:text-brand-dark"
+              className="px-3 md:px-4 py-[9px] md:py-[11px] bg-brand text-white rounded-r-lg border-0 font-semibold text-sm cursor-pointer transition-all hover:bg-white hover:text-brand-dark whitespace-nowrap"
             >
               Search
             </button>
           </form>
 
-          {/* Suggestions dropdown */}
           {showSuggestions && searchText.trim() && (
             <div className="absolute top-[calc(100%+6px)] w-full bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.18)] z-[200] max-h-64 overflow-y-auto border border-gray-100">
               {suggestions.length > 0 ? (
@@ -128,40 +127,95 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* HAMBURGER */}
-      <button
-        className="hidden md:flex flex-col gap-[5px] bg-transparent border-0 cursor-pointer p-1.5 z-[101]"
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle navigation"
-      >
-        {menuOpen ? (
-          <X size={24} className="text-white" />
-        ) : (
-          <>
-            <span className="block w-6 h-[2px] bg-white rounded transition-all duration-300" />
-            <span className="block w-6 h-[2px] bg-white rounded transition-all duration-300" />
-            <span className="block w-6 h-[2px] bg-white rounded transition-all duration-300" />
-          </>
-        )}
-      </button>
+      {/* RIGHT SIDE — hamburger on mobile, nav links on desktop */}
+      <div className="order-2 ml-auto md:order-3 flex items-center gap-4">
+        {/* HAMBURGER — mobile only */}
+        <button
+          className="flex md:hidden bg-transparent border-0 cursor-pointer p-1 z-[101] text-white"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation"
+        >
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
 
-      {/* Overlay — closes menu on tap outside */}
+        {/* DESKTOP NAV */}
+        <div className="hidden md:flex items-center gap-5">
+          {user ? (
+            <>
+              <span className="text-[0.9rem] font-semibold text-white/80">
+                Hello, {firstName}
+              </span>
+
+              {user.role === "user" ? (
+                <>
+                  <Link to="/profile" className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
+                    My Profile
+                  </Link>
+                  <Link to="/orders" className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
+                    My Orders
+                  </Link>
+                </>
+              ) : (
+                <Link to={adminLinkTarget} className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
+                  {adminLinkLabel}
+                </Link>
+              )}
+
+              {user.role === "user" && !isAdminPage && (
+                <Link to="/cart" className="relative text-white no-underline transition-all hover:text-brand-medium">
+                  <ShoppingCart size={24} />
+                  {count > 0 && (
+                    <span className="absolute -top-2 -right-2.5 bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
+                      {count > 99 ? "99+" : count}
+                    </span>
+                  )}
+                </Link>
+              )}
+
+              <button
+                onClick={handleLogout}
+                className="bg-transparent border-0 text-white/80 cursor-pointer flex items-center justify-center transition-all hover:text-white"
+                title="Logout"
+              >
+                <LogOut size={22} />
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 text-white no-underline font-semibold text-[0.9rem] transition-all hover:text-brand-medium"
+            >
+              <LogIn size={20} />
+              <span>Sign In</span>
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* MOBILE OVERLAY */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-[98] bg-black/40 md:block hidden"
+          className="fixed inset-0 z-[98] bg-black/40 md:hidden"
           onClick={() => setMenuOpen(false)}
         />
       )}
 
-      {/* NAV LINKS */}
+      {/* MOBILE SLIDE PANEL */}
       <div
-        className={`flex items-center gap-5 md:fixed md:top-0 md:right-0 md:h-screen md:w-72 md:flex-col md:justify-center md:gap-7 md:bg-brand-dark md:shadow-[-8px_0_24px_rgba(0,0,0,0.3)] md:transition-transform md:duration-300 md:z-[99] sm:w-full ${
-          menuOpen ? "md:translate-x-0" : "md:translate-x-full"
+        className={`fixed top-0 right-0 h-screen w-72 flex flex-col items-center justify-center gap-7 bg-brand-dark shadow-[-8px_0_24px_rgba(0,0,0,0.3)] transition-transform duration-300 z-[99] md:hidden ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
+        <button
+          className="absolute top-5 right-5 bg-transparent border-0 cursor-pointer text-white/70 hover:text-white"
+          onClick={() => setMenuOpen(false)}
+        >
+          <X size={24} />
+        </button>
+
         {user ? (
           <>
-            <span className="text-[0.9rem] font-semibold text-white/80 md:text-base md:text-white">
+            <span className="text-base font-semibold text-white">
               Hello, {firstName}
             </span>
 
@@ -182,7 +236,7 @@ export default function Navbar() {
 
             {user.role === "user" && !isAdminPage && (
               <Link to="/cart" className="relative text-white no-underline transition-all hover:text-brand-medium">
-                <ShoppingCart size={24} />
+                <ShoppingCart size={26} />
                 {count > 0 && (
                   <span className="absolute -top-2 -right-2.5 bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
                     {count > 99 ? "99+" : count}
@@ -193,19 +247,19 @@ export default function Navbar() {
 
             <button
               onClick={handleLogout}
-              className="bg-transparent border-0 text-white/80 cursor-pointer flex items-center justify-center transition-all hover:text-white"
-              title="Logout"
+              className="flex items-center gap-2 bg-transparent border-0 text-white/80 cursor-pointer transition-all hover:text-white text-base font-medium"
             >
-              <LogOut size={22} />
+              <LogOut size={20} />
+              Logout
             </button>
           </>
         ) : (
           <Link
             to="/login"
-            className="flex items-center gap-2 text-white no-underline font-semibold text-[0.9rem] transition-all hover:text-brand-medium"
+            className="flex items-center gap-2 text-white no-underline font-semibold text-base transition-all hover:text-brand-medium"
           >
-            <LogIn size={20} />
-            <span>Sign In</span>
+            <LogIn size={22} />
+            Sign In
           </Link>
         )}
       </div>
