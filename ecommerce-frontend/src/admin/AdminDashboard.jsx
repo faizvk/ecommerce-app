@@ -18,8 +18,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-[#f3f5f9]">
-      {/* SIDEBAR */}
-      <aside className="w-56 bg-brand-dark flex flex-col py-6 px-3 gap-1 sticky top-0 h-screen shrink-0 md:hidden">
+      {/* SIDEBAR — hidden on mobile, shown on desktop */}
+      <aside className="hidden md:flex w-56 bg-brand-dark flex-col py-6 px-3 gap-1 sticky top-0 h-screen shrink-0">
         <p className="text-white/40 text-[0.65rem] font-bold tracking-widest uppercase mb-3 px-3">Navigation</p>
         {navItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={linkCls}>
@@ -29,8 +29,8 @@ export default function AdminDashboard() {
         ))}
       </aside>
 
-      {/* MOBILE NAV */}
-      <div className="hidden md:flex w-full fixed bottom-0 left-0 bg-brand-dark z-50 border-t border-white/10">
+      {/* MOBILE BOTTOM NAV — shown on mobile, hidden on desktop */}
+      <div className="flex md:hidden w-full fixed bottom-0 left-0 bg-brand-dark z-50 border-t border-white/10">
         {navItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 overflow-auto p-8 md:p-5 md:pb-24">
+      <main className="flex-1 overflow-auto p-4 pb-24 md:p-8 md:pb-8">
         <Outlet />
       </main>
     </div>
