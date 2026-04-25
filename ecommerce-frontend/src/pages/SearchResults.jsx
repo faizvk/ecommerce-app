@@ -107,7 +107,7 @@ export default function SearchResults() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-4 gap-6 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 sm:gap-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6">
             {searchedProducts.map((p) => (
               <ProductCard key={p._id} product={p} />
             ))}

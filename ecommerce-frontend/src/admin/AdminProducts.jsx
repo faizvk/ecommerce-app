@@ -82,7 +82,9 @@ export default function AdminProducts() {
 
       {/* CONTENT */}
       {loading ? (
-        <p className="text-center py-12 text-brand text-xl">Loading products...</p>
+        <div className="flex justify-center py-20">
+          <div className="animate-spin w-10 h-10 rounded-full border-4 border-brand-medium border-t-brand" />
+        </div>
       ) : filteredProducts.length === 0 ? (
         <p className="text-center py-12 text-gray-400">No products found.</p>
       ) : (
