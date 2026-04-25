@@ -36,10 +36,7 @@ export default function ProductDetails() {
   }, [product, dispatch]);
 
   const handleAdd = async () => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    if (!user) { navigate("/login"); return; }
     if (user.role !== "user") return;
     setAdding(true);
     try {
@@ -71,9 +68,9 @@ export default function ProductDetails() {
   const isUser = user?.role === "user";
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8 sm:px-4 sm:py-5">
+    <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 md:py-8">
       {/* BREADCRUMB */}
-      <nav className="flex items-center gap-1.5 text-[0.8rem] text-gray-400 mb-6 flex-wrap">
+      <nav className="flex items-center gap-1.5 text-[0.8rem] text-gray-400 mb-5 flex-wrap">
         <Link to="/" className="hover:text-brand transition-colors no-underline text-gray-400">Home</Link>
         <ChevronRight size={14} />
         <Link
@@ -86,11 +83,11 @@ export default function ProductDetails() {
         <span className="text-gray-600 truncate max-w-[200px]">{product.name}</span>
       </nav>
 
-      {/* TOP SECTION */}
-      <div className="flex gap-10 items-start lg:flex-col lg:gap-8">
+      {/* TOP SECTION — stack on mobile, side-by-side on desktop */}
+      <div className="flex flex-col gap-6 md:flex-row md:gap-10 md:items-start">
         {/* LEFT — IMAGES */}
         <div
-          className="flex flex-col gap-4 w-[44%] lg:w-full"
+          className="w-full md:w-[44%] flex flex-col gap-4"
           {...fadeIn({ direction: "right", distance: 40, duration: 0.7 })}
         >
           <div className="relative rounded-2xl overflow-hidden bg-gray-50 border border-black/[0.06] aspect-square">
@@ -102,7 +99,7 @@ export default function ProductDetails() {
             <img
               src={product.image?.[activeImage] || "/placeholder.jpg"}
               alt={product.name}
-              className="w-full h-full object-contain p-6 transition-all duration-300"
+              className="w-full h-full object-contain p-4 md:p-6 transition-all duration-300"
             />
           </div>
 
@@ -112,7 +109,7 @@ export default function ProductDetails() {
                 <button
                   key={i}
                   onClick={() => setActiveImage(i)}
-                  className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer bg-transparent p-0 ${
+                  className={`w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer bg-transparent p-0 ${
                     activeImage === i ? "border-brand shadow-md" : "border-gray-200 hover:border-gray-400"
                   }`}
                 >
@@ -132,18 +129,18 @@ export default function ProductDetails() {
             <span className="text-[0.75rem] font-bold text-brand-medium uppercase tracking-wider capitalize">
               {product.category}
             </span>
-            <h1 className="text-[1.8rem] font-extrabold text-gray-900 leading-snug mt-1 md:text-2xl sm:text-xl">
+            <h1 className="text-xl md:text-[1.8rem] font-extrabold text-gray-900 leading-snug mt-1">
               {product.name}
             </h1>
           </div>
 
           {/* PRICE BOX */}
-          <div className="flex flex-col gap-2 p-5 bg-brand-light rounded-2xl border border-brand/10">
+          <div className="flex flex-col gap-2 p-4 md:p-5 bg-brand-light rounded-2xl border border-brand/10">
             <div className="flex items-baseline gap-3 flex-wrap">
-              <span className="text-3xl font-extrabold text-brand">₹{product.salePrice}</span>
+              <span className="text-2xl md:text-3xl font-extrabold text-brand">₹{product.salePrice}</span>
               {product.costPrice && product.costPrice > product.salePrice && (
                 <>
-                  <span className="text-lg text-gray-400 line-through">₹{product.costPrice}</span>
+                  <span className="text-base md:text-lg text-gray-400 line-through">₹{product.costPrice}</span>
                   <span className="bg-red-100 text-red-600 text-[0.75rem] font-bold px-2.5 py-0.5 rounded-full">
                     {discount}% OFF
                   </span>
@@ -189,11 +186,11 @@ export default function ProductDetails() {
 
       {/* RELATED PRODUCTS */}
       {related.length > 0 && (
-        <div className="mt-16 sm:mt-10">
-          <h2 className="text-2xl font-bold text-brand-dark mb-6 sm:text-xl">
+        <div className="mt-10 md:mt-16">
+          <h2 className="text-xl md:text-2xl font-bold text-brand-dark mb-5 md:mb-6">
             More in <span className="capitalize">{product.category}</span>
           </h2>
-          <div className="grid grid-cols-4 gap-6 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 sm:gap-3">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
             {related.map((item) => (
               <ProductCard key={item._id} product={item} />
             ))}
