@@ -75,13 +75,13 @@ export default function Home() {
 
       {/* CATEGORY NAV */}
       <nav
-        className="flex items-center gap-2 px-6 py-4 overflow-x-auto scrollbar-hide border-b border-gray-100 bg-white md:px-4 md:gap-2"
+        className="flex items-center gap-2 px-4 md:px-6 py-4 overflow-x-auto scrollbar-hide border-b border-gray-100 bg-white"
         aria-label="Product categories"
       >
         {CATEGORY_CONFIG.map(({ key, label }) => (
           <button
             key={key}
-            className="px-5 py-2 text-[0.875rem] font-semibold rounded-full border border-transparent cursor-pointer whitespace-nowrap text-gray-600 bg-gray-100 transition-all hover:bg-brand-light hover:text-brand hover:border-brand/20 md:px-4 md:py-1.5 md:text-sm"
+            className="px-4 py-1.5 md:px-5 md:py-2 text-sm font-semibold rounded-full border border-transparent cursor-pointer whitespace-nowrap text-gray-600 bg-gray-100 transition-all hover:bg-brand-light hover:text-brand hover:border-brand/20"
             onClick={() => goToCategory(key)}
             aria-label={`Browse ${label}`}
           >
@@ -91,7 +91,7 @@ export default function Home() {
       </nav>
 
       {/* PRODUCTS */}
-      <section className="mx-6 mt-8 sm:mx-4">
+      <section className="mx-4 md:mx-6 mt-6 md:mt-8">
         {CATEGORY_CONFIG.map(({ key, label }) => {
           const list = productsByCategory[key] || [];
           if (list.length === 0) return null;
@@ -100,11 +100,11 @@ export default function Home() {
           const hasMore = list.length > PREVIEW_LIMIT;
 
           return (
-            <section key={key} className="mb-12" aria-labelledby={`category-${key}`}>
-              <div className="flex items-center justify-between mb-5">
+            <section key={key} className="mb-10 md:mb-12" aria-labelledby={`category-${key}`}>
+              <div className="flex items-center justify-between mb-4 md:mb-5">
                 <h2
                   id={`category-${key}`}
-                  className="text-2xl font-extrabold text-brand-dark capitalize sm:text-xl"
+                  className="text-xl md:text-2xl font-extrabold text-brand-dark capitalize"
                 >
                   {label}
                 </h2>
@@ -118,7 +118,8 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="grid grid-cols-4 gap-6 lg:grid-cols-3 md:grid-cols-2 md:gap-4 sm:grid-cols-2 sm:gap-3">
+              {/* 2 cols on mobile → 3 on tablet → 4 on desktop */}
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-6">
                 {preview.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
