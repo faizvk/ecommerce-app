@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutThunk } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
-import { LogOut, LogIn, ShoppingCart, X, Menu } from "lucide-react";
+import { LogOut, LogIn, ShoppingCart, X, Menu, ShoppingBag } from "lucide-react";
 import api from "../api/api";
 
 export default function Navbar() {
@@ -54,9 +54,18 @@ export default function Navbar() {
       {/* LOGO */}
       <Link
         to={isAdminPage ? "/admin" : "/"}
-        className="order-1 flex-shrink-0 text-xl md:text-[1.75rem] font-extrabold text-white no-underline tracking-wide transition-opacity hover:opacity-80 z-[101]"
+        className="order-1 flex-shrink-0 flex items-center gap-2 no-underline transition-opacity hover:opacity-85 z-[101]"
       >
-        {isAdminPage ? "Admin Panel" : "MyStore"}
+        <div className="w-8 h-8 md:w-9 md:h-9 bg-white/15 rounded-xl flex items-center justify-center flex-shrink-0">
+          <ShoppingBag size={18} className="text-white" />
+        </div>
+        <span className="text-xl md:text-[1.6rem] font-extrabold tracking-tight leading-none">
+          {isAdminPage ? (
+            <><span className="text-white">Nex</span><span className="text-brand-medium">Kart</span> <span className="text-white/50 font-semibold text-sm md:text-base">Admin</span></>
+          ) : (
+            <><span className="text-white">Nex</span><span className="text-brand-medium">Kart</span></>
+          )}
+        </span>
       </Link>
 
       {/* SEARCH — wraps to row 2 on mobile, middle of row 1 on desktop */}
