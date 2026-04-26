@@ -3,7 +3,7 @@ import { addToCart } from "../api/cart.api";
 import { Link, useNavigate } from "react-router-dom";
 import { fadeIn } from "../animations/fadeIn";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch();
@@ -31,64 +31,78 @@ export default function ProductCard({ product }) {
       : 0;
 
   const isOutOfStock = product.stock === 0;
+  const isLowStock = !isOutOfStock && product.stock <= 5;
 
   return (
-    <div
-      className="bg-white rounded-2xl overflow-hidden border border-[#e6e9ef] transition-all duration-300 h-full flex flex-col group hover:-translate-y-1.5 hover:shadow-hover"
-      {...fadeIn({ direction: "up", distance: 60, duration: 0.6 })}
+    <Link
+      to={`/product/${product._id}`}
+      className="no-underline block group"
+      {...fadeIn({ direction: "up", distance: 50, duration: 0.6 })}
     >
-      {/* IMAGE */}
-      <div className="relative w-full aspect-square bg-[#f6f7fb] overflow-hidden">
-        {discount > 0 && (
-          <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[0.7rem] font-bold px-2 py-0.5 rounded">
-            -{discount}%
-          </span>
-        )}
-        {isOutOfStock && (
-          <span className="absolute top-3 right-3 z-10 bg-gray-700 text-white text-[0.7rem] font-bold px-2 py-0.5 rounded">
-            Out of Stock
-          </span>
-        )}
+      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 transition-all duration-300 h-full flex flex-col hover:-translate-y-1 hover:shadow-hover hover:border-brand/20">
+        {/* IMAGE */}
+        <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
+          {/* Badges */}
+          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5">
+            {discount > 0 && (
+              <span className="bg-red-500 text-white text-[0.65rem] font-bold px-2 py-0.5 rounded-md leading-none">
+                -{discount}%
+              </span>
+            )}
+            {isLowStock && (
+              <span className="bg-orange-500 text-white text-[0.65rem] font-bold px-2 py-0.5 rounded-md leading-none">
+                Few left
+              </span>
+            )}
+          </div>
 
-        <Link to={`/product/${product._id}`} className="absolute inset-x-0 bottom-0 z-10 py-3 bg-brand-dark/90 text-white text-center font-semibold text-sm opacity-0 translate-y-full transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 no-underline">
-          View Details
-        </Link>
-
-        <img
-          src={product.image?.[0] || "/placeholder.jpg"}
-          alt={product.name}
-          className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
-        />
-      </div>
-
-      {/* INFO */}
-      <div className="p-4 flex-1 flex flex-col sm:p-3">
-        <span className="text-[0.72rem] font-semibold text-brand-medium uppercase tracking-wider mb-1 capitalize">
-          {product.category}
-        </span>
-
-        <h3 className="text-[0.95rem] font-bold text-gray-900 mb-2 leading-snug line-clamp-2">
-          {product.name}
-        </h3>
-
-        <div className="flex items-baseline gap-2 mt-auto mb-3">
-          <span className="text-[1.15rem] font-extrabold text-brand">₹{product.salePrice}</span>
-          {product.costPrice && product.costPrice > product.salePrice && (
-            <span className="line-through text-gray-400 text-[0.85rem]">₹{product.costPrice}</span>
+          {isOutOfStock && (
+            <div className="absolute inset-0 z-10 bg-white/70 flex items-center justify-center">
+              <span className="bg-gray-700 text-white text-[0.75rem] font-bold px-3 py-1.5 rounded-lg">
+                Out of Stock
+              </span>
+            </div>
           )}
+
+          <img
+            src={product.image?.[0] || "/placeholder.jpg"}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
         </div>
 
-        {user?.role === "user" && (
-          <button
-            onClick={handleAdd}
-            disabled={isOutOfStock}
-            className="w-full py-2.5 bg-brand text-white border-0 rounded-xl text-[0.85rem] font-semibold cursor-pointer flex items-center justify-center gap-2 transition-all hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <ShoppingCart size={15} />
-            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-          </button>
-        )}
+        {/* INFO */}
+        <div className="p-3 md:p-4 flex-1 flex flex-col">
+          <span className="text-[0.68rem] font-bold text-brand-medium uppercase tracking-wider mb-1.5 capitalize">
+            {product.category}
+          </span>
+
+          <h3 className="text-[0.88rem] md:text-[0.92rem] font-semibold text-gray-900 leading-snug line-clamp-2 mb-auto">
+            {product.name}
+          </h3>
+
+          {/* PRICE */}
+          <div className="flex items-baseline gap-1.5 mt-2.5 mb-3">
+            <span className="text-[1.05rem] md:text-[1.1rem] font-extrabold text-brand">
+              ₹{product.salePrice}
+            </span>
+            {product.costPrice && product.costPrice > product.salePrice && (
+              <span className="line-through text-gray-400 text-[0.8rem]">₹{product.costPrice}</span>
+            )}
+          </div>
+
+          {user?.role === "user" && (
+            <button
+              onClick={handleAdd}
+              disabled={isOutOfStock}
+              className="w-full py-2 md:py-2.5 bg-brand-light text-brand border border-brand/20 rounded-xl text-[0.8rem] font-semibold cursor-pointer flex items-center justify-center gap-1.5 transition-all hover:bg-brand hover:text-white hover:border-brand disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ShoppingCart size={14} />
+              {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
