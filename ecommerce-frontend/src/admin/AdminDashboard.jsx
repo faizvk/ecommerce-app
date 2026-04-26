@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { LayoutDashboard, Package, ClipboardList, Users } from "lucide-react";
+import { LayoutDashboard, Package, ClipboardList, Users, ShoppingBag } from "lucide-react";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -20,7 +20,15 @@ export default function AdminDashboard() {
     <div className="flex min-h-screen bg-[#f3f5f9]">
       {/* SIDEBAR — hidden on mobile, shown on desktop */}
       <aside className="hidden md:flex w-56 bg-brand-dark flex-col py-6 px-3 gap-1 sticky top-0 h-screen shrink-0">
-        <p className="text-white/40 text-[0.65rem] font-bold tracking-widest uppercase mb-3 px-3">Navigation</p>
+        <div className="flex items-center gap-2.5 px-3 mb-5">
+          <div className="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
+            <ShoppingBag size={14} className="text-white" />
+          </div>
+          <span className="text-base font-extrabold tracking-tight">
+            <span className="text-white">Nex</span><span className="text-brand-medium">Kart</span>
+            <span className="text-white/40 text-xs font-semibold ml-1">Admin</span>
+          </span>
+        </div>
         {navItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className={linkCls}>
             <Icon size={17} />
