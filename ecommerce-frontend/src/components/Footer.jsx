@@ -25,9 +25,12 @@ export default function Footer() {
       <div className="grid grid-cols-1 gap-8 mb-10 sm:grid-cols-2 lg:grid-cols-4">
         {/* BRAND */}
         <div>
-          <h3 className="text-xl font-extrabold mb-3 tracking-wide">MyStore</h3>
+          <h3 className="text-xl font-extrabold mb-1 tracking-tight">
+            <span className="text-white">Nex</span><span className="text-brand-medium">Kart</span>
+          </h3>
+          <p className="text-white/40 text-xs mb-2 font-medium tracking-wide">Shop Smart, Live Better</p>
           <p className="text-white/60 text-sm leading-relaxed max-w-[220px]">
-            Your trusted destination for quality products at the best prices.
+            Your one-stop destination for electronics, fashion, home appliances and more.
           </p>
           <div className="flex gap-3 mt-5">
             {socialLinks.map(([Icon, href], i) => (
@@ -81,7 +84,7 @@ export default function Footer() {
         <div>
           <h4 className="font-bold text-sm uppercase tracking-wider text-white/50 mb-4">Contact</h4>
           <div className="flex flex-col gap-2.5 text-white/65 text-sm">
-            <span>support@mystore.com</span>
+            <span>support@nexkart.com</span>
             <span>+91-9876543210</span>
             <span className="mt-1 text-white/40 text-xs leading-relaxed">
               Mon–Sat, 9am–6pm IST
@@ -93,7 +96,7 @@ export default function Footer() {
       {/* BOTTOM */}
       <div className="flex items-center justify-between border-t border-white/10 pt-6 flex-wrap gap-3">
         <p className="text-white/40 text-xs">
-          © {new Date().getFullYear()} MyStore. All rights reserved.
+          © {new Date().getFullYear()} NexKart. All rights reserved.
         </p>
         <p className="text-white/30 text-xs">
           Made with ♥ in India
