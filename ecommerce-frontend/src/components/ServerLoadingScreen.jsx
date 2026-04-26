@@ -1,18 +1,30 @@
 export default function ServerLoadingScreen({ elapsed = 0 }) {
-  // After 10 s tell the user it's waking up, not just loading
   const isSlowStart = elapsed >= 10;
-  // Progress capped at 95% so it never looks "done" until actually ready
   const progress = Math.min(95, Math.round((elapsed / 90) * 100));
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-brand-dark px-6 text-center">
-      <div className="animate-spin w-14 h-14 rounded-full border-[3px] border-white/20 border-t-white mb-8" />
+      {/* Brand mark */}
+      <div className="mb-8 flex flex-col items-center gap-3">
+        <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center shadow-lg">
+          <svg viewBox="0 0 48 48" className="w-9 h-9" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 22 C16 17.582 19.582 14 24 14 C28.418 14 32 17.582 32 22" stroke="white" strokeWidth="2.8" strokeLinecap="round"/>
+            <rect x="12" y="22" width="24" height="16" rx="4" fill="white"/>
+            <circle cx="24" cy="31" r="2.8" fill="#113f67"/>
+          </svg>
+        </div>
+        <p className="text-2xl font-extrabold tracking-tight">
+          <span className="text-white">Nex</span><span className="text-brand-medium">Kart</span>
+        </p>
+      </div>
 
-      <h2 className="text-2xl font-bold text-white mb-2">
+      <div className="animate-spin w-10 h-10 rounded-full border-[3px] border-white/20 border-t-white mb-6" />
+
+      <h2 className="text-lg font-semibold text-white mb-2">
         {isSlowStart ? "Waking up the backend…" : "Starting up…"}
       </h2>
 
-      <p className="text-white/60 text-sm max-w-xs mb-1">
+      <p className="text-white/50 text-sm max-w-xs mb-1">
         {isSlowStart
           ? "The server was sleeping (Render free tier). This can take up to 60 seconds."
           : "Connecting to the server, please wait."}
