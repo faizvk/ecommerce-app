@@ -56,8 +56,11 @@ export default function App() {
     let mounted = true;
     let attempts = 0;
 
-    // Strip trailing slash so both "" and "https://backend.onrender.com" work
-    const base = (import.meta.env.VITE_BASE_URL || "").replace(/\/$/, "");
+    // Strip trailing slash AND any trailing /api suffix so the health check
+    // works regardless of whether VITE_BASE_URL includes /api or not.
+    const base = (import.meta.env.VITE_BASE_URL || "")
+      .replace(/\/$/, "")
+      .replace(/\/api$/, "");
 
     // Tick the elapsed counter every second for the loading screen
     const ticker = setInterval(() => {
