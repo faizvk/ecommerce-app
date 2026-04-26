@@ -3,6 +3,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchProfileThunk } from "../redux/slice/userSlice";
 import { fadeIn } from "../animations/fadeIn";
+import { Mail, Phone, MapPin, Calendar, Pencil, Lock, User } from "lucide-react";
+
+const FIELD_ICONS = {
+  Email: Mail,
+  Age: Calendar,
+  Contact: Phone,
+  Address: MapPin,
+};
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -39,63 +47,98 @@ export default function Profile() {
 
   const fields = [
     { label: "Email", value: profile.email },
-    profile.age && { label: "Age", value: profile.age },
+    profile.age && { label: "Age", value: `${profile.age} years` },
     profile.contact && { label: "Contact", value: profile.contact },
     profile.address && { label: "Address", value: profile.address },
   ].filter(Boolean);
 
+  const initials = profile.name
+    ? profile.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
+    : "?";
+
   return (
     <div className="w-full px-4 py-6 md:py-8">
       <div className="w-full max-w-[480px] mx-auto md:max-w-[1100px]">
-        <div className="bg-white border border-black/[0.08] rounded-xl overflow-hidden shadow-card flex flex-col md:flex-row md:min-h-[600px]">
+        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-card flex flex-col md:flex-row md:min-h-[600px]">
 
           {/* LEFT PANEL — hidden on mobile */}
           <div
-            className="hidden md:flex flex-[1.1] p-12 flex-col justify-center bg-brand-dark text-white"
+            className="hidden md:flex flex-[1.1] p-12 flex-col justify-center bg-gradient-to-br from-brand-dark via-[#2d2a6e] to-brand-dark text-white"
             {...fadeIn({ direction: "left", distance: 80, duration: 0.9 })}
           >
-            <span className="inline-flex items-center px-4 py-2 bg-white/15 border border-white/30 rounded-full text-[0.7rem] font-bold tracking-[0.15em] uppercase mb-6">
+            {/* Avatar */}
+            <div className="w-20 h-20 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center mb-8">
+              <span className="text-3xl font-extrabold text-white tracking-tight">{initials}</span>
+            </div>
+
+            <span className="inline-flex items-center px-4 py-2 bg-white/15 border border-white/20 rounded-full text-[0.68rem] font-bold tracking-[0.15em] uppercase mb-5 w-fit">
               Account
             </span>
-            <h1 className="text-[2.8rem] font-extrabold leading-[1.1] mb-5 tracking-tight">
+            <h1 className="text-[2.4rem] font-extrabold leading-[1.1] mb-4 tracking-tight">
               My Profile
             </h1>
-            <p className="text-[1.05rem] leading-relaxed text-white/85 max-w-[420px]">
-              View and manage your personal information.
+            <p className="text-[1rem] leading-relaxed text-white/70 max-w-[320px]">
+              Manage your personal information, change your password, and keep your account up to date.
             </p>
           </div>
 
           {/* RIGHT PANEL */}
           <div
-            className="flex-1 p-6 sm:p-8 md:p-12 bg-white flex items-center md:border-l md:border-black/[0.06]"
+            className="flex-1 p-6 sm:p-8 md:p-10 bg-white flex items-start md:border-l md:border-gray-100"
             {...fadeIn({ direction: "up", distance: 80, duration: 0.9 })}
           >
-            <div className="w-full flex flex-col gap-4">
-              <div className="text-center mb-2 md:hidden">
-                <h2 className="text-2xl font-bold mb-1">My Profile</h2>
-                <p className="text-black/60 text-sm">Your personal information</p>
+            <div className="w-full flex flex-col gap-5">
+              {/* Mobile header */}
+              <div className="md:hidden flex items-center gap-4 mb-1">
+                <div className="w-14 h-14 rounded-2xl bg-brand-light flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl font-extrabold text-brand">{initials}</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-extrabold text-gray-900">{profile.name}</h2>
+                  <p className="text-[0.8rem] text-gray-400">Your personal information</p>
+                </div>
               </div>
 
-              {fields.map(({ label, value }) => (
-                <div key={label} className="flex flex-col gap-1.5">
-                  <label className="text-[0.85rem] font-semibold text-gray-900">{label}</label>
-                  <p className="w-full py-3.5 px-4 rounded-xl border border-black/15 bg-[#f9f9fb] text-[0.95rem] text-gray-700">
-                    {value}
-                  </p>
-                </div>
-              ))}
+              {/* Name (desktop only label) */}
+              <div className="hidden md:block">
+                <p className="text-[0.75rem] font-bold text-gray-400 uppercase tracking-wider mb-1">Full Name</p>
+                <p className="text-xl font-extrabold text-gray-900">{profile.name}</p>
+              </div>
 
-              <div className="flex flex-col gap-3 mt-3">
+              <div className="h-px bg-gray-100 md:block hidden" />
+
+              {/* FIELDS */}
+              <div className="flex flex-col gap-3">
+                {fields.map(({ label, value }) => {
+                  const Icon = FIELD_ICONS[label] || User;
+                  return (
+                    <div key={label} className="flex items-start gap-3 p-3.5 rounded-xl bg-gray-50 border border-gray-100">
+                      <div className="w-8 h-8 rounded-lg bg-brand-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Icon size={14} className="text-brand" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[0.72rem] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{label}</p>
+                        <p className="text-[0.9rem] text-gray-800 font-medium break-words">{value}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* ACTIONS */}
+              <div className="flex flex-col gap-2.5 pt-1">
                 <button
-                  className="bg-brand text-white py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer flex items-center justify-center gap-2 transition-all hover:bg-brand-dark hover:-translate-y-px"
+                  className="flex items-center justify-center gap-2 bg-brand text-white py-3.5 px-4 border-0 rounded-xl text-[0.92rem] font-semibold cursor-pointer transition-all hover:bg-brand-dark hover:-translate-y-px shadow-[0_4px_14px_rgba(79,70,229,0.2)]"
                   onClick={() => navigate("/profile/edit")}
                 >
+                  <Pencil size={16} />
                   Edit Profile
                 </button>
                 <button
-                  className="bg-brand-dark text-white py-4 px-4 border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:-translate-y-px"
+                  className="flex items-center justify-center gap-2 bg-gray-100 text-gray-700 py-3.5 px-4 border-0 rounded-xl text-[0.92rem] font-semibold cursor-pointer transition-all hover:bg-gray-200"
                   onClick={() => navigate("/profile/password")}
                 >
+                  <Lock size={16} />
                   Change Password
                 </button>
               </div>
