@@ -7,10 +7,10 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
   };
 
   const selectCls =
-    "px-3 py-2 border border-gray-200 rounded-lg bg-white text-[0.875rem] text-gray-700 transition-all focus:border-brand focus:outline-none focus:shadow-[0_0_0_3px_rgba(56,89,139,0.12)] cursor-pointer sm:w-full";
+    "px-3 py-2 border border-gray-200 rounded-lg bg-white text-[0.875rem] text-gray-700 transition-all focus:border-brand focus:outline-none focus:shadow-[0_0_0_3px_rgba(79,70,229,0.12)] cursor-pointer sm:w-full";
 
   const inputCls =
-    "px-3 py-2 border border-gray-200 rounded-lg bg-white text-[0.875rem] text-gray-700 w-28 transition-all focus:border-brand focus:outline-none focus:shadow-[0_0_0_3px_rgba(56,89,139,0.12)] sm:w-full";
+    "px-3 py-2 border border-gray-200 rounded-lg bg-white text-[0.875rem] text-gray-700 w-28 transition-all focus:border-brand focus:outline-none focus:shadow-[0_0_0_3px_rgba(79,70,229,0.12)] sm:w-full";
 
   return (
     <div className="flex gap-2.5 my-5 flex-wrap items-center sm:flex-col sm:items-stretch">

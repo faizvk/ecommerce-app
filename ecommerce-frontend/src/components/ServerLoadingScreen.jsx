@@ -10,7 +10,7 @@ export default function ServerLoadingScreen({ elapsed = 0 }) {
           <svg viewBox="0 0 48 48" className="w-9 h-9" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M16 22 C16 17.582 19.582 14 24 14 C28.418 14 32 17.582 32 22" stroke="white" strokeWidth="2.8" strokeLinecap="round"/>
             <rect x="12" y="22" width="24" height="16" rx="4" fill="white"/>
-            <circle cx="24" cy="31" r="2.8" fill="#113f67"/>
+            <circle cx="24" cy="31" r="2.8" fill="#4f46e5"/>
           </svg>
         </div>
         <p className="text-2xl font-extrabold tracking-tight">

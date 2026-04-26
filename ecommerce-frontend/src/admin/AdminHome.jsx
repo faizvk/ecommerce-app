@@ -131,7 +131,7 @@ export default function AdminHome() {
     datasets: [{
       label: "Revenue (₹)",
       data: stats.revenueByDay,
-      backgroundColor: "rgba(56,89,139,0.55)",
+      backgroundColor: "rgba(79,70,229,0.55)",
       borderRadius: 6,
     }],
   };
@@ -141,11 +141,11 @@ export default function AdminHome() {
     datasets: [{
       label: "Orders",
       data: stats.ordersByDay,
-      borderColor: "#38598b",
-      backgroundColor: "rgba(56,89,139,0.08)",
+      borderColor: "#4f46e5",
+      backgroundColor: "rgba(79,70,229,0.08)",
       tension: 0.4,
       fill: true,
-      pointBackgroundColor: "#38598b",
+      pointBackgroundColor: "#4f46e5",
       pointRadius: 4,
     }],
   };

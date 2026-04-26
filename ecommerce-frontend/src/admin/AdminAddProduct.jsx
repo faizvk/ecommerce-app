@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { adminAddProductThunk } from "../redux/slice/productSlice";
 import { uploadImage } from "./utils/uploadImage";
 
-const inputCls = "w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-[0.9rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(56,89,139,0.12)]";
+const inputCls = "w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-[0.9rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(79,70,229,0.12)]";
 const labelCls = "text-[0.85rem] font-semibold text-gray-700";
 
 export default function AdminAddProduct() {

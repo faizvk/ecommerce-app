@@ -17,9 +17,9 @@ export default function AdminDashboard() {
     }`;
 
   return (
-    <div className="flex min-h-screen bg-[#f3f5f9]">
+    <div className="flex min-h-screen bg-[#f4f3ff]">
       {/* SIDEBAR — hidden on mobile, shown on desktop */}
-      <aside className="hidden md:flex w-56 bg-brand-dark flex-col py-6 px-3 gap-1 sticky top-0 h-screen shrink-0">
+      <aside className="hidden md:flex w-56 bg-gradient-to-b from-brand-dark via-[#2d2a6e] to-brand-dark flex-col py-6 px-3 gap-1 sticky top-0 h-screen shrink-0">
         <div className="flex items-center gap-2.5 px-3 mb-5">
           <div className="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
             <ShoppingBag size={14} className="text-white" />
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* MOBILE BOTTOM NAV — shown on mobile, hidden on desktop */}
-      <div className="flex md:hidden w-full fixed bottom-0 left-0 bg-brand-dark z-50 border-t border-white/10">
+      <div className="flex md:hidden w-full fixed bottom-0 left-0 bg-gradient-to-r from-brand-dark via-[#2d2a6e] to-brand-dark z-50 border-t border-white/10">
         {navItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}

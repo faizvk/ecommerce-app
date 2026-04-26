@@ -48,7 +48,7 @@ export default function AdminUsers() {
             id="roleFilter"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 outline-none transition-all focus:border-brand focus:shadow-[0_0_0_2px_rgba(56,89,139,0.12)]"
+            className="px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 outline-none transition-all focus:border-brand focus:shadow-[0_0_0_2px_rgba(79,70,229,0.12)]"
           >
             <option value="all">All</option>
             <option value="user">Customers</option>

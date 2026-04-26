@@ -50,7 +50,7 @@ export default function Navbar() {
   const firstName = user?.name ? user.name.split(" ")[0] : "";
 
   return (
-    <nav className="w-full px-4 md:px-[4%] py-3 md:py-4 flex flex-wrap items-center gap-x-3 gap-y-2 bg-brand-dark text-white sticky top-0 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.25)]">
+    <nav className="w-full px-4 md:px-[4%] py-3 md:py-4 flex flex-wrap items-center gap-x-3 gap-y-2 bg-gradient-to-r from-brand-dark via-[#2d2a6e] to-brand-dark text-white sticky top-0 z-50 shadow-[0_2px_20px_rgba(79,70,229,0.35)]">
       {/* LOGO */}
       <Link
         to={isAdminPage ? "/admin" : "/"}
@@ -211,7 +211,7 @@ export default function Navbar() {
 
       {/* MOBILE SLIDE PANEL */}
       <div
-        className={`fixed top-0 right-0 h-screen w-72 flex flex-col items-center justify-center gap-7 bg-brand-dark shadow-[-8px_0_24px_rgba(0,0,0,0.3)] transition-transform duration-300 z-[99] md:hidden ${
+        className={`fixed top-0 right-0 h-screen w-72 flex flex-col items-center justify-center gap-7 bg-gradient-to-b from-brand-dark to-[#2d2a6e] shadow-[-8px_0_32px_rgba(79,70,229,0.4)] transition-transform duration-300 z-[99] md:hidden ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

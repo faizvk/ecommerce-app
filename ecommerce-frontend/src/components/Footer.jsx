@@ -20,7 +20,7 @@ export default function Footer() {
   if (location.pathname.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-brand-dark text-white pt-10 pb-6 px-5 md:px-[6%] mt-16">
+    <footer className="bg-gradient-to-br from-brand-dark via-[#2d2a6e] to-brand-dark text-white pt-10 pb-6 px-5 md:px-[6%] mt-16">
       {/* GRID — 1 col mobile → 2 cols tablet → 4 cols desktop */}
       <div className="grid grid-cols-1 gap-8 mb-10 sm:grid-cols-2 lg:grid-cols-4">
         {/* BRAND */}

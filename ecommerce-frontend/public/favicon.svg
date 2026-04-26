@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Background rounded square -->
+  <rect width="48" height="48" rx="12" fill="#1e1b4b"/>
+  <!-- Shopping bag handle arc -->
+  <path d="M16 22 C16 17.582 19.582 14 24 14 C28.418 14 32 17.582 32 22"
+        stroke="white" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+  <!-- Shopping bag body -->
+  <rect x="12" y="22" width="24" height="16" rx="4" fill="white"/>
+  <!-- Inner accent dot -->
+  <circle cx="24" cy="31" r="2.8" fill="#4f46e5"/>
+</svg>

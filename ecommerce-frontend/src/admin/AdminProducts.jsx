@@ -131,7 +131,7 @@ export default function AdminProducts() {
                           min="0"
                           value={p.stock ?? 0}
                           disabled={isUpdating}
-                          className={`w-20 px-2 py-1.5 text-sm rounded-lg border outline-none transition-all focus:shadow-[0_0_0_2px_rgba(56,89,139,0.2)] disabled:opacity-60 ${stockCls(p.stock)}`}
+                          className={`w-20 px-2 py-1.5 text-sm rounded-lg border outline-none transition-all focus:shadow-[0_0_0_2px_rgba(79,70,229,0.2)] disabled:opacity-60 ${stockCls(p.stock)}`}
                           onChange={(e) => handleStockChange(p._id, e.target.value)}
                         />
                         {isUpdating && <span className="text-[0.75rem] text-gray-400 animate-pulse">Saving...</span>}

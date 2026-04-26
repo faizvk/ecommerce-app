@@ -89,7 +89,7 @@ export default function ForgotPassword() {
                       autoComplete="email"
                       placeholder="name@company.com"
                       required
-                      className="w-full py-3.5 px-4 pl-[46px] rounded-xl border border-black/15 bg-[#f9f9fb] text-[0.95rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(56,89,139,0.15)]"
+                      className="w-full py-3.5 px-4 pl-[46px] rounded-xl border border-black/15 bg-[#f9f9fb] text-[0.95rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(79,70,229,0.15)]"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />

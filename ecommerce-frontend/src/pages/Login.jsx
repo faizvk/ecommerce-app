@@ -98,7 +98,7 @@ export default function Login() {
                     type="email"
                     autoComplete="email"
                     placeholder="name@company.com"
-                    className={`w-full py-3.5 px-4 pl-[46px] rounded-xl border bg-[#f9f9fb] text-[0.95rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(56,89,139,0.15)] ${errors.email ? "border-red-500 bg-red-50" : "border-black/15"}`}
+                    className={`w-full py-3.5 px-4 pl-[46px] rounded-xl border bg-[#f9f9fb] text-[0.95rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(79,70,229,0.15)] ${errors.email ? "border-red-500 bg-red-50" : "border-black/15"}`}
                     {...register("email")}
                   />
                 </div>
@@ -118,7 +118,7 @@ export default function Login() {
                     type="password"
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    className={`w-full py-3.5 px-4 pl-[46px] rounded-xl border bg-[#f9f9fb] text-[0.95rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(56,89,139,0.15)] ${errors.password ? "border-red-500 bg-red-50" : "border-black/15"}`}
+                    className={`w-full py-3.5 px-4 pl-[46px] rounded-xl border bg-[#f9f9fb] text-[0.95rem] outline-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(79,70,229,0.15)] ${errors.password ? "border-red-500 bg-red-50" : "border-black/15"}`}
                     {...register("password")}
                   />
                 </div>

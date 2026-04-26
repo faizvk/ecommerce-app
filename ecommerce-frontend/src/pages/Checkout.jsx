@@ -86,7 +86,7 @@ export default function Checkout() {
           }
         },
         notes: { address },
-        theme: { color: "#38598b" },
+        theme: { color: "#4f46e5" },
       };
 
       const rzp = new window.Razorpay(options);
@@ -185,7 +185,7 @@ export default function Checkout() {
           </div>
 
           <textarea
-            className="w-full px-4 py-3 rounded-xl border border-black/15 bg-[#f9f9fb] text-[0.9rem] outline-none resize-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(56,89,139,0.15)] min-h-[110px]"
+            className="w-full px-4 py-3 rounded-xl border border-black/15 bg-[#f9f9fb] text-[0.9rem] outline-none resize-none transition-all focus:border-brand focus:bg-white focus:shadow-[0_0_0_3px_rgba(79,70,229,0.15)] min-h-[110px]"
             placeholder="Enter your full shipping address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
