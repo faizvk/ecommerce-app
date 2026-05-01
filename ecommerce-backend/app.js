@@ -9,6 +9,7 @@ import productRoutes from "./view/product.routes.js";
 import cartRoutes from "./view/cart.routes.js";
 import orderRoutes from "./view/order.routes.js";
 import paymentRoutes from "./view/payment.routes.js";
+import offerRoutes from "./view/offer.routes.js";
 
 import { CLIENT_URL } from "./config/env.js";
 
@@ -69,6 +70,7 @@ app.use("/api", productRoutes);
 app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", paymentRoutes);
+app.use("/api", offerRoutes);
 
 // Health check — allow any origin so Vercel frontend can reach Render backend
 // regardless of CLIENT_URL configuration
