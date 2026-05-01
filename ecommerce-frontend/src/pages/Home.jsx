@@ -1,17 +1,23 @@
 import { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { fetchProductsThunk } from "../redux/slice/productSlice";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 import { fetchCartThunk } from "../redux/slice/cartItemsSlice";
 import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
+import { getProductRating } from "../utils/productMeta";
 
 import ProductCard from "../components/ProductCard";
+import ProductRow from "../components/ProductRow";
 import HeroCarousel from "../components/HeroCarousel";
 import OfferBanner from "../components/OfferBanner";
+import Testimonials from "../components/Testimonials";
 import { CATEGORY_CONFIG, PREVIEW_LIMIT } from "../utils/productCategory";
-import { ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones } from "lucide-react";
+import {
+  ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones, Flame,
+  Sparkles, Star, Wallet, Mail, Send,
+} from "lucide-react";
 
 const BENEFITS = [
   { icon: Truck, title: "Free Delivery", sub: "On orders above ₹499" },
@@ -19,6 +25,14 @@ const BENEFITS = [
   { icon: ShieldCheck, title: "Secure Payments", sub: "100% safe checkout" },
   { icon: Headphones, title: "24/7 Support", sub: "Always here to help" },
 ];
+
+const CATEGORY_TILE_GRADIENTS = {
+  "electronics":      "from-blue-400 to-indigo-500",
+  "fashion":          "from-pink-400 to-rose-500",
+  "dairy":            "from-amber-300 to-orange-400",
+  "technology":       "from-cyan-400 to-sky-500",
+  "home appliances":  "from-emerald-400 to-teal-500",
+};
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -34,14 +48,40 @@ export default function Home() {
     if (user?.role === "user") dispatch(fetchCartThunk());
   }, [dispatch, user?.role]);
 
+  /* Derived collections */
   const productsByCategory = useMemo(() => {
     const map = {};
-    for (const product of products || []) {
-      if (!product?.category) continue;
-      if (!map[product.category]) map[product.category] = [];
-      map[product.category].push(product);
+    for (const p of products || []) {
+      if (!p?.category) continue;
+      if (!map[p.category]) map[p.category] = [];
+      map[p.category].push(p);
     }
     return map;
+  }, [products]);
+
+  const topDeals = useMemo(() => {
+    return [...(products || [])]
+      .filter((p) => p.costPrice && p.salePrice && p.costPrice > p.salePrice)
+      .map((p) => ({ ...p, _discount: (p.costPrice - p.salePrice) / p.costPrice }))
+      .sort((a, b) => b._discount - a._discount)
+      .slice(0, 12);
+  }, [products]);
+
+  const topRated = useMemo(() => {
+    return [...(products || [])]
+      .map((p) => ({ ...p, _rating: getProductRating(p).rating }))
+      .sort((a, b) => b._rating - a._rating)
+      .slice(0, 12);
+  }, [products]);
+
+  const newArrivals = useMemo(() => {
+    return [...(products || [])]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 12);
+  }, [products]);
+
+  const budgetPicks = useMemo(() => {
+    return (products || []).filter((p) => p.salePrice <= 999).slice(0, 12);
   }, [products]);
 
   const goToCategory = (category) => {
@@ -91,7 +131,7 @@ export default function Home() {
 
       {/* BENEFITS STRIP */}
       <section className="bg-white border-b border-gray-100">
-        <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-4">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-4">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {BENEFITS.map(({ icon: Icon, title, sub }) => (
               <div key={title} className="flex items-center gap-3 py-2">
@@ -108,10 +148,64 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CATEGORY NAV */}
-      <section className="bg-white border-b border-gray-100 sticky top-[57px] md:top-[65px] z-40">
+      {/* CATEGORY SHOWCASE TILES */}
+      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-8">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-9 rounded-full bg-gradient-to-b from-brand to-[#7c3aed]" />
+            <div>
+              <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight">Shop by Category</h2>
+              <p className="text-[0.8rem] text-gray-400 mt-0.5">Find what you need, fast</p>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+          {CATEGORY_CONFIG.map(({ key, label, emoji, desc }) => {
+            const count = productsByCategory[key]?.length || 0;
+            const gradient = CATEGORY_TILE_GRADIENTS[key] || "from-brand to-brand-medium";
+            return (
+              <button
+                key={key}
+                onClick={() => goToCategory(key)}
+                className="group relative bg-white rounded-2xl border border-gray-100 p-5 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5"
+              >
+                {/* Decorative gradient blur */}
+                <div className={`absolute -top-10 -right-8 w-28 h-28 rounded-full bg-gradient-to-br ${gradient} blur-2xl opacity-30 group-hover:opacity-60 transition-opacity`} />
+                <div className="relative">
+                  <div className="text-3xl md:text-[2rem] mb-2 leading-none">{emoji}</div>
+                  <h3 className="font-extrabold text-gray-900 text-[0.95rem] leading-tight">{label}</h3>
+                  <p className="text-[0.72rem] text-gray-400 mt-0.5 line-clamp-1">{desc}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-[0.72rem] font-bold text-gray-500">{count} items</span>
+                    <span className="text-brand inline-flex items-center gap-0.5 text-[0.78rem] font-bold group-hover:translate-x-0.5 transition-transform">
+                      Shop <ChevronRight size={13} />
+                    </span>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* TOP DEALS — horizontal scroller */}
+      {topDeals.length > 0 && (
+        <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-10">
+          <ProductRow
+            title="🔥 Top Deals of the Day"
+            subtitle="Biggest discounts, while stocks last"
+            icon={Flame}
+            accent="from-red-400 to-orange-500"
+            products={topDeals}
+            viewAllHref="/search"
+          />
+        </section>
+      )}
+
+      {/* CATEGORY NAV (sticky) */}
+      <section className="bg-white border-y border-gray-100 sticky top-[57px] md:top-[65px] z-40">
         <nav
-          className="flex items-center gap-2 px-4 md:px-6 py-3 overflow-x-auto scrollbar-hide max-w-[1200px] mx-auto"
+          className="flex items-center gap-2 px-4 md:px-6 py-3 overflow-x-auto scrollbar-hide max-w-[1280px] mx-auto"
           aria-label="Product categories"
         >
           <button
@@ -125,7 +219,6 @@ export default function Home() {
               key={key}
               className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-full cursor-pointer whitespace-nowrap text-gray-600 bg-gray-100 border border-transparent transition-all hover:bg-brand-light hover:text-brand hover:border-brand/20 flex-shrink-0"
               onClick={() => goToCategory(key)}
-              aria-label={`Browse ${label}`}
             >
               <span>{emoji}</span>
               {label}
@@ -134,8 +227,8 @@ export default function Home() {
         </nav>
       </section>
 
-      {/* PRODUCTS BY CATEGORY */}
-      <section className="max-w-[1200px] mx-auto px-4 md:px-6 mt-8">
+      {/* PRODUCTS BY CATEGORY (existing grids — wider cards now) */}
+      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-8">
         {CATEGORY_CONFIG.map(({ key, label, emoji }) => {
           const list = productsByCategory[key] || [];
           if (list.length === 0) return null;
@@ -145,7 +238,6 @@ export default function Home() {
 
           return (
             <section key={key} className="mb-12" aria-labelledby={`category-${key}`}>
-              {/* Section header */}
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center text-lg flex-shrink-0">
@@ -164,7 +256,7 @@ export default function Home() {
 
                 {hasMore && (
                   <button
-                    className="flex items-center gap-1 text-[0.82rem] font-semibold text-brand hover:text-brand-dark transition-colors cursor-pointer border border-brand/25 bg-brand-light hover:bg-brand hover:text-white rounded-full px-3.5 py-1.5 no-underline"
+                    className="flex items-center gap-1 text-[0.82rem] font-semibold text-brand hover:text-brand-dark transition-colors cursor-pointer border border-brand/25 bg-brand-light hover:bg-brand hover:text-white rounded-full px-3.5 py-1.5"
                     onClick={() => goToCategory(key)}
                   >
                     View All <ChevronRight size={14} />
@@ -172,7 +264,8 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5">
+              {/* Wider cards: 2 → 3 → 3 → 4 */}
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
                 {preview.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
@@ -180,6 +273,98 @@ export default function Home() {
             </section>
           );
         })}
+      </section>
+
+      {/* TOP RATED */}
+      {topRated.length > 0 && (
+        <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-2">
+          <ProductRow
+            title="Top Rated"
+            subtitle="Customer favourites with stellar reviews"
+            icon={Star}
+            accent="from-amber-400 to-orange-500"
+            products={topRated}
+            viewAllHref="/search"
+          />
+        </section>
+      )}
+
+      {/* NEW ARRIVALS */}
+      {newArrivals.length > 0 && (
+        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
+          <ProductRow
+            title="✨ New Arrivals"
+            subtitle="Fresh in this week"
+            icon={Sparkles}
+            accent="from-brand to-[#7c3aed]"
+            products={newArrivals}
+            viewAllHref="/search"
+          />
+        </section>
+      )}
+
+      {/* BUDGET PICKS */}
+      {budgetPicks.length > 0 && (
+        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
+          <ProductRow
+            title="Under ₹999"
+            subtitle="Wallet-friendly steals"
+            icon={Wallet}
+            accent="from-emerald-400 to-teal-500"
+            products={budgetPicks}
+            viewAllHref="/search"
+          />
+        </section>
+      )}
+
+      {/* TESTIMONIALS */}
+      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-4">
+        <Testimonials />
+      </section>
+
+      {/* PROMO CTA — newsletter signup */}
+      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-2">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-dark via-brand to-[#7c3aed] text-white shadow-[0_12px_40px_rgba(79,70,229,0.3)]">
+          <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-16 -left-10 w-72 h-72 rounded-full bg-white/5 blur-3xl" />
+
+          <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 p-7 md:p-12 items-center">
+            <div>
+              <span className="inline-flex items-center gap-1.5 mb-3 px-3 py-1 bg-white/15 border border-white/25 rounded-full text-[0.7rem] font-bold uppercase tracking-[0.15em]">
+                <Sparkles size={12} />
+                Members get more
+              </span>
+              <h2 className="text-2xl md:text-[2rem] font-extrabold leading-tight mb-3">
+                Save 10% on your first order
+              </h2>
+              <p className="text-[0.95rem] text-white/80 max-w-md">
+                Subscribe to our newsletter for exclusive deals, new arrivals, and members-only promotions delivered to your inbox.
+              </p>
+            </div>
+
+            <form
+              className="flex flex-col sm:flex-row gap-2"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <div className="relative flex-1">
+                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
+                <input
+                  type="email"
+                  required
+                  placeholder="Your email address"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/10 border border-white/25 text-white placeholder:text-white/50 text-[0.92rem] outline-none focus:bg-white/15 focus:border-white/45 transition-all"
+                />
+              </div>
+              <button
+                type="submit"
+                className="flex items-center justify-center gap-1.5 px-6 py-3.5 bg-white text-brand-dark rounded-xl font-bold text-[0.92rem] border-0 cursor-pointer transition-all hover:bg-brand-light hover:scale-[1.02] shadow-md whitespace-nowrap"
+              >
+                Subscribe
+                <Send size={14} />
+              </button>
+            </form>
+          </div>
+        </div>
       </section>
     </main>
   );
