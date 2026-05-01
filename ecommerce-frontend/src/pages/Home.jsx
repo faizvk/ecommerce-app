@@ -4,9 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { fetchProductsThunk } from "../redux/slice/productSlice";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
+import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
 
 import ProductCard from "../components/ProductCard";
 import HeroCarousel from "../components/HeroCarousel";
+import OfferBanner from "../components/OfferBanner";
 import { CATEGORY_CONFIG, PREVIEW_LIMIT } from "../utils/productCategory";
 import { ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones } from "lucide-react";
 
@@ -26,6 +28,7 @@ export default function Home() {
   useEffect(() => {
     dispatch(refreshCartCountThunk());
     dispatch(fetchProductsThunk());
+    dispatch(fetchActiveOffersThunk());
   }, [dispatch]);
 
   const productsByCategory = useMemo(() => {
@@ -79,6 +82,9 @@ export default function Home() {
       <section aria-label="Promotions">
         <HeroCarousel />
       </section>
+
+      {/* ACTIVE OFFERS BANNER */}
+      <OfferBanner />
 
       {/* BENEFITS STRIP */}
       <section className="bg-white border-b border-gray-100">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,9 +10,11 @@ import {
 } from "../redux/slice/productSlice";
 import { addToCartThunk, fetchCartThunk } from "../redux/slice/cartItemsSlice";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
+import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
+import { buildOfferMap, getOfferPricing } from "../utils/applyOffer";
 import { fadeIn } from "../animations/fadeIn";
 import ProductCard from "../components/ProductCard";
-import { ShoppingCart, ChevronRight, Truck, RefreshCcw, ShieldCheck, Tag } from "lucide-react";
+import { ShoppingCart, ChevronRight, Truck, RefreshCcw, ShieldCheck, Tag, Sparkles, Clock } from "lucide-react";
 
 const TRUST_BADGES = [
   { icon: Truck, label: "Free Delivery", sub: "On orders above ₹499" },
@@ -27,12 +29,17 @@ export default function ProductDetails() {
 
   const { user } = useSelector((state) => state.auth);
   const { currentProduct: product, relatedProducts: related, loading } = useSelector((state) => state.product);
+  const { activeOffers } = useSelector((state) => state.offer);
 
   const [activeImage, setActiveImage] = useState(0);
   const [adding, setAdding] = useState(false);
 
+  const offerMap = useMemo(() => buildOfferMap(activeOffers), [activeOffers]);
+  const pricing = product ? getOfferPricing(product, offerMap) : null;
+
   useEffect(() => {
     dispatch(fetchProductByIdThunk(id));
+    dispatch(fetchActiveOffersThunk());
     setActiveImage(0);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id, dispatch]);
@@ -66,14 +73,19 @@ export default function ProductDetails() {
     );
   }
 
-  const discount =
+  const baseDiscount =
     product.costPrice && product.costPrice > 0
       ? Math.round(((product.costPrice - product.salePrice) / product.costPrice) * 100)
       : 0;
 
-  const savings = product.costPrice && product.costPrice > product.salePrice
-    ? product.costPrice - product.salePrice
-    : 0;
+  const discount = pricing.hasOffer ? pricing.percentOff : baseDiscount;
+
+  const savings = pricing.hasOffer
+    ? pricing.savings
+    : (product.costPrice && product.costPrice > product.salePrice ? product.costPrice - product.salePrice : 0);
+
+  const displayPrice = pricing.finalPrice;
+  const displayOriginal = pricing.hasOffer ? pricing.originalPrice : product.costPrice;
 
   const isOutOfStock = product.stock === 0;
   const isLowStock = !isOutOfStock && product.stock <= 10;
@@ -156,12 +168,30 @@ export default function ProductDetails() {
           </div>
 
           {/* PRICE */}
-          <div className="p-4 md:p-5 bg-brand-light rounded-2xl border border-brand/10">
+          <div className={`p-4 md:p-5 rounded-2xl border ${
+            pricing.hasOffer
+              ? "bg-gradient-to-br from-brand-light to-[#f5f0ff] border-brand/30"
+              : "bg-brand-light border-brand/10"
+          }`}>
+            {pricing.hasOffer && (
+              <div className="flex items-center gap-1.5 mb-2 text-[0.7rem] font-extrabold tracking-wider uppercase text-[#7c3aed]">
+                <Sparkles size={11} />
+                {pricing.offer.title}
+                {pricing.offer.endTime && (
+                  <span className="ml-auto inline-flex items-center gap-1 text-gray-500 normal-case font-semibold">
+                    <Clock size={10} />
+                    Ends {new Date(pricing.offer.endTime).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                  </span>
+                )}
+              </div>
+            )}
             <div className="flex items-baseline gap-3 flex-wrap mb-1">
-              <span className="text-2xl md:text-3xl font-extrabold text-brand">₹{product.salePrice}</span>
-              {product.costPrice && product.costPrice > product.salePrice && (
+              <span className={`text-2xl md:text-3xl font-extrabold ${pricing.hasOffer ? "text-[#7c3aed]" : "text-brand"}`}>
+                ₹{displayPrice}
+              </span>
+              {displayOriginal && displayOriginal > displayPrice && (
                 <>
-                  <span className="text-base md:text-lg text-gray-400 line-through">₹{product.costPrice}</span>
+                  <span className="text-base md:text-lg text-gray-400 line-through">₹{displayOriginal}</span>
                   <span className="bg-red-100 text-red-600 text-[0.72rem] font-bold px-2.5 py-0.5 rounded-full">
                     {discount}% OFF
                   </span>
