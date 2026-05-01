@@ -67,6 +67,18 @@ export default function ProductCard({ product }) {
   const freeDelivery = qualifiesForFreeDelivery(finalPrice);
   const wishlisted = isWishlisted(product._id);
 
+  // Border shade priority — gives every card a tinted border that signals its state
+  // Out of stock (gray) > Offer (brand→violet) > In cart (emerald) > Low stock (amber) > Default (soft indigo)
+  const cardBorderCls = isOutOfStock
+    ? "border-gray-200 hover:border-gray-300"
+    : hasOffer
+    ? "border-brand/30 hover:border-brand/50 hover:shadow-[0_12px_32px_rgba(124,58,237,0.15)]"
+    : cartQty > 0
+    ? "border-emerald-300/50 hover:border-emerald-400/70 hover:shadow-[0_12px_32px_rgba(16,185,129,0.12)]"
+    : isLowStock
+    ? "border-amber-300/50 hover:border-amber-400/70 hover:shadow-[0_12px_32px_rgba(251,191,36,0.12)]"
+    : "border-brand-medium/25 hover:border-brand/40 hover:shadow-hover";
+
   // Cart action helpers
   const stop = (e) => { e.preventDefault(); e.stopPropagation(); };
 
@@ -133,9 +145,7 @@ export default function ProductCard({ product }) {
       className="no-underline block group"
       {...fadeIn({ direction: "up", distance: 50, duration: 0.6 })}
     >
-      <div className={`bg-white rounded-2xl overflow-hidden border transition-all duration-300 h-full flex flex-col hover:-translate-y-1 hover:shadow-hover ${
-        hasOffer ? "border-brand/30 hover:border-brand/50" : "border-gray-100 hover:border-brand/20"
-      }`}>
+      <div className={`bg-white rounded-2xl overflow-hidden border transition-all duration-300 h-full flex flex-col hover:-translate-y-1 ${cardBorderCls}`}>
         {/* IMAGE */}
         <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
           {/* Top-left badges */}
