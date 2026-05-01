@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutThunk } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
-import { LogOut, LogIn, ShoppingCart, X, Menu, ShoppingBag } from "lucide-react";
+import { LogOut, LogIn, ShoppingCart, X, Menu, ShoppingBag, Heart } from "lucide-react";
 import api from "../api/api";
+import { useWishlist } from "../hooks/useWishlist";
 
 export default function Navbar() {
   const location = useLocation();
@@ -13,6 +14,7 @@ export default function Navbar() {
 
   const { user } = useSelector((state) => state.auth);
   const { count } = useSelector((state) => state.cart);
+  const { count: wishlistCount } = useWishlist();
 
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -171,14 +173,28 @@ export default function Navbar() {
               )}
 
               {user.role === "user" && !isAdminPage && (
-                <Link to="/cart" className="relative text-white no-underline transition-all hover:text-brand-medium">
-                  <ShoppingCart size={24} />
-                  {count > 0 && (
-                    <span className="absolute -top-2 -right-2.5 bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
-                      {count > 99 ? "99+" : count}
-                    </span>
-                  )}
-                </Link>
+                <>
+                  <Link
+                    to="/wishlist"
+                    title="Wishlist"
+                    className="relative text-white no-underline transition-all hover:text-brand-medium"
+                  >
+                    <Heart size={22} />
+                    {wishlistCount > 0 && (
+                      <span className="absolute -top-2 -right-2.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
+                        {wishlistCount > 99 ? "99+" : wishlistCount}
+                      </span>
+                    )}
+                  </Link>
+                  <Link to="/cart" className="relative text-white no-underline transition-all hover:text-brand-medium">
+                    <ShoppingCart size={24} />
+                    {count > 0 && (
+                      <span className="absolute -top-2 -right-2.5 bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
+                  </Link>
+                </>
               )}
 
               <button
@@ -235,6 +251,15 @@ export default function Navbar() {
                 </Link>
                 <Link to="/orders" className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
                   My Orders
+                </Link>
+                <Link to="/wishlist" className="flex items-center gap-1.5 text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
+                  <Heart size={16} />
+                  Wishlist
+                  {wishlistCount > 0 && (
+                    <span className="bg-red-500 text-white text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full">
+                      {wishlistCount}
+                    </span>
+                  )}
                 </Link>
               </>
             ) : (

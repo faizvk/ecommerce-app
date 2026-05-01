@@ -179,7 +179,7 @@ export default function ProductDetails() {
   };
 
   const handleWishlist = () => {
-    const now = toggleWishlist(product._id);
+    const now = toggleWishlist(product);
     toast.success(now ? "Saved to wishlist" : "Removed from wishlist", { autoClose: 1200 });
   };
 

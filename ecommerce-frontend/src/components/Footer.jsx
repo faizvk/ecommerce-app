@@ -90,7 +90,7 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-[0.7rem] uppercase tracking-[0.12em] text-white/40 mb-4">Quick Links</h4>
             <div className="flex flex-col gap-2.5">
-              {[["Home", "/"], ["My Cart", "/cart"], ["My Orders", "/orders"], ["My Profile", "/profile"]].map(([label, to]) => (
+              {[["Home", "/"], ["My Cart", "/cart"], ["Wishlist", "/wishlist"], ["My Orders", "/orders"], ["My Profile", "/profile"]].map(([label, to]) => (
                 <Link
                   key={to}
                   to={to}

@@ -25,6 +25,7 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 const Cart = lazy(() => import("./pages/Cart"));
+const Wishlist = lazy(() => import("./pages/Wishlist"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const OrderTrack = lazy(() => import("./pages/OrderTrack"));
 const Orders = lazy(() => import("./pages/Orders"));
@@ -115,6 +116,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/search" element={<SearchResults />} />
+            <Route path="/wishlist" element={<Wishlist />} />
 
             {/* Guest Only */}
             <Route element={<GuestRoute />}>

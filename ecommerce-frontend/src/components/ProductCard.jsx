@@ -123,7 +123,7 @@ export default function ProductCard({ product }) {
 
   const handleWishlist = (e) => {
     stop(e);
-    const nowWishlisted = toggle(product._id);
+    const nowWishlisted = toggle(product);
     toast.success(nowWishlisted ? "Saved to wishlist" : "Removed from wishlist", { autoClose: 1200 });
   };
 
