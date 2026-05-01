@@ -3,7 +3,10 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutThunk } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
-import { LogOut, LogIn, ShoppingCart, X, Menu, ShoppingBag, Heart, Search, Sparkles, ArrowRight } from "lucide-react";
+import {
+  LogOut, LogIn, ShoppingCart, X, Menu, ShoppingBag, Heart, Search,
+  ArrowRight, User as UserIcon, ClipboardList, Shield, ChevronRight,
+} from "lucide-react";
 import api from "../api/api";
 import { useWishlist } from "../hooks/useWishlist";
 
@@ -23,6 +26,7 @@ export default function Navbar() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const searchInputRef = useRef(null);
+  const menuRef = useRef(null);
 
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -31,6 +35,21 @@ export default function Navbar() {
   const adminLinkTarget = isAdminPage ? "/" : "/admin";
 
   useEffect(() => { setMenuOpen(false); }, [location]);
+
+  // Click outside / Escape to close menu
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    const handleEsc = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (isAuthPage || isAdminPage) return;
@@ -46,6 +65,7 @@ export default function Navbar() {
   }, [searchText, isAuthPage, isAdminPage]);
 
   const handleLogout = async () => {
+    setMenuOpen(false);
     try { await dispatch(logoutThunk()).unwrap(); } catch { /* ignore */ }
     dispatch(clearCart());
     navigate("/login", { replace: true });
@@ -55,6 +75,13 @@ export default function Navbar() {
 
   let hideTimeout;
   const firstName = user?.name ? user.name.split(" ")[0] : "";
+  const initials = user?.name ? user.name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase() : "";
+  const isCustomer = user?.role === "user";
+  const showCartIcons = isCustomer && !isAdminPage;
+
+  // Reusable dropdown item style
+  const itemCls =
+    "flex items-center gap-3 px-4 py-2.5 text-[0.88rem] font-medium text-gray-700 no-underline hover:bg-gray-50 transition-colors w-full bg-transparent border-0 cursor-pointer text-left";
 
   return (
     <nav className="w-full px-4 md:px-[4%] py-3 md:py-4 flex flex-wrap items-center gap-x-3 gap-y-2 bg-gradient-to-r from-brand-dark via-[#2d2a6e] to-brand-dark text-white sticky top-0 z-50 shadow-[0_2px_20px_rgba(79,70,229,0.35)]">
@@ -75,7 +102,7 @@ export default function Navbar() {
         </span>
       </Link>
 
-      {/* SEARCH — wraps to row 2 on mobile, middle of row 1 on desktop */}
+      {/* SEARCH */}
       {!isAdminPage && (
         <div
           className="order-3 w-full md:order-2 md:w-[42%] md:flex-1 md:max-w-[560px] relative"
@@ -96,7 +123,6 @@ export default function Navbar() {
                 ? "bg-white shadow-[0_0_0_3px_rgba(129,140,248,0.4),0_8px_24px_rgba(0,0,0,0.12)]"
                 : "bg-white/95 hover:bg-white shadow-[0_2px_10px_rgba(0,0,0,0.08)]"
             }`}>
-              {/* Leading search icon */}
               <div className="flex items-center justify-center pl-3.5 flex-shrink-0">
                 {searchLoading ? (
                   <div className="w-4 h-4 rounded-full border-2 border-brand-medium/30 border-t-brand animate-spin" />
@@ -104,8 +130,6 @@ export default function Navbar() {
                   <Search size={16} className={searchFocused ? "text-brand" : "text-gray-400"} />
                 )}
               </div>
-
-              {/* Input */}
               <input
                 ref={searchInputRef}
                 type="text"
@@ -116,8 +140,6 @@ export default function Navbar() {
                 onBlur={() => setSearchFocused(false)}
                 className="flex-1 min-w-0 px-3 py-2.5 md:py-3 bg-transparent border-0 text-gray-900 text-[0.9rem] outline-none placeholder:text-gray-400"
               />
-
-              {/* Clear button */}
               {searchText && (
                 <button
                   type="button"
@@ -128,8 +150,6 @@ export default function Navbar() {
                   <X size={13} />
                 </button>
               )}
-
-              {/* Submit button — fills full height of the bar; visible on desktop only */}
               <button
                 type="submit"
                 disabled={!searchText.trim()}
@@ -142,22 +162,16 @@ export default function Navbar() {
             </div>
           </form>
 
-          {/* SUGGESTIONS DROPDOWN */}
           {showSuggestions && searchText.trim() && (
             <div className="absolute top-[calc(100%+8px)] w-full bg-white rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.18)] z-[200] overflow-hidden border border-gray-100">
-              {/* Header */}
               <div className="flex items-center justify-between gap-2 px-4 py-2.5 bg-gray-50/70 border-b border-gray-100">
                 <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-gray-500">
                   {searchLoading ? "Searching..." : suggestions.length > 0 ? `Top ${suggestions.length} matches` : "No matches"}
                 </span>
                 {suggestions.length > 0 && (
-                  <span className="text-[0.62rem] text-gray-400 font-medium hidden sm:inline">
-                    Press Enter to see all
-                  </span>
+                  <span className="text-[0.62rem] text-gray-400 font-medium hidden sm:inline">Press Enter to see all</span>
                 )}
               </div>
-
-              {/* Body */}
               <div className="max-h-80 overflow-y-auto">
                 {suggestions.length > 0 ? (
                   <>
@@ -173,16 +187,9 @@ export default function Navbar() {
                           className="flex items-center gap-3 px-4 py-2.5 cursor-pointer border-b border-gray-50 last:border-0 transition-colors hover:bg-brand-light/60 w-full text-left bg-transparent"
                           onClick={() => { navigate(`/product/${item._id}`); setShowSuggestions(false); setSearchText(""); }}
                         >
-                          <img
-                            src={item.image?.[0] || "/placeholder.jpg"}
-                            alt={item.name}
-                            className="w-11 h-11 rounded-lg object-cover bg-gray-100 flex-shrink-0 border border-gray-100"
-                          />
+                          <img src={item.image?.[0] || "/placeholder.jpg"} alt={item.name} className="w-11 h-11 rounded-lg object-cover bg-gray-100 flex-shrink-0 border border-gray-100" />
                           <div className="flex flex-col min-w-0 flex-1">
-                            <p
-                              className="text-[0.88rem] text-gray-900 truncate m-0"
-                              dangerouslySetInnerHTML={{ __html: name }}
-                            />
+                            <p className="text-[0.88rem] text-gray-900 truncate m-0" dangerouslySetInnerHTML={{ __html: name }} />
                             <span className="text-[0.72rem] text-gray-400 capitalize">{item.category}</span>
                           </div>
                           <div className="flex flex-col items-end flex-shrink-0">
@@ -194,14 +201,9 @@ export default function Navbar() {
                         </button>
                       );
                     })}
-
-                    {/* See all results footer */}
                     <button
                       type="button"
-                      onClick={() => {
-                        navigate(`/search?query=${encodeURIComponent(searchText)}`);
-                        setShowSuggestions(false);
-                      }}
+                      onClick={() => { navigate(`/search?query=${encodeURIComponent(searchText)}`); setShowSuggestions(false); }}
                       className="w-full flex items-center justify-center gap-1.5 px-4 py-3 bg-gradient-to-r from-brand-light/60 to-[#f5f0ff] text-brand-dark text-[0.82rem] font-bold cursor-pointer border-0 hover:from-brand-light hover:to-brand-light transition-colors border-t border-gray-100"
                     >
                       See all results for "{searchText}"
@@ -227,26 +229,44 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* RIGHT SIDE — hamburger on mobile, nav links on desktop */}
-      <div className="order-2 ml-auto md:order-3 flex items-center gap-4">
-        {/* HAMBURGER — mobile only */}
-        <button
-          className="flex md:hidden bg-transparent border-0 cursor-pointer p-1 z-[101] text-white"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+      {/* RIGHT SIDE */}
+      <div className="order-2 ml-auto md:order-3 flex items-center gap-3 md:gap-5">
+        {/* Wishlist & Cart — always visible for customers, on both mobile and desktop */}
+        {showCartIcons && (
+          <>
+            <Link
+              to="/wishlist"
+              title="Wishlist"
+              className="relative text-white no-underline transition-all hover:text-brand-medium"
+            >
+              <Heart size={22} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.62rem] font-bold leading-none">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
+                </span>
+              )}
+            </Link>
+            <Link
+              to="/cart"
+              title="Cart"
+              className="relative text-white no-underline transition-all hover:text-brand-medium"
+            >
+              <ShoppingCart size={23} />
+              {count > 0 && (
+                <span className="absolute -top-2 -right-2.5 bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.62rem] font-bold leading-none">
+                  {count > 99 ? "99+" : count}
+                </span>
+              )}
+            </Link>
+          </>
+        )}
 
         {/* DESKTOP NAV */}
         <div className="hidden md:flex items-center gap-5">
           {user ? (
             <>
-              <span className="text-[0.9rem] font-semibold text-white/80">
-                Hello, {firstName}
-              </span>
-
-              {user.role === "user" ? (
+              <span className="text-[0.9rem] font-semibold text-white/80">Hello, {firstName}</span>
+              {isCustomer ? (
                 <>
                   <Link to="/profile" className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
                     My Profile
@@ -260,32 +280,6 @@ export default function Navbar() {
                   {adminLinkLabel}
                 </Link>
               )}
-
-              {user.role === "user" && !isAdminPage && (
-                <>
-                  <Link
-                    to="/wishlist"
-                    title="Wishlist"
-                    className="relative text-white no-underline transition-all hover:text-brand-medium"
-                  >
-                    <Heart size={22} />
-                    {wishlistCount > 0 && (
-                      <span className="absolute -top-2 -right-2.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
-                        {wishlistCount > 99 ? "99+" : wishlistCount}
-                      </span>
-                    )}
-                  </Link>
-                  <Link to="/cart" className="relative text-white no-underline transition-all hover:text-brand-medium">
-                    <ShoppingCart size={24} />
-                    {count > 0 && (
-                      <span className="absolute -top-2 -right-2.5 bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
-                        {count > 99 ? "99+" : count}
-                      </span>
-                    )}
-                  </Link>
-                </>
-              )}
-
               <button
                 onClick={handleLogout}
                 className="bg-transparent border-0 text-white/80 cursor-pointer flex items-center justify-center transition-all hover:text-white"
@@ -304,87 +298,107 @@ export default function Navbar() {
             </Link>
           )}
         </div>
-      </div>
 
-      {/* MOBILE OVERLAY */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 z-[98] bg-black/40 md:hidden"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
+        {/* HAMBURGER + DROPDOWN — mobile only */}
+        <div className="md:hidden relative" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            className={`w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer border transition-all ${
+              menuOpen
+                ? "bg-white text-brand-dark border-white"
+                : "bg-white/10 text-white border-white/20 hover:bg-white/20"
+            }`}
+          >
+            {menuOpen ? <X size={19} /> : <Menu size={19} />}
+          </button>
 
-      {/* MOBILE SLIDE PANEL */}
-      <div
-        className={`fixed top-0 right-0 h-screen w-72 flex flex-col items-center justify-center gap-7 bg-gradient-to-b from-brand-dark to-[#2d2a6e] shadow-[-8px_0_32px_rgba(79,70,229,0.4)] transition-transform duration-300 z-[99] md:hidden ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <button
-          className="absolute top-5 right-5 bg-transparent border-0 cursor-pointer text-white/70 hover:text-white"
-          onClick={() => setMenuOpen(false)}
-        >
-          <X size={24} />
-        </button>
-
-        {user ? (
-          <>
-            <span className="text-base font-semibold text-white">
-              Hello, {firstName}
-            </span>
-
-            {user.role === "user" ? (
+          {/* Dropdown */}
+          <div
+            className={`absolute top-full right-0 mt-3 w-64 bg-white rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.22)] border border-gray-100 overflow-hidden origin-top-right transition-all duration-200 ${
+              menuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+            }`}
+          >
+            {user ? (
               <>
-                <Link to="/profile" className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
-                  My Profile
-                </Link>
-                <Link to="/orders" className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
-                  My Orders
-                </Link>
-                <Link to="/wishlist" className="flex items-center gap-1.5 text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
-                  <Heart size={16} />
-                  Wishlist
-                  {wishlistCount > 0 && (
-                    <span className="bg-red-500 text-white text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full">
-                      {wishlistCount}
-                    </span>
+                {/* Header strip */}
+                <div className="bg-gradient-to-r from-brand-dark via-brand to-[#7c3aed] text-white px-4 py-3.5 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-white/15 border border-white/25 flex items-center justify-center font-extrabold text-[0.78rem]">
+                    {initials || "?"}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/70">Signed in as</p>
+                    <p className="text-[0.88rem] font-bold leading-tight truncate">{firstName}</p>
+                  </div>
+                </div>
+
+                {/* Menu items */}
+                <div className="py-1.5">
+                  {isCustomer ? (
+                    <>
+                      <Link to="/profile" className={itemCls}>
+                        <UserIcon size={15} className="text-brand" />
+                        My Profile
+                        <ChevronRight size={13} className="ml-auto text-gray-300" />
+                      </Link>
+                      <Link to="/orders" className={itemCls}>
+                        <ClipboardList size={15} className="text-brand" />
+                        My Orders
+                        <ChevronRight size={13} className="ml-auto text-gray-300" />
+                      </Link>
+                      <Link to="/wishlist" className={itemCls}>
+                        <Heart size={15} className="text-brand" />
+                        Wishlist
+                        {wishlistCount > 0 && (
+                          <span className="ml-auto bg-red-500 text-white text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full">
+                            {wishlistCount}
+                          </span>
+                        )}
+                      </Link>
+                      <Link to="/cart" className={itemCls}>
+                        <ShoppingCart size={15} className="text-brand" />
+                        Cart
+                        {count > 0 && (
+                          <span className="ml-auto bg-brand text-white text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full">
+                            {count}
+                          </span>
+                        )}
+                      </Link>
+                    </>
+                  ) : (
+                    <Link to={adminLinkTarget} className={itemCls}>
+                      <Shield size={15} className="text-brand" />
+                      {adminLinkLabel}
+                      <ChevronRight size={13} className="ml-auto text-gray-300" />
+                    </Link>
                   )}
-                </Link>
+                </div>
+
+                <div className="border-t border-gray-100">
+                  <button onClick={handleLogout} className={`${itemCls} text-red-500`}>
+                    <LogOut size={15} className="text-red-500" />
+                    Logout
+                  </button>
+                </div>
               </>
             ) : (
-              <Link to={adminLinkTarget} className="text-white no-underline font-medium text-[0.95rem] hover:text-brand-medium transition-colors">
-                {adminLinkLabel}
-              </Link>
+              <div className="p-3">
+                <Link
+                  to="/login"
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-brand to-[#7c3aed] text-white rounded-xl font-bold text-[0.88rem] no-underline transition-all hover:opacity-90"
+                >
+                  <LogIn size={16} />
+                  Sign In
+                </Link>
+                <p className="text-[0.78rem] text-gray-500 text-center mt-2">
+                  New here?{" "}
+                  <Link to="/signup" className="text-brand font-bold no-underline">Create account</Link>
+                </p>
+              </div>
             )}
-
-            {user.role === "user" && !isAdminPage && (
-              <Link to="/cart" className="relative text-white no-underline transition-all hover:text-brand-medium">
-                <ShoppingCart size={26} />
-                {count > 0 && (
-                  <span className="absolute -top-2 -right-2.5 bg-brand text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.65rem] font-bold leading-none">
-                    {count > 99 ? "99+" : count}
-                  </span>
-                )}
-              </Link>
-            )}
-
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 bg-transparent border-0 text-white/80 cursor-pointer transition-all hover:text-white text-base font-medium"
-            >
-              <LogOut size={20} />
-              Logout
-            </button>
-          </>
-        ) : (
-          <Link
-            to="/login"
-            className="flex items-center gap-2 text-white no-underline font-semibold text-base transition-all hover:text-brand-medium"
-          >
-            <LogIn size={22} />
-            Sign In
-          </Link>
-        )}
+          </div>
+        </div>
       </div>
     </nav>
   );
