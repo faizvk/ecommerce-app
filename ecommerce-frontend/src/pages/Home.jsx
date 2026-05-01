@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { fetchProductsThunk } from "../redux/slice/productSlice";
@@ -8,12 +8,12 @@ import { fetchCartThunk } from "../redux/slice/cartItemsSlice";
 import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
 import { getProductRating } from "../utils/productMeta";
 
-import ProductCard from "../components/ProductCard";
 import ProductRow from "../components/ProductRow";
 import HeroCarousel from "../components/HeroCarousel";
 import OfferBanner from "../components/OfferBanner";
 import Testimonials from "../components/Testimonials";
-import { CATEGORY_CONFIG, PREVIEW_LIMIT } from "../utils/productCategory";
+import PromoBanners from "../components/PromoBanners";
+import { CATEGORY_CONFIG } from "../utils/productCategory";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones, Flame,
   Sparkles, Star, Wallet, Mail, Send,
@@ -30,6 +30,14 @@ const CATEGORY_TILE_GRADIENTS = {
   "electronics":      "from-blue-400 to-indigo-500",
   "fashion":          "from-pink-400 to-rose-500",
   "dairy":            "from-amber-300 to-orange-400",
+  "technology":       "from-cyan-400 to-sky-500",
+  "home appliances":  "from-emerald-400 to-teal-500",
+};
+
+const CATEGORY_ROW_ACCENT = {
+  "electronics":      "from-blue-400 to-indigo-500",
+  "fashion":          "from-pink-400 to-rose-500",
+  "dairy":            "from-amber-400 to-orange-500",
   "technology":       "from-cyan-400 to-sky-500",
   "home appliances":  "from-emerald-400 to-teal-500",
 };
@@ -64,24 +72,24 @@ export default function Home() {
       .filter((p) => p.costPrice && p.salePrice && p.costPrice > p.salePrice)
       .map((p) => ({ ...p, _discount: (p.costPrice - p.salePrice) / p.costPrice }))
       .sort((a, b) => b._discount - a._discount)
-      .slice(0, 12);
+      .slice(0, 14);
   }, [products]);
 
   const topRated = useMemo(() => {
     return [...(products || [])]
       .map((p) => ({ ...p, _rating: getProductRating(p).rating }))
       .sort((a, b) => b._rating - a._rating)
-      .slice(0, 12);
+      .slice(0, 14);
   }, [products]);
 
   const newArrivals = useMemo(() => {
     return [...(products || [])]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 12);
+      .slice(0, 14);
   }, [products]);
 
   const budgetPicks = useMemo(() => {
-    return (products || []).filter((p) => p.salePrice <= 999).slice(0, 12);
+    return (products || []).filter((p) => p.salePrice <= 999).slice(0, 14);
   }, [products]);
 
   const goToCategory = (category) => {
@@ -169,7 +177,6 @@ export default function Home() {
                 onClick={() => goToCategory(key)}
                 className="group relative bg-white rounded-2xl border border-gray-100 p-5 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5"
               >
-                {/* Decorative gradient blur */}
                 <div className={`absolute -top-10 -right-8 w-28 h-28 rounded-full bg-gradient-to-br ${gradient} blur-2xl opacity-30 group-hover:opacity-60 transition-opacity`} />
                 <div className="relative">
                   <div className="text-3xl md:text-[2rem] mb-2 leading-none">{emoji}</div>
@@ -188,9 +195,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TOP DEALS — horizontal scroller */}
+      {/* PROMOTIONAL BANNER CARDS */}
+      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-8">
+        <PromoBanners />
+      </section>
+
+      {/* TOP DEALS */}
       {topDeals.length > 0 && (
-        <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-10">
+        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
           <ProductRow
             title="🔥 Top Deals of the Day"
             subtitle="Biggest discounts, while stocks last"
@@ -227,59 +239,30 @@ export default function Home() {
         </nav>
       </section>
 
-      {/* PRODUCTS BY CATEGORY (existing grids — wider cards now) */}
+      {/* PER-CATEGORY HORIZONTAL SCROLLERS */}
       <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-8">
         {CATEGORY_CONFIG.map(({ key, label, emoji }) => {
           const list = productsByCategory[key] || [];
           if (list.length === 0) return null;
 
-          const preview = list.slice(0, PREVIEW_LIMIT);
-          const hasMore = list.length > PREVIEW_LIMIT;
-
           return (
-            <section key={key} className="mb-12" aria-labelledby={`category-${key}`}>
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center text-lg flex-shrink-0">
-                    {emoji}
-                  </div>
-                  <div>
-                    <h2
-                      id={`category-${key}`}
-                      className="text-lg md:text-xl font-extrabold text-gray-900 leading-none"
-                    >
-                      {label}
-                    </h2>
-                    <p className="text-[0.75rem] text-gray-400 mt-0.5">{list.length} products</p>
-                  </div>
-                </div>
-
-                {hasMore && (
-                  <button
-                    className="flex items-center gap-1 text-[0.82rem] font-semibold text-brand hover:text-brand-dark transition-colors cursor-pointer border border-brand/25 bg-brand-light hover:bg-brand hover:text-white rounded-full px-3.5 py-1.5"
-                    onClick={() => goToCategory(key)}
-                  >
-                    View All <ChevronRight size={14} />
-                  </button>
-                )}
-              </div>
-
-              {/* Wider cards: 2 → 3 → 3 → 4 */}
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
-                {preview.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
-              </div>
-            </section>
+            <ProductRow
+              key={key}
+              title={`${emoji} Best in ${label}`}
+              subtitle={`${list.length} curated picks for you`}
+              accent={CATEGORY_ROW_ACCENT[key] || "from-brand to-brand-medium"}
+              products={list.slice(0, 12)}
+              viewAllHref={`/search?category=${encodeURIComponent(key)}`}
+            />
           );
         })}
       </section>
 
       {/* TOP RATED */}
       {topRated.length > 0 && (
-        <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-2">
+        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
           <ProductRow
-            title="Top Rated"
+            title="⭐ Top Rated"
             subtitle="Customer favourites with stellar reviews"
             icon={Star}
             accent="from-amber-400 to-orange-500"
@@ -307,7 +290,7 @@ export default function Home() {
       {budgetPicks.length > 0 && (
         <section className="max-w-[1280px] mx-auto px-4 md:px-6">
           <ProductRow
-            title="Under ₹999"
+            title="💰 Under ₹999"
             subtitle="Wallet-friendly steals"
             icon={Wallet}
             accent="from-emerald-400 to-teal-500"
