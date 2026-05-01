@@ -112,7 +112,7 @@ export default function ProductRow({
 
         <div
           ref={scrollRef}
-          className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory px-4 md:px-6 py-1"
+          className="flex gap-3 md:gap-4 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth snap-x snap-mandatory px-4 md:px-6 py-3"
         >
           {products.map((p) => (
             <div
