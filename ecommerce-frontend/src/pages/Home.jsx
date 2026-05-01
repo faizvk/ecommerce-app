@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { fetchProductsThunk } from "../redux/slice/productSlice";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
+import { fetchCartThunk } from "../redux/slice/cartItemsSlice";
 import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
 
 import ProductCard from "../components/ProductCard";
@@ -24,12 +25,14 @@ export default function Home() {
   const navigate = useNavigate();
 
   const { products, loading, error } = useSelector((state) => state.product);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(refreshCartCountThunk());
     dispatch(fetchProductsThunk());
     dispatch(fetchActiveOffersThunk());
-  }, [dispatch]);
+    if (user?.role === "user") dispatch(fetchCartThunk());
+  }, [dispatch, user?.role]);
 
   const productsByCategory = useMemo(() => {
     const map = {};

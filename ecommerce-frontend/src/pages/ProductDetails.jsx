@@ -14,7 +14,7 @@ import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
 import { buildOfferMap, getOfferPricing } from "../utils/applyOffer";
 import { fadeIn } from "../animations/fadeIn";
 import ProductCard from "../components/ProductCard";
-import { ShoppingCart, ChevronRight, Truck, RefreshCcw, ShieldCheck, Tag, Sparkles, Clock } from "lucide-react";
+import { ShoppingCart, ChevronRight, Truck, RefreshCcw, ShieldCheck, Tag, Sparkles, Clock, Minus, Plus } from "lucide-react";
 
 const TRUST_BADGES = [
   { icon: Truck, label: "Free Delivery", sub: "On orders above ₹499" },
@@ -33,9 +33,13 @@ export default function ProductDetails() {
 
   const [activeImage, setActiveImage] = useState(0);
   const [adding, setAdding] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const offerMap = useMemo(() => buildOfferMap(activeOffers), [activeOffers]);
   const pricing = product ? getOfferPricing(product, offerMap) : null;
+
+  // Reset quantity when product changes
+  useEffect(() => { setQuantity(1); }, [id]);
 
   useEffect(() => {
     dispatch(fetchProductByIdThunk(id));
@@ -54,16 +58,26 @@ export default function ProductDetails() {
     if (user.role !== "user") return;
     setAdding(true);
     try {
-      await dispatch(addToCartThunk({ productId: product._id })).unwrap();
+      await dispatch(addToCartThunk({ productId: product._id, quantity })).unwrap();
       dispatch(fetchCartThunk());
       dispatch(refreshCartCountThunk());
-      toast.success("Added to cart!");
+      toast.success(`${quantity} ${quantity === 1 ? "item" : "items"} added to cart!`);
     } catch {
       toast.error("Failed to add to cart.");
     } finally {
       setAdding(false);
     }
   };
+
+  const incQty = () => {
+    if (!product) return;
+    if (quantity >= product.stock) {
+      toast.info(`Only ${product.stock} in stock`, { autoClose: 1500 });
+      return;
+    }
+    setQuantity((q) => q + 1);
+  };
+  const decQty = () => setQuantity((q) => Math.max(1, q - 1));
 
   if (loading || !product) {
     return (
@@ -231,16 +245,55 @@ export default function ProductDetails() {
             </div>
           )}
 
-          {/* ADD TO CART */}
+          {/* QUANTITY + ADD TO CART */}
           {isUser && (
-            <button
-              className="py-3.5 px-6 bg-brand text-white border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer flex items-center justify-center gap-2.5 transition-all hover:bg-brand-dark hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_14px_rgba(79,70,229,0.3)]"
-              disabled={isOutOfStock || adding}
-              onClick={handleAdd}
-            >
-              <ShoppingCart size={20} />
-              {isOutOfStock ? "Out of Stock" : adding ? "Adding..." : "Add to Cart"}
-            </button>
+            <div className="flex flex-col gap-3">
+              {!isOutOfStock && (
+                <div className="flex items-center gap-3">
+                  <span className="text-[0.82rem] font-bold text-gray-500 uppercase tracking-wider">Quantity</span>
+                  <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden">
+                    <button
+                      onClick={decQty}
+                      disabled={quantity <= 1 || adding}
+                      aria-label="Decrease quantity"
+                      className="w-10 h-10 flex items-center justify-center text-gray-700 cursor-pointer hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <Minus size={15} />
+                    </button>
+                    <span className="w-12 text-center font-extrabold text-gray-900 tabular-nums">{quantity}</span>
+                    <button
+                      onClick={incQty}
+                      disabled={quantity >= product.stock || adding}
+                      aria-label="Increase quantity"
+                      className="w-10 h-10 flex items-center justify-center text-gray-700 cursor-pointer hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <Plus size={15} />
+                    </button>
+                  </div>
+                  {quantity > 1 && (
+                    <span className="text-[0.85rem] text-gray-500">
+                      Subtotal:{" "}
+                      <span className="font-bold text-brand-dark">₹{displayPrice * quantity}</span>
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <button
+                className="py-3.5 px-6 bg-brand text-white border-0 rounded-xl text-[0.95rem] font-semibold cursor-pointer flex items-center justify-center gap-2.5 transition-all hover:bg-brand-dark hover:-translate-y-px disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_14px_rgba(79,70,229,0.3)]"
+                disabled={isOutOfStock || adding}
+                onClick={handleAdd}
+              >
+                <ShoppingCart size={20} />
+                {isOutOfStock
+                  ? "Out of Stock"
+                  : adding
+                  ? "Adding..."
+                  : quantity > 1
+                  ? `Add ${quantity} to Cart`
+                  : "Add to Cart"}
+              </button>
+            </div>
           )}
 
           {/* TRUST BADGES */}
