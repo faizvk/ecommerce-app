@@ -103,7 +103,7 @@ export default function Navbar() {
               searchInputRef.current?.blur();
             }}
           >
-            <div className={`relative flex items-center w-full transition-all duration-200 rounded-2xl ${
+            <div className={`relative flex items-center w-full overflow-hidden transition-all duration-200 rounded-2xl ${
               searchFocused
                 ? "bg-white shadow-[0_0_0_3px_rgba(129,140,248,0.4),0_8px_24px_rgba(0,0,0,0.12)]"
                 : "bg-white/95 hover:bg-white shadow-[0_2px_10px_rgba(0,0,0,0.08)]"
@@ -145,15 +145,15 @@ export default function Navbar() {
                 </kbd>
               )}
 
-              {/* Submit button — visible on desktop, hidden on mobile (Enter key still works) */}
+              {/* Submit button — fills full height of the bar; visible on desktop only */}
               <button
                 type="submit"
                 disabled={!searchText.trim()}
                 aria-label="Search"
-                className="hidden md:flex items-center justify-center gap-1 px-4 mr-1 py-1.5 bg-gradient-to-r from-brand to-[#7c3aed] text-white rounded-xl border-0 font-bold text-[0.82rem] cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                className="hidden md:flex items-center justify-center gap-1.5 self-stretch px-5 bg-gradient-to-r from-brand to-[#7c3aed] text-white border-0 font-bold text-[0.85rem] cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 Search
-                <ArrowRight size={13} />
+                <ArrowRight size={14} />
               </button>
             </div>
           </form>
