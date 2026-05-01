@@ -38,85 +38,21 @@ if (envPath) {
   dotenv.config();
 }
 
-/* ─────────────────────────  IMAGE POOLS  ───────────────────────── */
-const u = (id) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`;
+/* ─────────────────────────  IMAGES  ─────────────────────────
+ * Uses Picsum.photos — every URL returns a real photograph and is
+ * fully deterministic per seed. Each product gets two unique images.
+ *
+ * Replace these later with real product photos via the admin UI or
+ * a Cloudinary upload pipeline when you have real catalogue assets.
+ * ─────────────────────────────────────────────────────────── */
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-const IMAGES = {
-  electronics: [
-    u("1505740420928-5e560c06d30e"), // headphones
-    u("1583394838336-acd977736f90"), // earbuds
-    u("1546054454-aa26e2b734c7"),    // smartwatch
-    u("1542751371-adc38448a05e"),    // mechanical keyboard
-    u("1527443224154-c4a3942d3acf"), // gaming mouse
-    u("1558089687-f1d1e6a0cde3"),    // wireless charger
-    u("1572569511254-d8f925fe2cbb"), // smart speaker
-    u("1585399000684-d2f72660f092"), // phone
-    u("1583863788434-e58a36330cf0"), // power bank
-    u("1517336714731-489689fd1ca8"), // gadget setup
-    u("1611532736597-de2d4265fba3"), // electronic device
-    u("1556656793-08538906a9f8"),    // earbuds case
-  ],
-  fashion: [
-    u("1542291026-7eec264c27ff"),    // red sneakers
-    u("1542272604-787c3835535d"),    // jeans
-    u("1556905055-8f358a7a47b2"),    // sweater knit
-    u("1521572163474-6864f9cf17ab"), // t-shirt grey
-    u("1551028719-00167b16eac5"),    // sneakers white
-    u("1591047139829-d91aecb6caea"), // backpack canvas
-    u("1572635196237-14b3f281503f"), // sunglasses
-    u("1525507119028-ed4c629a60a3"), // shirt
-    u("1521577352947-9bb58764b69a"), // hoodie
-    u("1539109136881-3be0616acf4b"), // jacket
-    u("1547949003-9792a18a2601"),    // watch
-    u("1503341504253-dff4815485f1"), // shoes leather
-  ],
-  dairy: [
-    u("1550583724-b2692b85b150"),    // milk bottle
-    u("1559561853-08451507cbe7"),    // cheese block
-    u("1571212515416-fef01fc43637"), // yogurt
-    u("1628088062854-d1870b4553da"), // butter
-    u("1628088062854-d1870b4553da"), // butter (alt)
-    u("1542838132-92c53300491e"),    // cream
-    u("1576186726115-4d51596775d1"), // dairy products
-    u("1559561853-08451507cbe7"),    // cheese
-    u("1486297678162-eb2a19b0a32d"), // milk glass
-    u("1571835847905-26b6f8ba60de"), // yogurt cup
-  ],
-  technology: [
-    u("1496181133206-80ce9b88a853"), // laptop on desk
-    u("1593642632559-0c6d3fc62b89"), // laptop closed
-    u("1547119957-637f8679db1e"),    // monitor
-    u("1588702547923-7093a6c3ba33"), // keyboard monitor
-    u("1517336714731-489689fd1ca8"), // gaming setup rgb
-    u("1587202372775-e229f172b9d7"), // cable accessories
-    u("1591488320449-011701bb6704"), // mouse rgb
-    u("1623128830050-43dffd11dba7"), // ssd drive
-    u("1576508302010-c8c5ed14f6e3"), // headset gaming
-    u("1622653281474-04e8f4cd4d5e"), // dock station
-    u("1518770660439-4636190af475"), // circuit chip
-    u("1531297484001-80022131f5a1"), // tech gadgets
-  ],
-  homeAppliances: [
-    u("1556909114-f6e7ad7d3136"),    // kitchen appliance
-    u("1585515320310-259814833e62"), // microwave
-    u("1601628828688-632f38a5a7d0"), // vacuum
-    u("1585032226651-759b368d7246"), // coffee maker
-    u("1588776814546-1ffcf47267a5"), // kitchen
-    u("1610551543000-d4c5e5fcb3f3"), // air fryer
-    u("1593642632823-8f785ba67e45"), // mixer
-    u("1559056199-641a0ac8b55e"),    // toaster
-    u("1556910108-3d9a10b6a8b5"),    // kettle
-    u("1584269600464-37b1b58a9fe7"), // blender
-    u("1574269909862-7e1d70bb8078"), // home appliance
-    u("1581090700227-1e8e9fb1f3d4"), // smart home
-  ],
-};
-
-const pickImages = (pool, idx) => {
-  const a = pool[idx % pool.length];
-  const b = pool[(idx + 3) % pool.length];
-  return [a, b];
+const buildImagesFor = (category, index, name) => {
+  const base = `${slug(category)}-${index}-${slug(name).slice(0, 24)}`;
+  return [
+    `https://picsum.photos/seed/${base}/800/800`,
+    `https://picsum.photos/seed/${base}-alt/800/800`,
+  ];
 };
 
 /* ─────────────────────────  PRODUCT CATALOG  ───────────────────────── */
@@ -290,7 +226,7 @@ const HOME_APPLIANCES = [
 ];
 
 /* ─────────────────────────  ASSEMBLE & SEED  ───────────────────────── */
-function buildDocs(catalog, category, imagePool, sellerId) {
+function buildDocs(catalog, category, sellerId) {
   return catalog.map((row, i) => {
     const [name, description, costPrice, salePrice] = row;
     return {
@@ -301,7 +237,7 @@ function buildDocs(catalog, category, imagePool, sellerId) {
       salePrice,
       category,
       stock: 8 + Math.floor(Math.random() * 90),
-      image: pickImages(imagePool, i),
+      image: buildImagesFor(category, i, name),
       deleted: false,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -334,11 +270,11 @@ async function run() {
 
   // Build all docs
   const docs = [
-    ...buildDocs(ELECTRONICS,      "electronics",      IMAGES.electronics,    admin._id),
-    ...buildDocs(FASHION,          "fashion",          IMAGES.fashion,        admin._id),
-    ...buildDocs(DAIRY,            "dairy",            IMAGES.dairy,          admin._id),
-    ...buildDocs(TECHNOLOGY,       "technology",       IMAGES.technology,     admin._id),
-    ...buildDocs(HOME_APPLIANCES,  "home appliances",  IMAGES.homeAppliances, admin._id),
+    ...buildDocs(ELECTRONICS,      "electronics",      admin._id),
+    ...buildDocs(FASHION,          "fashion",          admin._id),
+    ...buildDocs(DAIRY,            "dairy",            admin._id),
+    ...buildDocs(TECHNOLOGY,       "technology",       admin._id),
+    ...buildDocs(HOME_APPLIANCES,  "home appliances",  admin._id),
   ];
 
   // Bypass Mongoose validators (so costPrice can be > salePrice for the strike-through UI)
