@@ -39,19 +39,87 @@ if (envPath) {
 }
 
 /* ─────────────────────────  IMAGES  ─────────────────────────
- * Uses Picsum.photos — every URL returns a real photograph and is
- * fully deterministic per seed. Each product gets two unique images.
- *
- * Replace these later with real product photos via the admin UI or
- * a Cloudinary upload pipeline when you have real catalogue assets.
+ * Uses Loremflickr — pulls real Flickr photos by tag, so images
+ * actually match each product (e.g. "earbuds" returns earbud photos).
+ * The `lock` param makes each URL deterministic.
  * ─────────────────────────────────────────────────────────── */
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+const STOPWORDS = new Set([
+  "pro", "plus", "mini", "max", "series", "elite", "premium", "wireless", "smart",
+  "classic", "vintage", "genuine", "pure", "fresh", "cordless", "electric", "ultra",
+  "slim", "digital", "and", "with", "the", "of", "a", "an", "high", "for", "in",
+  "on", "by", "ml", "lt", "kg", "gm", "pc", "pcs", "set", "pack", "fit", "size",
+  "made", "from", "rich", "pure", "best", "top", "new", "free", "full",
+]);
+
+// Hand-tuned keyword overrides for products where the auto-extracted keyword
+// would return generic/unrelated images on Flickr.
+const KEYWORD_OVERRIDES = {
+  electronics: {
+    "Smart Home Hub": "speaker,smarthome",
+    "USB-C 7-in-1 Hub": "usb,hub",
+    "Smart Bulbs (Pack of 4)": "lightbulb,led",
+    "Smart Wi-Fi Plug (Pack of 2)": "smartplug",
+    "VR Headset for Mobile": "vr,headset",
+  },
+  fashion: {
+    "Cotton T-Shirts (Pack of 3)": "tshirt",
+    "Crewneck Basic T-Shirt": "tshirt",
+    "Track Suit Set (2pc)": "tracksuit",
+  },
+  dairy: {
+    "Pure Cow's Ghee (500g)": "ghee,butter",
+    "Fresh Curd / Yogurt (500g)": "yogurt,curd",
+  },
+  technology: {
+    "USB-C 7-in-1 Hub": "usb,hub",
+    "8-Port Gigabit Network Switch": "router,network",
+    "Wi-Fi 6 Router (AX1800)": "router,wifi",
+    "NAS 2-Bay 4TB": "harddrive,storage",
+    "HDMI Capture Card 4K": "computer,electronics",
+    "Stream Deck Mini (6 keys)": "keyboard,streaming",
+    "18U Server Rack Cabinet": "server,datacenter",
+    "Smart RGB LED Strip 5m": "led,lights",
+  },
+  homeAppliances: {
+    "Smart Wi-Fi Thermostat": "thermostat",
+    "Tower Fan Bladeless": "fan,tower",
+    "Ceiling Fan with LED Light": "fan,ceiling",
+    "Vacuum Sealer Machine": "vacuum,sealer",
+    "Hand Mixer with Stand": "mixer,kitchen",
+    "Belgian Waffle Maker": "waffle",
+    "Cold-Press Slow Juicer": "juicer",
+    "Sonic Electric Toothbrush": "toothbrush",
+  },
+};
+
+const categoryKeyForOverride = (cat) => {
+  if (cat === "home appliances") return "homeAppliances";
+  return cat;
+};
+
+function extractKeyword(name) {
+  const cleaned = name
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, " ")           // strip parenthesised qualifiers like (1L)
+    .replace(/[^\w\s-]/g, " ")            // strip punctuation
+    .replace(/\d+\.?\d*\s*(g|gm|kg|ml|l|w|inch|in|cm|mm|hz|fps|cup|oz)\b/gi, " ") // strip measurements
+    .replace(/\d+/g, " ")                 // strip raw numbers
+    .split(/[\s-]+/)
+    .map((w) => w.trim())
+    .filter((w) => w && w.length >= 3 && !STOPWORDS.has(w));
+  return cleaned.slice(-2).join(",");
+}
+
 const buildImagesFor = (category, index, name) => {
-  const base = `${slug(category)}-${index}-${slug(name).slice(0, 24)}`;
+  const overrides = KEYWORD_OVERRIDES[categoryKeyForOverride(category)] || {};
+  const productKw = overrides[name] || extractKeyword(name);
+  const catKw = slug(category).replace("-", ","); // "home-appliances" -> "home,appliances"
+  const tags = productKw ? `${productKw}` : catKw;
   return [
-    `https://picsum.photos/seed/${base}/800/800`,
-    `https://picsum.photos/seed/${base}-alt/800/800`,
+    `https://loremflickr.com/800/800/${tags}?lock=${index * 7 + 11}`,
+    `https://loremflickr.com/800/800/${tags}?lock=${index * 7 + 23}`,
   ];
 };
 
