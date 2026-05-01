@@ -24,18 +24,6 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const searchInputRef = useRef(null);
 
-  // Keyboard shortcut: "/" focuses search (desktop only)
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "/" && !e.target.matches("input, textarea")) {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
   const isAdminPage = location.pathname.startsWith("/admin");
 
@@ -129,8 +117,8 @@ export default function Navbar() {
                 className="flex-1 min-w-0 px-3 py-2.5 md:py-3 bg-transparent border-0 text-gray-900 text-[0.9rem] outline-none placeholder:text-gray-400"
               />
 
-              {/* Trailing actions: clear button or kbd hint */}
-              {searchText ? (
+              {/* Clear button */}
+              {searchText && (
                 <button
                   type="button"
                   onClick={() => { setSearchText(""); searchInputRef.current?.focus(); }}
@@ -139,10 +127,6 @@ export default function Navbar() {
                 >
                   <X size={13} />
                 </button>
-              ) : (
-                <kbd className="hidden md:inline-flex items-center gap-0.5 mr-2.5 px-1.5 py-0.5 text-[0.65rem] font-bold text-gray-400 bg-gray-100 border border-gray-200 rounded">
-                  /
-                </kbd>
               )}
 
               {/* Submit button — fills full height of the bar; visible on desktop only */}
