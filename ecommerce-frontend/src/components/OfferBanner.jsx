@@ -76,12 +76,12 @@ export default function OfferBanner() {
             />
           )}
 
-          <div className="relative flex flex-col sm:flex-row sm:items-center gap-4 p-5 md:p-6">
+          <div className="relative flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-6 p-6 md:p-9 min-h-[180px] md:min-h-[220px]">
             {/* Discount pill */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="bg-white/15 border border-white/25 backdrop-blur-sm rounded-2xl px-4 py-2.5 flex items-center gap-2">
-                <Sparkles size={18} className="text-white" />
-                <span className="text-xl md:text-2xl font-extrabold tracking-tight whitespace-nowrap">
+              <div className="bg-white/15 border border-white/25 backdrop-blur-sm rounded-2xl px-5 py-3.5 md:px-6 md:py-4 flex items-center gap-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+                <Sparkles size={22} className="text-white" />
+                <span className="text-2xl md:text-3xl font-extrabold tracking-tight whitespace-nowrap">
                   {discountLabel}
                 </span>
               </div>
@@ -89,16 +89,19 @@ export default function OfferBanner() {
 
             {/* Title + meta */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-base md:text-lg font-extrabold leading-tight">{offer.title}</h3>
+              <span className="inline-block mb-1.5 text-[0.65rem] md:text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white/70">
+                Limited time offer
+              </span>
+              <h3 className="text-lg md:text-2xl font-extrabold leading-tight">{offer.title}</h3>
               {offer.description && (
-                <p className="text-[0.82rem] text-white/80 mt-0.5 line-clamp-1">{offer.description}</p>
+                <p className="text-[0.88rem] md:text-[0.95rem] text-white/80 mt-1.5 line-clamp-2">{offer.description}</p>
               )}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[0.78rem] text-white/85">
-                <span className="inline-flex items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-[0.8rem] text-white/85">
+                <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-2.5 py-1 rounded-full">
                   <Tag size={11} />
                   {productCount} product{productCount !== 1 ? "s" : ""}
                 </span>
-                <span className="inline-flex items-center gap-1.5 font-mono font-bold tabular-nums">
+                <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 px-2.5 py-1 rounded-full font-mono font-bold tabular-nums">
                   <Clock size={11} />
                   Ends in {formatTimeLeft(timeLeft)}
                 </span>
@@ -108,22 +111,22 @@ export default function OfferBanner() {
             {/* CTA */}
             <button
               onClick={() => navigate("/search?offer=" + offer._id)}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-white text-brand-dark rounded-xl font-bold text-sm transition-all hover:bg-brand-light hover:scale-105 shadow-md flex-shrink-0"
+              className="flex items-center gap-1.5 px-5 py-3 md:px-6 md:py-3.5 bg-white text-brand-dark rounded-xl font-bold text-[0.92rem] md:text-base transition-all hover:bg-brand-light hover:scale-105 shadow-[0_8px_24px_rgba(0,0,0,0.2)] flex-shrink-0"
             >
               Shop Sale
-              <ChevronRight size={15} />
+              <ChevronRight size={16} />
             </button>
           </div>
 
           {/* Slide indicators (only if multiple) */}
           {liveOffers.length > 1 && (
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
               {liveOffers.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setIndex(i)}
                   className={`rounded-full transition-all ${
-                    i === index ? "w-4 h-1 bg-white" : "w-1 h-1 bg-white/40"
+                    i === index ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
                   }`}
                   aria-label={`Show offer ${i + 1}`}
                 />
