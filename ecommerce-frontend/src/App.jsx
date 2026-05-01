@@ -40,6 +40,7 @@ const AdminAddProduct = lazy(() => import("./admin/AdminAddProduct"));
 const AdminEditProduct = lazy(() => import("./admin/AdminEditProduct"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders"));
 const AdminUsers = lazy(() => import("./admin/AdminUsers"));
+const AdminOffers = lazy(() => import("./admin/AdminOffers"));
 
 export default function App() {
   useFadeInScroll();
@@ -147,6 +148,7 @@ export default function App() {
                 />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="offers" element={<AdminOffers />} />
               </Route>
             </Route>
 
