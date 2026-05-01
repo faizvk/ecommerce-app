@@ -142,7 +142,7 @@ export default function ProductCard({ product }) {
   return (
     <Link
       to={`/product/${product._id}`}
-      className="no-underline block group"
+      className="no-underline block group h-full"
       {...fadeIn({ direction: "up", distance: 50, duration: 0.6 })}
     >
       <div className={`bg-white rounded-2xl overflow-hidden border transition-all duration-300 h-full flex flex-col hover:-translate-y-1 ${cardBorderCls}`}>
