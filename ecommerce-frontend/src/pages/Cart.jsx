@@ -60,13 +60,19 @@ export default function Cart() {
 
   if (error) return <p className="text-center py-12 text-red-500">{error}</p>;
 
-  const totalSavings = items.reduce((acc, item) => {
+  // Filter out items whose underlying product was deleted (productId now null)
+  const validItems = items.filter((it) => it && it.productId && it.productId._id);
+  const unavailableCount = items.length - validItems.length;
+
+  const totalSavings = validItems.reduce((acc, item) => {
     const product = item.productId;
     if (product?.costPrice && product.costPrice > item.price) {
       acc += (product.costPrice - item.price) * item.quantity;
     }
     return acc;
   }, 0);
+
+  const subtotal = validItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
   return (
     <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 md:py-8">
@@ -75,14 +81,29 @@ export default function Cart() {
         <h1 className="text-xl md:text-2xl font-extrabold text-gray-900">
           Your Cart
         </h1>
-        {items.length > 0 && (
+        {validItems.length > 0 && (
           <p className="text-[0.85rem] text-gray-400 mt-0.5">
-            {items.length} {items.length === 1 ? "item" : "items"} in your cart
+            {validItems.length} {validItems.length === 1 ? "item" : "items"} in your cart
           </p>
         )}
       </div>
 
-      {items.length === 0 ? (
+      {/* Stale items notice */}
+      {unavailableCount > 0 && (
+        <div className="mb-4 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+          <span className="text-xl leading-none mt-0.5">⚠️</span>
+          <div className="flex-1">
+            <p className="text-[0.88rem] font-bold text-amber-800">
+              {unavailableCount} item{unavailableCount > 1 ? "s" : ""} no longer available
+            </p>
+            <p className="text-[0.8rem] text-amber-700 mt-0.5">
+              Some products in your cart have been removed from the store. They've been hidden — refresh the page to clean them up.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {validItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-5 text-center">
           <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center">
             <ShoppingCart size={40} className="text-gray-300" />
@@ -105,7 +126,7 @@ export default function Cart() {
         >
           {/* CART ITEMS */}
           <div className="flex-1 flex flex-col gap-3">
-            {items.map((item) => {
+            {validItems.map((item) => {
               const product = item.productId;
               const itemSavings = product?.costPrice && product.costPrice > item.price
                 ? (product.costPrice - item.price) * item.quantity
@@ -194,10 +215,8 @@ export default function Cart() {
 
             <div className="flex flex-col gap-0">
               <div className="flex justify-between items-center py-2.5 border-b border-gray-50 text-[0.88rem]">
-                <span className="text-gray-500">Subtotal ({items.length} items)</span>
-                <span className="font-semibold text-gray-800">
-                  ₹{items.reduce((acc, i) => acc + i.price * i.quantity, 0)}
-                </span>
+                <span className="text-gray-500">Subtotal ({validItems.length} {validItems.length === 1 ? "item" : "items"})</span>
+                <span className="font-semibold text-gray-800">₹{subtotal}</span>
               </div>
               {totalSavings > 0 && (
                 <div className="flex justify-between items-center py-2.5 border-b border-gray-50 text-[0.88rem]">
@@ -215,7 +234,7 @@ export default function Cart() {
 
               <div className="flex justify-between items-center pt-3 pb-1">
                 <span className="text-[0.92rem] font-bold text-gray-800">Total</span>
-                <span className="text-brand text-xl font-extrabold">₹{totalAmount}</span>
+                <span className="text-brand text-xl font-extrabold">₹{unavailableCount > 0 ? subtotal : totalAmount}</span>
               </div>
             </div>
 

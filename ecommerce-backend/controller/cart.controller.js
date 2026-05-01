@@ -23,6 +23,16 @@ export const getCart = async (req, res) => {
       return res.status(404).json({ message: "No cart exists" });
     }
 
+    // Auto-clean: drop entries whose product was deleted/removed.
+    const before = cart.products.length;
+    cart.products = cart.products.filter(
+      (item) => item.productId && !item.productId.deleted
+    );
+    if (cart.products.length !== before) {
+      calculateTotal(cart);
+      await cart.save();
+    }
+
     res.status(200).json({
       success: true,
       cart,
