@@ -255,77 +255,140 @@ export default function ProductDetails() {
       <div className="flex flex-col gap-6 md:flex-row md:gap-10 md:items-start">
         {/* LEFT — IMAGE GALLERY */}
         <div
-          className="w-full md:w-[44%] flex flex-col gap-3"
+          className="w-full md:w-[46%] md:sticky md:top-20"
           {...fadeIn({ direction: "right", distance: 40, duration: 0.7 })}
         >
-          {/* Main image with prev/next */}
-          <div className="relative rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 aspect-square group">
-            {discount > 0 && (
-              <span className={`absolute top-4 left-4 z-10 text-white text-[0.72rem] font-bold px-3 py-1 rounded-full shadow-sm ${
-                pricing.hasOffer
-                  ? "bg-gradient-to-r from-brand to-[#7c3aed]"
-                  : "bg-red-500"
-              }`}>
-                {pricing.hasOffer && "🎉 "}-{discount}% OFF
-              </span>
-            )}
-
-            <button
-              onClick={() => setLightbox(true)}
-              aria-label="Zoom image"
-              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 text-gray-600 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:text-brand"
-            >
-              <ZoomIn size={15} />
-            </button>
-
+          <div className="flex flex-col-reverse gap-3 md:flex-row md:gap-3">
+            {/* THUMBNAIL STRIP — vertical on desktop, horizontal on mobile */}
             {images.length > 1 && (
-              <>
-                <button
-                  onClick={() => navImage(-1)}
-                  aria-label="Previous image"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 text-gray-600 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:text-brand"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  onClick={() => navImage(1)}
-                  aria-label="Next image"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 text-gray-600 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:text-brand"
-                >
-                  <ChevronRight size={16} />
-                </button>
-                {/* Image counter */}
-                <span className="absolute bottom-3 right-3 z-10 text-[0.7rem] font-bold text-white bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
-                  {activeImage + 1} / {images.length}
-                </span>
-              </>
+              <div className="flex md:flex-col gap-2 md:gap-2.5 overflow-x-auto md:overflow-y-auto scrollbar-hide md:max-h-[460px] md:w-[68px] flex-shrink-0">
+                {images.map((img, i) => {
+                  const active = activeImage === i;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImage(i)}
+                      aria-label={`View image ${i + 1}`}
+                      className={`relative w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden cursor-pointer bg-white p-0 transition-all flex-shrink-0 ${
+                        active
+                          ? "ring-2 ring-brand ring-offset-2 ring-offset-white shadow-[0_4px_14px_rgba(79,70,229,0.25)] scale-105"
+                          : "ring-1 ring-gray-200 opacity-70 hover:opacity-100 hover:ring-brand/40 hover:scale-105"
+                      }`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      {active && (
+                        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             )}
 
-            <img
-              src={images[activeImage] || "/placeholder.jpg"}
-              alt={product.name}
-              onClick={() => setLightbox(true)}
-              className="w-full h-full object-contain p-4 md:p-6 cursor-zoom-in transition-transform duration-300"
-            />
-          </div>
+            {/* MAIN IMAGE — premium presentation */}
+            <div className="relative flex-1 group">
+              {/* Soft drop shadow that "floats" the image */}
+              <div className="absolute inset-x-6 bottom-0 h-8 bg-black/15 blur-2xl rounded-full -z-10" />
 
-          {/* Thumbnails */}
-          {images.length > 1 && (
-            <div className="flex gap-2 flex-wrap">
-              {images.map((img, i) => (
+              <div className="relative aspect-square rounded-3xl overflow-hidden border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white">
+                {/* Decorative gradient backdrop */}
+                <div className="absolute inset-0 bg-gradient-to-br from-brand-light/40 via-white to-[#f5f0ff]/40" />
+                <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-brand/5 blur-3xl" />
+                <div className="absolute -bottom-24 -left-16 w-56 h-56 rounded-full bg-[#7c3aed]/5 blur-3xl" />
+
+                {/* Top-left badge stack */}
+                <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+                  {discount > 0 && (
+                    <span className={`inline-flex items-center gap-1 text-white text-[0.72rem] font-extrabold px-3 py-1.5 rounded-full shadow-md ${
+                      pricing.hasOffer
+                        ? "bg-gradient-to-r from-brand to-[#7c3aed]"
+                        : "bg-red-500"
+                    }`}>
+                      {pricing.hasOffer && <Sparkles size={11} />}
+                      -{discount}% OFF
+                    </span>
+                  )}
+                  {pricing.hasOffer && (
+                    <span className="inline-flex items-center gap-1 bg-white/90 backdrop-blur-sm text-[#7c3aed] text-[0.65rem] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#7c3aed]/20 shadow-sm">
+                      Limited Sale
+                    </span>
+                  )}
+                </div>
+
+                {/* Top-right zoom button (glass) */}
                 <button
-                  key={i}
-                  onClick={() => setActiveImage(i)}
-                  aria-label={`View image ${i + 1}`}
-                  className={`w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer bg-transparent p-0 ${
-                    activeImage === i ? "border-brand shadow-md" : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  onClick={() => setLightbox(true)}
+                  aria-label="Zoom image"
+                  className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-gray-700 flex items-center justify-center cursor-pointer transition-all hover:bg-white hover:text-brand hover:scale-110 shadow-md"
                 >
-                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  <ZoomIn size={15} />
                 </button>
-              ))}
+
+                {/* Crossfade image stack */}
+                <div className="absolute inset-0 z-10 flex items-center justify-center">
+                  {images.length === 0 ? (
+                    <img src="/placeholder.jpg" alt={product.name} className="w-full h-full object-contain p-6 md:p-10" />
+                  ) : (
+                    images.map((img, i) => (
+                      <img
+                        key={i}
+                        src={img}
+                        alt={i === activeImage ? product.name : ""}
+                        onClick={() => i === activeImage && setLightbox(true)}
+                        className={`absolute inset-0 w-full h-full object-contain p-6 md:p-10 transition-all duration-500 ease-out ${
+                          i === activeImage
+                            ? "opacity-100 scale-100 cursor-zoom-in"
+                            : "opacity-0 scale-95 pointer-events-none"
+                        }`}
+                      />
+                    ))
+                  )}
+                </div>
+
+                {/* Prev/Next nav (visible at low opacity, full on hover) */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => navImage(-1)}
+                      aria-label="Previous image"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-md border border-white/60 text-gray-700 flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-white hover:text-brand hover:scale-110 shadow-md"
+                    >
+                      <ChevronLeft size={17} />
+                    </button>
+                    <button
+                      onClick={() => navImage(1)}
+                      aria-label="Next image"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-md border border-white/60 text-gray-700 flex items-center justify-center cursor-pointer transition-all opacity-0 group-hover:opacity-100 hover:bg-white hover:text-brand hover:scale-110 shadow-md"
+                    >
+                      <ChevronRight size={17} />
+                    </button>
+
+                    {/* Bottom controls — counter + dot pagination */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-white/80 backdrop-blur-md border border-white/60 rounded-full px-3 py-1.5 shadow-md">
+                      <span className="text-[0.7rem] font-bold text-gray-700 tabular-nums">
+                        {String(activeImage + 1).padStart(2, "0")}
+                        <span className="text-gray-400 mx-0.5">/</span>
+                        {String(images.length).padStart(2, "0")}
+                      </span>
+                      <span className="w-px h-3 bg-gray-300" />
+                      <div className="flex gap-1">
+                        {images.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setActiveImage(i)}
+                            aria-label={`Go to image ${i + 1}`}
+                            className={`rounded-full transition-all ${
+                              i === activeImage ? "w-4 h-1.5 bg-brand" : "w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* RIGHT — DETAILS */}
