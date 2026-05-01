@@ -86,30 +86,28 @@ export default function ProductRow({
           }`}
         />
 
-        {/* Floating left arrow */}
+        {/* Inline left hint */}
         <button
           onClick={() => scrollBy(-1)}
           aria-label="Scroll left"
-          className={`absolute left-2 md:left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-11 md:h-11 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.12)] transition-all hover:border-brand hover:text-brand hover:scale-110 ${
-            canScrollLeft
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
+          className={`absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 text-gray-500 hover:text-brand bg-transparent border-0 cursor-pointer text-[0.72rem] font-bold uppercase tracking-wider transition-all ${
+            canScrollLeft ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         >
-          <ChevronLeft size={17} />
+          <ChevronLeft size={16} />
+          Scroll
         </button>
 
-        {/* Floating right arrow */}
+        {/* Inline right hint */}
         <button
           onClick={() => scrollBy(1)}
           aria-label="Scroll right"
-          className={`absolute right-2 md:right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 md:w-11 md:h-11 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.12)] transition-all hover:border-brand hover:text-brand hover:scale-110 ${
-            canScrollRight
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
+          className={`absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 text-gray-500 hover:text-brand bg-transparent border-0 cursor-pointer text-[0.72rem] font-bold uppercase tracking-wider transition-all ${
+            canScrollRight ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         >
-          <ChevronRight size={17} />
+          Scroll
+          <ChevronRight size={16} />
         </button>
 
         <div
