@@ -698,7 +698,7 @@ export default function ProductDetails() {
                     key={i}
                     className={
                       isLead
-                        ? "text-[1.05rem] md:text-[1.1rem] leading-relaxed text-gray-800 first-letter:text-3xl first-letter:font-extrabold first-letter:text-brand-dark first-letter:mr-1 first-letter:float-left first-letter:leading-none first-letter:mt-1"
+                        ? "text-[1rem] md:text-[1.05rem] leading-relaxed text-gray-800"
                         : "text-[0.95rem] leading-relaxed mt-4"
                     }
                   >
