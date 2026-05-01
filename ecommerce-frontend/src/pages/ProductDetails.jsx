@@ -20,7 +20,8 @@ import ProductCard from "../components/ProductCard";
 import {
   ShoppingCart, ChevronRight, ChevronLeft, Truck, RefreshCcw, ShieldCheck, Tag,
   Sparkles, Clock, Minus, Plus, Heart, Share2, Zap, Check, Info, Package,
-  X, ZoomIn, MapPin, Star,
+  X, ZoomIn, MapPin, Star, BadgeCheck, Award, Settings, IndianRupee,
+  Boxes, Headphones, ChevronDown, FileText,
 } from "lucide-react";
 
 const TRUST_BADGES = [
@@ -625,87 +626,301 @@ export default function ProductDetails() {
 
       {/* TABS SECTION */}
       <div className="mt-12 md:mt-14">
-        <div className="flex gap-1 border-b border-gray-200 overflow-x-auto scrollbar-hide">
-          {TABS.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-2 px-4 md:px-5 py-3 text-[0.85rem] font-semibold border-0 cursor-pointer whitespace-nowrap transition-all relative bg-transparent ${
-                activeTab === key
-                  ? "text-brand"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              <Icon size={14} />
-              {label}
-              {activeTab === key && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand rounded-t-full" />
-              )}
-            </button>
-          ))}
+        {/* Tab nav — pill style */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-4">
+          {TABS.map(({ key, label, icon: Icon }) => {
+            const active = activeTab === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`flex items-center gap-2 px-4 py-2.5 text-[0.85rem] font-semibold rounded-full border cursor-pointer whitespace-nowrap transition-all ${
+                  active
+                    ? "bg-brand text-white border-brand shadow-[0_4px_14px_rgba(79,70,229,0.25)]"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-brand/40 hover:text-brand"
+                }`}
+              >
+                <Icon size={14} />
+                {label}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="bg-white rounded-b-2xl border border-t-0 border-gray-100 shadow-card p-5 md:p-6">
-          {activeTab === "description" && (
-            <div className="prose-sm">
-              <p className="text-[0.92rem] text-gray-600 leading-relaxed whitespace-pre-line">
-                {product.description || "No description available for this product."}
+        {/* ───── DESCRIPTION TAB ───── */}
+        {activeTab === "description" && (
+          <div className="flex flex-col gap-5">
+            {/* Quote card */}
+            <div className="relative bg-gradient-to-br from-white via-white to-brand-light/30 rounded-2xl border border-gray-100 shadow-card overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand to-[#7c3aed]" />
+              <div className="p-5 md:p-7">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText size={14} className="text-brand" />
+                  <span className="text-[0.7rem] font-extrabold uppercase tracking-[0.15em] text-brand">About this product</span>
+                </div>
+                <p className="text-[0.95rem] md:text-[1rem] text-gray-700 leading-relaxed whitespace-pre-line">
+                  {product.description || "No detailed description provided for this product yet."}
+                </p>
+              </div>
+            </div>
+
+            {/* Highlights */}
+            <div>
+              <h3 className="text-[0.8rem] font-bold text-gray-500 uppercase tracking-wider mb-3">Why you'll love it</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  {
+                    icon: Award,
+                    label: rating >= 4.5 ? "Top Rated" : "Customer Favourite",
+                    sub: `${rating.toFixed(1)} ★ rating`,
+                    iconBg: "bg-amber-100",
+                    iconColor: "text-amber-600",
+                  },
+                  {
+                    icon: Truck,
+                    label: freeDelivery ? "Free Delivery" : "Fast Delivery",
+                    sub: freeDelivery ? "On this order" : "2–5 business days",
+                    iconBg: "bg-green-100",
+                    iconColor: "text-green-600",
+                  },
+                  {
+                    icon: BadgeCheck,
+                    label: "Quality Checked",
+                    sub: "100% authentic",
+                    iconBg: "bg-blue-100",
+                    iconColor: "text-blue-600",
+                  },
+                  {
+                    icon: RefreshCcw,
+                    label: "Easy Returns",
+                    sub: "7-day return window",
+                    iconBg: "bg-brand-light",
+                    iconColor: "text-brand",
+                  },
+                ].map(({ icon: Icon, label, sub, iconBg, iconColor }) => (
+                  <div key={label} className="bg-white rounded-2xl border border-gray-100 p-4 hover:border-brand/20 hover:shadow-card transition-all">
+                    <div className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center mb-3`}>
+                      <Icon size={17} className={iconColor} />
+                    </div>
+                    <p className="text-[0.88rem] font-bold text-gray-900 leading-tight">{label}</p>
+                    <p className="text-[0.74rem] text-gray-400 mt-0.5">{sub}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ───── SPECIFICATIONS TAB ───── */}
+        {activeTab === "specs" && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden">
+            {[
+              {
+                title: "General",
+                icon: Settings,
+                rows: [
+                  ["Product Name", product.name],
+                  ["Category", <span className="capitalize">{product.category}</span>],
+                  ["Product ID", <span className="font-mono text-[0.82rem]">#{product._id.slice(-8).toUpperCase()}</span>],
+                  ["Brand", "NexKart Verified"],
+                ],
+              },
+              {
+                title: "Pricing",
+                icon: IndianRupee,
+                rows: [
+                  ["MRP", `₹${product.costPrice || product.salePrice}`],
+                  ["Selling Price", <span className="text-brand font-bold">₹{displayPrice}</span>],
+                  ["Discount", discount > 0 ? <span className="text-green-600 font-bold">{discount}% off</span> : "—"],
+                  ["You Save", savings > 0 ? <span className="text-green-600 font-bold">₹{savings}</span> : "—"],
+                ],
+              },
+              {
+                title: "Availability",
+                icon: Boxes,
+                rows: [
+                  ["Status", isOutOfStock
+                    ? <span className="inline-flex items-center gap-1 text-red-600 font-bold"><X size={11} />Out of Stock</span>
+                    : <span className="inline-flex items-center gap-1 text-green-600 font-bold"><Check size={11} />In Stock</span>],
+                  ["Stock Level", isOutOfStock ? "0" : `${product.stock} units`],
+                  ["Listed On", new Date(product.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })],
+                ],
+              },
+              {
+                title: "Shipping",
+                icon: Truck,
+                rows: [
+                  ["Free Delivery", freeDelivery
+                    ? <span className="text-green-600 font-bold">Yes — included</span>
+                    : <span className="text-gray-500">Add ₹{499 - displayPrice} for free delivery</span>],
+                  ["Estimated Delivery", "2–5 business days"],
+                  ["Return Window", "7 days"],
+                ],
+              },
+            ].map((section) => (
+              <div key={section.title} className="border-b border-gray-100 last:border-0">
+                <div className="flex items-center gap-2.5 px-5 md:px-6 py-3.5 bg-gray-50/70 border-b border-gray-100">
+                  <div className="w-7 h-7 rounded-lg bg-brand-light flex items-center justify-center">
+                    <section.icon size={13} className="text-brand" />
+                  </div>
+                  <h3 className="text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-gray-700">
+                    {section.title}
+                  </h3>
+                </div>
+                <dl className="px-5 md:px-6 py-1">
+                  {section.rows.map(([label, value]) => (
+                    <div key={label} className="flex justify-between items-center gap-4 py-3 border-b border-gray-50 last:border-0">
+                      <dt className="text-[0.85rem] text-gray-500 font-medium">{label}</dt>
+                      <dd className="text-[0.88rem] text-gray-800 font-semibold text-right break-words">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ───── SHIPPING & RETURNS TAB ───── */}
+        {activeTab === "shipping" && (
+          <div className="flex flex-col gap-5">
+            {/* Delivery options */}
+            <div>
+              <h3 className="text-[0.8rem] font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Truck size={13} />
+                Delivery Options
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  {
+                    name: "Standard",
+                    price: freeDelivery ? "FREE" : "₹49",
+                    sub: "2–5 business days",
+                    accent: freeDelivery ? "from-green-500/10 to-green-500/5 border-green-200" : "from-gray-100 to-white border-gray-200",
+                    label: freeDelivery ? "Recommended" : null,
+                    labelCls: "bg-green-500",
+                  },
+                  {
+                    name: "Express",
+                    price: "₹99",
+                    sub: "1–2 business days",
+                    accent: "from-brand-light to-white border-brand/20",
+                    label: "Fastest",
+                    labelCls: "bg-brand",
+                  },
+                  {
+                    name: "Same Day",
+                    price: "₹199",
+                    sub: "Order before 12 PM",
+                    accent: "from-amber-100/50 to-white border-amber-200",
+                    label: "Select cities",
+                    labelCls: "bg-amber-500",
+                  },
+                ].map((opt) => (
+                  <div key={opt.name} className={`relative bg-gradient-to-br rounded-2xl border p-4 ${opt.accent}`}>
+                    {opt.label && (
+                      <span className={`absolute -top-2 left-4 text-white text-[0.62rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${opt.labelCls}`}>
+                        {opt.label}
+                      </span>
+                    )}
+                    <p className="text-[0.78rem] font-bold text-gray-500 uppercase tracking-wider">{opt.name}</p>
+                    <p className="text-xl font-extrabold text-gray-900 mt-1">{opt.price}</p>
+                    <p className="text-[0.78rem] text-gray-500 mt-0.5">{opt.sub}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[0.78rem] text-gray-400 mt-3 flex items-center gap-1.5">
+                <Info size={11} />
+                Final delivery options shown at checkout based on your pincode.
               </p>
             </div>
-          )}
 
-          {activeTab === "specs" && (
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-[0.875rem]">
-              {[
-                ["Category", <span className="capitalize">{product.category}</span>],
-                ["Product ID", <span className="font-mono">#{product._id.slice(-8).toUpperCase()}</span>],
-                ["Availability", isOutOfStock ? "Out of Stock" : `${product.stock} units in stock`],
-                ["MRP", `₹${product.costPrice || product.salePrice}`],
-                ["Selling Price", `₹${displayPrice}`],
-                ["Listed On", new Date(product.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })],
-                ["Discount", discount > 0 ? `${discount}% off` : "—"],
-                ["Free Delivery", freeDelivery ? "Yes" : "No"],
-              ].map(([label, value]) => (
-                <div key={label} className="flex justify-between gap-3 py-2 border-b border-gray-50 last:border-0">
-                  <dt className="text-gray-500 font-medium">{label}</dt>
-                  <dd className="text-gray-800 font-semibold text-right">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-
-          {activeTab === "shipping" && (
-            <div className="flex flex-col gap-4 text-[0.88rem] text-gray-600 leading-relaxed">
-              <div className="flex gap-3 items-start">
-                <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
-                  <Truck size={16} className="text-brand" />
-                </div>
-                <div>
-                  <p className="font-bold text-gray-800 mb-0.5">Delivery</p>
-                  <p>Standard delivery in 2–5 business days. Free delivery on orders above ₹499. Express options available at checkout.</p>
-                </div>
-              </div>
-              <div className="flex gap-3 items-start">
-                <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
-                  <RefreshCcw size={16} className="text-brand" />
-                </div>
-                <div>
-                  <p className="font-bold text-gray-800 mb-0.5">Returns</p>
-                  <p>7-day return policy. Items must be in original condition with tags and packaging. Refunds are processed within 3–5 business days after we receive your return.</p>
-                </div>
-              </div>
-              <div className="flex gap-3 items-start">
-                <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
-                  <ShieldCheck size={16} className="text-brand" />
-                </div>
-                <div>
-                  <p className="font-bold text-gray-800 mb-0.5">Warranty & Support</p>
-                  <p>Manufacturer warranty applies where applicable. Reach our support team 9am–6pm IST, Monday to Saturday.</p>
+            {/* Return policy timeline */}
+            <div>
+              <h3 className="text-[0.8rem] font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <RefreshCcw size={13} />
+                Return Process
+              </h3>
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5 md:p-6">
+                <div className="flex flex-col">
+                  {[
+                    { step: 1, title: "Request a return", desc: "Within 7 days of delivery from your Orders page." },
+                    { step: 2, title: "Pickup scheduled", desc: "We'll arrange a free pickup from your address in 1–2 days." },
+                    { step: 3, title: "Quality check", desc: "Item is inspected at our warehouse to confirm condition." },
+                    { step: 4, title: "Refund issued", desc: "Refund credited within 3–5 business days to original payment method." },
+                  ].map((s, i, arr) => (
+                    <div key={s.step} className="flex gap-4 relative">
+                      {/* Connector line */}
+                      {i < arr.length - 1 && (
+                        <span className="absolute left-[14px] top-8 bottom-0 w-0.5 bg-gradient-to-b from-brand to-brand/20" />
+                      )}
+                      <div className="w-7 h-7 rounded-full bg-brand text-white flex items-center justify-center text-[0.75rem] font-bold flex-shrink-0 z-10 shadow-md">
+                        {s.step}
+                      </div>
+                      <div className="pb-5 last:pb-0 flex-1">
+                        <p className="text-[0.92rem] font-bold text-gray-900">{s.title}</p>
+                        <p className="text-[0.82rem] text-gray-500 mt-0.5 leading-relaxed">{s.desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          )}
-        </div>
+
+            {/* Warranty + Support */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-3">
+                  <ShieldCheck size={17} className="text-blue-600" />
+                </div>
+                <p className="text-[0.92rem] font-bold text-gray-900">Warranty</p>
+                <p className="text-[0.82rem] text-gray-500 mt-1 leading-relaxed">
+                  Manufacturer warranty applies where applicable. See product packaging for details and proof of purchase requirements.
+                </p>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
+                <div className="w-10 h-10 rounded-xl bg-brand-light flex items-center justify-center mb-3">
+                  <Headphones size={17} className="text-brand" />
+                </div>
+                <p className="text-[0.92rem] font-bold text-gray-900">24/7 Customer Support</p>
+                <p className="text-[0.82rem] text-gray-500 mt-1 leading-relaxed">
+                  Reach us at <a href="mailto:support@nexkart.com" className="text-brand font-semibold no-underline hover:underline">support@nexkart.com</a> or call +91-9876543210, Mon–Sat 9am–6pm IST.
+                </p>
+              </div>
+            </div>
+
+            {/* FAQ */}
+            <div>
+              <h3 className="text-[0.8rem] font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Info size={13} />
+                Frequently Asked
+              </h3>
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-card divide-y divide-gray-100 overflow-hidden">
+                {[
+                  {
+                    q: "How can I track my order?",
+                    a: "Visit your Orders page and click 'Track Order' on any active order to see real-time status updates.",
+                  },
+                  {
+                    q: "Can I cancel after placing the order?",
+                    a: "Yes — orders can be cancelled while they're in Pending or Processing status, directly from your Orders page.",
+                  },
+                  {
+                    q: "What if I receive a damaged item?",
+                    a: "Contact our support team within 48 hours of delivery. We'll arrange an immediate pickup and replacement at no extra cost.",
+                  },
+                ].map((item, i) => (
+                  <details key={i} className="group">
+                    <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none hover:bg-gray-50/60 transition-colors">
+                      <span className="text-[0.88rem] font-semibold text-gray-800">{item.q}</span>
+                      <ChevronDown size={15} className="text-gray-400 transition-transform group-open:rotate-180 flex-shrink-0" />
+                    </summary>
+                    <p className="px-5 pb-4 text-[0.84rem] text-gray-500 leading-relaxed">{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* RECENTLY VIEWED */}
