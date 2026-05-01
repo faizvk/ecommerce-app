@@ -712,70 +712,110 @@ export default function ProductDetails() {
 
         {/* ───── SPECIFICATIONS TAB ───── */}
         {activeTab === "specs" && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden">
-            {[
-              {
-                title: "General",
-                icon: Settings,
-                rows: [
-                  ["Product Name", product.name],
-                  ["Category", <span className="capitalize">{product.category}</span>],
-                  ["Product ID", <span className="font-mono text-[0.82rem]">#{product._id.slice(-8).toUpperCase()}</span>],
-                  ["Brand", "NexKart Verified"],
-                ],
-              },
-              {
-                title: "Pricing",
-                icon: IndianRupee,
-                rows: [
-                  ["MRP", `₹${product.costPrice || product.salePrice}`],
-                  ["Selling Price", <span className="text-brand font-bold">₹{displayPrice}</span>],
-                  ["Discount", discount > 0 ? <span className="text-green-600 font-bold">{discount}% off</span> : "—"],
-                  ["You Save", savings > 0 ? <span className="text-green-600 font-bold">₹{savings}</span> : "—"],
-                ],
-              },
-              {
-                title: "Availability",
-                icon: Boxes,
-                rows: [
-                  ["Status", isOutOfStock
-                    ? <span className="inline-flex items-center gap-1 text-red-600 font-bold"><X size={11} />Out of Stock</span>
-                    : <span className="inline-flex items-center gap-1 text-green-600 font-bold"><Check size={11} />In Stock</span>],
-                  ["Stock Level", isOutOfStock ? "0" : `${product.stock} units`],
-                  ["Listed On", new Date(product.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })],
-                ],
-              },
-              {
-                title: "Shipping",
-                icon: Truck,
-                rows: [
-                  ["Free Delivery", freeDelivery
-                    ? <span className="text-green-600 font-bold">Yes — included</span>
-                    : <span className="text-gray-500">Add ₹{499 - displayPrice} for free delivery</span>],
-                  ["Estimated Delivery", "2–5 business days"],
-                  ["Return Window", "7 days"],
-                ],
-              },
-            ].map((section) => (
-              <div key={section.title} className="border-b border-gray-100 last:border-0">
-                <div className="flex items-center gap-2.5 px-5 md:px-6 py-3.5 bg-gray-50/70 border-b border-gray-100">
-                  <div className="w-7 h-7 rounded-lg bg-brand-light flex items-center justify-center">
-                    <section.icon size={13} className="text-brand" />
-                  </div>
-                  <h3 className="text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-gray-700">
-                    {section.title}
-                  </h3>
+          <div className="flex flex-col gap-4">
+            {/* NexKart verified header */}
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-dark via-brand to-[#7c3aed] text-white shadow-[0_8px_30px_rgba(79,70,229,0.25)]">
+              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+              <div className="absolute -bottom-12 -left-8 w-44 h-44 rounded-full bg-white/5 blur-2xl" />
+              <div className="relative flex items-center gap-3 p-4 md:p-5">
+                <div className="w-10 h-10 rounded-xl bg-white/15 border border-white/25 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                  <BadgeCheck size={20} className="text-white" />
                 </div>
-                <dl className="px-5 md:px-6 py-1">
-                  {section.rows.map(([label, value]) => (
-                    <div key={label} className="flex justify-between items-center gap-4 py-3 border-b border-gray-50 last:border-0">
-                      <dt className="text-[0.85rem] text-gray-500 font-medium">{label}</dt>
-                      <dd className="text-[0.88rem] text-gray-800 font-semibold text-right break-words">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white/70">NexKart Verified</p>
+                  <p className="text-[0.95rem] md:text-[1rem] font-extrabold leading-tight">
+                    Product Specifications
+                  </p>
+                </div>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[0.65rem] font-bold uppercase tracking-wider bg-white/15 border border-white/25 px-2.5 py-1 rounded-full">
+                  <Sparkles size={10} />
+                  Authentic
+                </span>
               </div>
-            ))}
+            </div>
+
+            {/* 2-col spec grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                {
+                  title: "General",
+                  icon: Settings,
+                  accent: "from-brand to-brand-medium",
+                  rows: [
+                    ["Product Name", <span className="line-clamp-1">{product.name}</span>],
+                    ["Category", <span className="capitalize">{product.category}</span>],
+                    ["Product ID", <span className="font-mono text-[0.8rem] text-brand-dark">#{product._id.slice(-8).toUpperCase()}</span>],
+                    ["Brand", <span className="inline-flex items-center gap-1 text-brand"><BadgeCheck size={11} className="text-brand" />NexKart</span>],
+                  ],
+                },
+                {
+                  title: "Pricing",
+                  icon: IndianRupee,
+                  accent: "from-[#7c3aed] to-brand",
+                  rows: [
+                    ["MRP", <span className="text-gray-400 line-through">₹{product.costPrice || product.salePrice}</span>],
+                    ["Selling Price", <span className="text-brand font-extrabold text-base">₹{displayPrice}</span>],
+                    ["Discount", discount > 0 ? <span className="text-green-600 font-bold">{discount}% off</span> : <span className="text-gray-400">—</span>],
+                    ["You Save", savings > 0 ? <span className="text-green-600 font-bold">₹{savings}</span> : <span className="text-gray-400">—</span>],
+                  ],
+                },
+                {
+                  title: "Availability",
+                  icon: Boxes,
+                  accent: "from-brand-medium to-[#7c3aed]",
+                  rows: [
+                    ["Status", isOutOfStock
+                      ? <span className="inline-flex items-center gap-1 text-red-600 font-bold"><X size={11} />Out of Stock</span>
+                      : <span className="inline-flex items-center gap-1 text-green-600 font-bold"><Check size={11} />In Stock</span>],
+                    ["Stock Level", isOutOfStock ? "0" : <span className="text-brand-dark font-bold">{product.stock} units</span>],
+                    ["Listed On", new Date(product.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })],
+                  ],
+                },
+                {
+                  title: "Shipping",
+                  icon: Truck,
+                  accent: "from-brand to-[#7c3aed]",
+                  rows: [
+                    ["Free Delivery", freeDelivery
+                      ? <span className="text-green-600 font-bold">Yes — included</span>
+                      : <span className="text-gray-500">Add ₹{499 - displayPrice} more</span>],
+                    ["Estimated Delivery", "2–5 business days"],
+                    ["Return Window", <span className="text-brand-dark font-bold">7 days</span>],
+                  ],
+                },
+              ].map((section) => (
+                <div key={section.title} className="bg-white rounded-2xl border border-gray-100 shadow-card overflow-hidden hover:border-brand/20 transition-colors">
+                  {/* Gradient accent strip */}
+                  <div className={`h-1 bg-gradient-to-r ${section.accent}`} />
+                  {/* Section header */}
+                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-gray-100">
+                    <div className="w-8 h-8 rounded-lg bg-brand-light flex items-center justify-center flex-shrink-0">
+                      <section.icon size={14} className="text-brand" />
+                    </div>
+                    <h3 className="text-[0.85rem] font-extrabold text-gray-900">
+                      {section.title}
+                    </h3>
+                  </div>
+                  {/* Rows */}
+                  <dl className="px-5 py-1">
+                    {section.rows.map(([label, value]) => (
+                      <div key={label} className="flex justify-between items-center gap-4 py-2.5 border-b border-gray-50 last:border-0">
+                        <dt className="text-[0.82rem] text-gray-500">{label}</dt>
+                        <dd className="text-[0.86rem] text-gray-800 font-semibold text-right break-words max-w-[60%]">
+                          {value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer trust note */}
+            <div className="flex items-center gap-2 px-1 text-[0.78rem] text-gray-500">
+              <ShieldCheck size={13} className="text-brand flex-shrink-0" />
+              <span>Specifications verified by NexKart. Information may vary slightly from product packaging.</span>
+            </div>
           </div>
         )}
 
