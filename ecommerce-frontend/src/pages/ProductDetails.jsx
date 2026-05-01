@@ -648,68 +648,67 @@ export default function ProductDetails() {
         </div>
 
         {/* ───── DESCRIPTION TAB ───── */}
-        {activeTab === "description" && (
-          <div className="flex flex-col gap-5">
-            {/* Quote card */}
-            <div className="relative bg-gradient-to-br from-white via-white to-brand-light/30 rounded-2xl border border-gray-100 shadow-card overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand to-[#7c3aed]" />
-              <div className="p-5 md:p-7">
-                <div className="flex items-center gap-2 mb-3">
-                  <FileText size={14} className="text-brand" />
-                  <span className="text-[0.7rem] font-extrabold uppercase tracking-[0.15em] text-brand">About this product</span>
-                </div>
-                <p className="text-[0.95rem] md:text-[1rem] text-gray-700 leading-relaxed whitespace-pre-line">
-                  {product.description || "No detailed description provided for this product yet."}
-                </p>
+        {activeTab === "description" && (() => {
+          const raw = (product.description || "").trim();
+          if (!raw) {
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-8 text-center">
+                <p className="text-gray-400 text-sm">No description provided for this product yet.</p>
               </div>
-            </div>
+            );
+          }
 
-            {/* Highlights */}
-            <div>
-              <h3 className="text-[0.8rem] font-bold text-gray-500 uppercase tracking-wider mb-3">Why you'll love it</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  {
-                    icon: Award,
-                    label: rating >= 4.5 ? "Top Rated" : "Customer Favourite",
-                    sub: `${rating.toFixed(1)} ★ rating`,
-                    iconBg: "bg-amber-100",
-                    iconColor: "text-amber-600",
-                  },
-                  {
-                    icon: Truck,
-                    label: freeDelivery ? "Free Delivery" : "Fast Delivery",
-                    sub: freeDelivery ? "On this order" : "2–5 business days",
-                    iconBg: "bg-green-100",
-                    iconColor: "text-green-600",
-                  },
-                  {
-                    icon: BadgeCheck,
-                    label: "Quality Checked",
-                    sub: "100% authentic",
-                    iconBg: "bg-blue-100",
-                    iconColor: "text-blue-600",
-                  },
-                  {
-                    icon: RefreshCcw,
-                    label: "Easy Returns",
-                    sub: "7-day return window",
-                    iconBg: "bg-brand-light",
-                    iconColor: "text-brand",
-                  },
-                ].map(({ icon: Icon, label, sub, iconBg, iconColor }) => (
-                  <div key={label} className="bg-white rounded-2xl border border-gray-100 p-4 hover:border-brand/20 hover:shadow-card transition-all">
-                    <div className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center mb-3`}>
-                      <Icon size={17} className={iconColor} />
-                    </div>
-                    <p className="text-[0.88rem] font-bold text-gray-900 leading-tight">{label}</p>
-                    <p className="text-[0.74rem] text-gray-400 mt-0.5">{sub}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+          // Split into paragraphs and detect bullet lines (-, •, *)
+          const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
+          const blocks = [];
+          let bullets = [];
+          const flushBullets = () => {
+            if (bullets.length) {
+              blocks.push({ type: "list", items: bullets });
+              bullets = [];
+            }
+          };
+          for (const line of lines) {
+            const m = line.match(/^[-•*]\s+(.+)$/);
+            if (m) bullets.push(m[1]);
+            else { flushBullets(); blocks.push({ type: "p", text: line }); }
+          }
+          flushBullets();
+
+          const firstParagraphIdx = blocks.findIndex((b) => b.type === "p");
+
+          return (
+            <article className="max-w-[680px] text-gray-700">
+              {blocks.map((b, i) => {
+                if (b.type === "list") {
+                  return (
+                    <ul key={i} className="my-5 flex flex-col gap-2.5">
+                      {b.items.map((item, j) => (
+                        <li key={j} className="flex gap-3 items-start text-[0.95rem] leading-relaxed">
+                          <span className="mt-2 w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                }
+                const isLead = i === firstParagraphIdx;
+                return (
+                  <p
+                    key={i}
+                    className={
+                      isLead
+                        ? "text-[1.05rem] md:text-[1.1rem] leading-relaxed text-gray-800 first-letter:text-3xl first-letter:font-extrabold first-letter:text-brand-dark first-letter:mr-1 first-letter:float-left first-letter:leading-none first-letter:mt-1"
+                        : "text-[0.95rem] leading-relaxed mt-4"
+                    }
+                  >
+                    {b.text}
+                  </p>
+                );
+              })}
+            </article>
+          );
+        })()}
 
         {/* ───── SPECIFICATIONS TAB ───── */}
         {activeTab === "specs" && (
