@@ -4,6 +4,8 @@
 ecommerce-backend/node_modules/
 ecommerce-backend/.env
 ecommerce-backend/.env.*
+ecommerce-backend/*.env
+ecommerce-backend/ecommerce-app.env
 logs/
 *.log
 npm-debug.log*

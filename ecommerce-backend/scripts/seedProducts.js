@@ -16,11 +16,27 @@
 
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import Product from "../model/product.model.js";
 import User from "../model/user.model.js";
 import { invalidateProductCache } from "../utils/productCache.js";
 
-dotenv.config();
+// Resolve .env relative to backend root, accepting alternate filenames.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const backendRoot = path.resolve(__dirname, "..");
+const candidates = [".env", "ecommerce-app.env", ".env.local"];
+const envPath = candidates
+  .map((f) => path.join(backendRoot, f))
+  .find((p) => fs.existsSync(p));
+
+if (envPath) {
+  dotenv.config({ path: envPath });
+  console.log(`→ Loaded env from: ${path.basename(envPath)}`);
+} else {
+  dotenv.config();
+}
 
 /* ─────────────────────────  IMAGE POOLS  ───────────────────────── */
 const u = (id) =>
