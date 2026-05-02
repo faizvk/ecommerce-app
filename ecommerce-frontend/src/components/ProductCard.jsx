@@ -12,7 +12,7 @@ import {
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 import { ShoppingCart, Sparkles, Heart, Star, Truck, Eye, Minus, Plus } from "lucide-react";
 import { buildOfferMap, getOfferPricing } from "../utils/applyOffer";
-import { getProductRating, qualifiesForFreeDelivery } from "../utils/productMeta";
+import { getProductRating, qualifiesForFreeDelivery, getProductBadge } from "../utils/productMeta";
 import { useWishlist } from "../hooks/useWishlist";
 
 function StarRow({ rating }) {
@@ -45,6 +45,7 @@ export default function ProductCard({ product }) {
   const offerMap = useMemo(() => buildOfferMap(activeOffers), [activeOffers]);
   const { hasOffer, finalPrice, originalPrice, percentOff } = getOfferPricing(product, offerMap);
   const { rating, reviews } = useMemo(() => getProductRating(product), [product]);
+  const promoBadge = useMemo(() => getProductBadge(product), [product]);
   const { isWishlisted, toggle } = useWishlist();
 
   const [busy, setBusy] = useState(false);
@@ -149,7 +150,7 @@ export default function ProductCard({ product }) {
         {/* IMAGE */}
         <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
           {/* Top-left badges */}
-          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5">
+          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5 items-start">
             {hasOffer ? (
               <span className="bg-gradient-to-r from-brand to-[#7c3aed] text-white text-[0.65rem] font-extrabold px-2 py-0.5 rounded-md leading-none flex items-center gap-1 shadow-md">
                 <Sparkles size={9} />
@@ -162,8 +163,14 @@ export default function ProductCard({ product }) {
                 </span>
               )
             )}
+            {!hasOffer && promoBadge && (
+              <span className={`text-[0.62rem] font-bold px-2 py-0.5 rounded-md leading-none flex items-center gap-1 shadow-sm ${promoBadge.cls}`}>
+                <span className="leading-none">{promoBadge.emoji}</span>
+                {promoBadge.label}
+              </span>
+            )}
             {isLowStock && (
-              <span className="bg-orange-500 text-white text-[0.65rem] font-bold px-2 py-0.5 rounded-md leading-none">
+              <span className="bg-orange-500 text-white text-[0.62rem] font-bold px-2 py-0.5 rounded-md leading-none">
                 Only {product.stock} left
               </span>
             )}

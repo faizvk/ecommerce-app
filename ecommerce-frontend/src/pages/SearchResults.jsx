@@ -5,7 +5,18 @@ import { searchProductsThunk } from "../redux/slice/productSlice";
 import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
 import ProductCard from "../components/ProductCard";
 import SearchFilters from "../components/SearchFilters";
-import { Search, Sparkles, Clock, ArrowLeft } from "lucide-react";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { Search, Sparkles, Clock, ArrowLeft, X as XIcon } from "lucide-react";
+import { CATEGORY_CONFIG } from "../utils/productCategory";
+
+const SORT_LABELS = {
+  "createdAt-desc": "Newest first",
+  "createdAt-asc":  "Oldest first",
+  "salePrice-asc":  "Price: Low to High",
+  "salePrice-desc": "Price: High to Low",
+  "name-asc":       "Name: A–Z",
+  "name-desc":      "Name: Z–A",
+};
 
 function formatTimeLeft(ms) {
   if (ms <= 0) return "00:00:00";
@@ -202,23 +213,55 @@ export default function SearchResults() {
     );
   }
 
+  // Build active filter chips
+  const activeChips = [];
+  if (urlQuery) activeChips.push({ key: "query", label: `Search: "${urlQuery}"`, removeTo: `/search${urlCategory ? `?category=${encodeURIComponent(urlCategory)}` : ""}` });
+  if (localFilters.category) activeChips.push({
+    key: "category",
+    label: `Category: ${localFilters.category}`,
+    onRemove: () => { setLocalFilters((p) => ({ ...p, category: "" })); setPage(1); dispatch(searchProductsThunk({ name: urlQuery, page: 1, limit: 12, ...localFilters, category: "" })); },
+  });
+  if (localFilters.minPrice) activeChips.push({
+    key: "min", label: `Min ₹${localFilters.minPrice}`,
+    onRemove: () => { setLocalFilters((p) => ({ ...p, minPrice: "" })); setPage(1); dispatch(searchProductsThunk({ name: urlQuery, page: 1, limit: 12, ...localFilters, minPrice: "" })); },
+  });
+  if (localFilters.maxPrice) activeChips.push({
+    key: "max", label: `Max ₹${localFilters.maxPrice}`,
+    onRemove: () => { setLocalFilters((p) => ({ ...p, maxPrice: "" })); setPage(1); dispatch(searchProductsThunk({ name: urlQuery, page: 1, limit: 12, ...localFilters, maxPrice: "" })); },
+  });
+  if (localFilters.sortBy !== "createdAt" || localFilters.order !== "desc") {
+    const sortKey = `${localFilters.sortBy}-${localFilters.order}`;
+    activeChips.push({
+      key: "sort", label: `Sort: ${SORT_LABELS[sortKey] || sortKey}`,
+      onRemove: () => { setLocalFilters((p) => ({ ...p, sortBy: "createdAt", order: "desc" })); setPage(1); dispatch(searchProductsThunk({ name: urlQuery, page: 1, limit: 12, ...localFilters, sortBy: "createdAt", order: "desc" })); },
+    });
+  }
+
+  const breadcrumbItems = urlQuery
+    ? [{ label: `Search: "${urlQuery}"` }]
+    : urlCategory
+    ? [{ label: urlCategory, to: null }]
+    : [{ label: "All Products" }];
+
   // NORMAL SEARCH MODE
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8 sm:px-4 sm:py-6">
-      <div className="mb-1">
-        <h2 className="text-2xl font-extrabold text-brand-dark sm:text-xl">
+    <div className="max-w-[1280px] mx-auto px-3 py-5 md:px-5 md:py-7">
+      <Breadcrumbs items={breadcrumbItems} className="mb-4" />
+
+      <div className="mb-3">
+        <h2 className="text-2xl font-extrabold text-gray-900 sm:text-xl capitalize">
           {urlQuery ? (
             <>Results for <span className="text-brand">"{urlQuery}"</span></>
           ) : urlCategory ? (
-            <span className="capitalize">{urlCategory}</span>
+            urlCategory
           ) : (
             "All Products"
           )}
         </h2>
         {!loading && (
-          <p className="text-[0.85rem] text-gray-400 mt-0.5">
+          <p className="text-[0.85rem] text-gray-400 mt-1">
             {searchedProducts.length > 0
-              ? `${searchedProducts.length} product${searchedProducts.length !== 1 ? "s" : ""} found`
+              ? `${searchedProducts.length} ${searchedProducts.length === 1 ? "result" : "results"}`
               : "No products found"}
           </p>
         )}
@@ -230,19 +273,71 @@ export default function SearchResults() {
         applyFilters={applyFilters}
       />
 
+      {/* Active filter chips */}
+      {activeChips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-5">
+          <span className="text-[0.72rem] font-bold text-gray-500 uppercase tracking-wider">Filtering by:</span>
+          {activeChips.map((chip) => (
+            chip.removeTo ? (
+              <Link
+                key={chip.key}
+                to={chip.removeTo}
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-light text-brand rounded-full text-[0.78rem] font-semibold no-underline border border-brand/20 hover:bg-brand hover:text-white transition-colors"
+              >
+                {chip.label}
+                <XIcon size={11} />
+              </Link>
+            ) : (
+              <button
+                key={chip.key}
+                onClick={chip.onRemove}
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-light text-brand rounded-full text-[0.78rem] font-semibold border border-brand/20 hover:bg-brand hover:text-white transition-colors cursor-pointer"
+              >
+                {chip.label}
+                <XIcon size={11} />
+              </button>
+            )
+          ))}
+          <Link
+            to="/search"
+            className="text-[0.78rem] font-bold text-gray-500 hover:text-red-500 no-underline transition-colors ml-1"
+          >
+            Clear all
+          </Link>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center py-20">
           <div className="animate-spin w-10 h-10 rounded-full border-4 border-brand-medium border-t-brand" />
         </div>
       ) : searchedProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
-            <Search size={26} className="text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-16 gap-5 text-center bg-white rounded-2xl border border-gray-100">
+          <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
+            <Search size={32} className="text-gray-300" />
           </div>
           <div>
-            <p className="text-base font-semibold text-gray-600">No products match your filters</p>
-            <p className="text-sm text-gray-400 mt-0.5">Try adjusting your search or removing some filters.</p>
+            <p className="text-lg font-bold text-gray-700">No products match your filters</p>
+            <p className="text-[0.88rem] text-gray-400 mt-1 max-w-md">Try adjusting your search or browse one of these popular categories.</p>
           </div>
+          <div className="flex flex-wrap gap-2 justify-center max-w-md">
+            {CATEGORY_CONFIG.map((c) => (
+              <Link
+                key={c.value}
+                to={`/search?category=${encodeURIComponent(c.value)}`}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-gray-700 rounded-full text-[0.82rem] font-semibold no-underline border border-gray-200 hover:border-brand hover:text-brand hover:bg-brand-light transition-all"
+              >
+                <span>{c.emoji}</span>
+                {c.label}
+              </Link>
+            ))}
+          </div>
+          <Link
+            to="/"
+            className="px-6 py-2.5 bg-brand text-white rounded-xl font-semibold no-underline transition-all hover:bg-brand-dark text-sm"
+          >
+            Back to Home
+          </Link>
         </div>
       ) : (
         <>

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { fetchOrdersThunk } from "../redux/slice/orderSlice";
 import { fadeIn } from "../animations/fadeIn";
 import { Package, MapPin, Clock, ChevronRight } from "lucide-react";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const STATUS_CONFIG = {
   pending:    { label: "Pending", cls: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-400" },
@@ -132,6 +133,7 @@ export default function Orders() {
 
   return (
     <div className="max-w-[900px] mx-auto px-4 py-6 md:py-8">
+      <Breadcrumbs items={[{ label: "My Orders" }]} className="mb-4" />
       {/* HEADER */}
       <div className="mb-6">
         <h1 className="text-xl md:text-2xl font-extrabold text-gray-900">My Orders</h1>

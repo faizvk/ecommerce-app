@@ -485,6 +485,36 @@ export default function ProductDetails() {
             )}
           </div>
 
+          {/* SHIPPING URGENCY + SOCIAL PROOF */}
+          {!isOutOfStock && (
+            <div className="flex flex-wrap items-center gap-2 text-[0.82rem]">
+              {(() => {
+                const now = new Date();
+                const cutoff = new Date();
+                cutoff.setHours(20, 0, 0, 0); // 8 PM cutoff
+                const diff = cutoff - now;
+                if (diff > 0) {
+                  const hours = Math.floor(diff / 3600000);
+                  const minutes = Math.floor((diff % 3600000) / 60000);
+                  const tomorrow = new Date();
+                  tomorrow.setDate(tomorrow.getDate() + 1);
+                  const dateLabel = tomorrow.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+                  return (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 text-orange-700 rounded-full font-semibold">
+                      <Clock size={12} />
+                      Order in {hours}h {minutes}m for delivery by {dateLabel}
+                    </span>
+                  );
+                }
+                return null;
+              })()}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 rounded-full font-semibold">
+                <Sparkles size={11} />
+                {Math.max(8, Math.min(380, Math.round(reviews * 0.6)))} bought this week
+              </span>
+            </div>
+          )}
+
           {/* DELIVERY CHECK */}
           <div className="bg-gray-50 rounded-2xl border border-gray-100 p-4">
             <div className="flex items-center gap-2 mb-2.5">

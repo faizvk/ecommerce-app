@@ -9,6 +9,7 @@ import {
 import { fadeIn } from "../animations/fadeIn";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Trash2, Truck, ShieldCheck, Tag } from "lucide-react";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -76,6 +77,7 @@ export default function Cart() {
 
   return (
     <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 md:py-8">
+      <Breadcrumbs items={[{ label: "Cart" }]} className="mb-4" />
       {/* PAGE HEADER */}
       <div className="mb-6">
         <h1 className="text-xl md:text-2xl font-extrabold text-gray-900">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Heart, Trash2, ShoppingCart, ArrowRight, ShoppingBag } from "lucide-react";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { useWishlist } from "../hooks/useWishlist";
 import { addToCartThunk, fetchCartThunk } from "../redux/slice/cartItemsSlice";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
@@ -75,6 +76,7 @@ export default function Wishlist() {
 
   return (
     <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 md:py-8">
+      <Breadcrumbs items={[{ label: "Wishlist" }]} className="mb-4" />
       {/* HEADER */}
       <div
         className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-dark via-brand to-[#7c3aed] text-white mb-6 shadow-[0_8px_30px_rgba(79,70,229,0.25)]"
