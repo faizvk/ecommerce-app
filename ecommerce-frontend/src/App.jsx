@@ -7,6 +7,7 @@ import { useFadeInScroll } from "./animations/useFadeInScroll";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
@@ -112,6 +113,7 @@ export default function App() {
       <Navbar />
 
       <main className="main-content">
+        <ErrorBoundary>
         <Suspense fallback={<ServerLoadingScreen />}>
           <Routes>
             {/* Public */}
@@ -159,6 +161,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
+        </ErrorBoundary>
       </main>
 
       <ToastContainer
