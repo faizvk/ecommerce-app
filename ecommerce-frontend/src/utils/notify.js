@@ -28,58 +28,66 @@ const VARIANTS = {
   success: {
     Icon: CheckCircle2,
     accent: "bg-emerald-500",
-    iconBg: "bg-emerald-50",
+    iconBg: "bg-white",
     iconColor: "text-emerald-600",
     titleColor: "text-emerald-900",
+    cls: "nexkart-toast--success",
   },
   error: {
     Icon: XCircle,
     accent: "bg-red-500",
-    iconBg: "bg-red-50",
+    iconBg: "bg-white",
     iconColor: "text-red-600",
     titleColor: "text-red-900",
+    cls: "nexkart-toast--error",
   },
   info: {
     Icon: Info,
     accent: "bg-brand",
-    iconBg: "bg-brand-light",
+    iconBg: "bg-white",
     iconColor: "text-brand",
     titleColor: "text-brand-dark",
+    cls: "nexkart-toast--info",
   },
   warn: {
     Icon: AlertTriangle,
     accent: "bg-amber-500",
-    iconBg: "bg-amber-50",
+    iconBg: "bg-white",
     iconColor: "text-amber-600",
     titleColor: "text-amber-900",
+    cls: "nexkart-toast--warn",
   },
   promo: {
     Icon: Sparkles,
     accent: "bg-gradient-to-b from-brand to-[#7c3aed]",
-    iconBg: "bg-gradient-to-br from-brand to-[#7c3aed]",
-    iconColor: "text-white",
+    iconBg: "bg-white",
+    iconColor: "text-[#7c3aed]",
     titleColor: "text-brand-dark",
+    cls: "nexkart-toast--promo",
   },
   cart: {
     Icon: ShoppingCart,
     accent: "bg-brand",
-    iconBg: "bg-brand-light",
+    iconBg: "bg-white",
     iconColor: "text-brand",
     titleColor: "text-brand-dark",
+    cls: "nexkart-toast--cart",
   },
   wishlist: {
     Icon: Heart,
     accent: "bg-pink-500",
-    iconBg: "bg-pink-50",
+    iconBg: "bg-white",
     iconColor: "text-pink-600",
     titleColor: "text-pink-900",
+    cls: "nexkart-toast--wishlist",
   },
   order: {
     Icon: Package,
     accent: "bg-blue-500",
-    iconBg: "bg-blue-50",
+    iconBg: "bg-white",
     iconColor: "text-blue-600",
     titleColor: "text-blue-900",
+    cls: "nexkart-toast--order",
   },
 };
 
@@ -144,26 +152,27 @@ function build(variant, args) {
   });
 }
 
-const baseOptions = {
+const optionsFor = (variant, autoClose) => ({
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,
   draggable: false,
-  className: "nexkart-toast",
+  className: `nexkart-toast ${VARIANTS[variant]?.cls || ""}`,
   bodyClassName: "nexkart-toast__body",
   progressClassName: "nexkart-toast__progress",
   closeButton: false,
-};
+  autoClose,
+});
 
 export const notify = {
-  success: (args) => toast(build("success", args), { ...baseOptions, autoClose: 2500 }),
-  error:   (args) => toast(build("error",   args), { ...baseOptions, autoClose: 3500 }),
-  info:    (args) => toast(build("info",    args), { ...baseOptions, autoClose: 2500 }),
-  warn:    (args) => toast(build("warn",    args), { ...baseOptions, autoClose: 3000 }),
-  promo:   (args) => toast(build("promo",   args), { ...baseOptions, autoClose: 4000 }),
-  cart:    (args) => toast(build("cart",    args), { ...baseOptions, autoClose: 2500 }),
-  wishlist:(args) => toast(build("wishlist",args), { ...baseOptions, autoClose: 2000 }),
-  order:   (args) => toast(build("order",   args), { ...baseOptions, autoClose: 3000 }),
+  success: (args) => toast(build("success", args), optionsFor("success", 2500)),
+  error:   (args) => toast(build("error",   args), optionsFor("error",   3500)),
+  info:    (args) => toast(build("info",    args), optionsFor("info",    2500)),
+  warn:    (args) => toast(build("warn",    args), optionsFor("warn",    3000)),
+  promo:   (args) => toast(build("promo",   args), optionsFor("promo",   4000)),
+  cart:    (args) => toast(build("cart",    args), optionsFor("cart",    2500)),
+  wishlist:(args) => toast(build("wishlist",args), optionsFor("wishlist",2000)),
+  order:   (args) => toast(build("order",   args), optionsFor("order",   3000)),
 };
 
 export default notify;
