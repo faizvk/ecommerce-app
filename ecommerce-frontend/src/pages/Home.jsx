@@ -15,8 +15,8 @@ import Testimonials from "../components/Testimonials";
 import PromoBanners from "../components/PromoBanners";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
 import {
-  ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones, Flame,
-  Sparkles, Star, Wallet, Mail, Send,
+  ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
+  Sparkles, Mail, Send,
 } from "lucide-react";
 
 const BENEFITS = [
@@ -139,7 +139,7 @@ export default function Home() {
 
       {/* BENEFITS STRIP */}
       <section className="bg-white border-b border-gray-100">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-4">
+        <div className="max-w-[1320px] mx-auto px-2 md:px-4 py-4">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {BENEFITS.map(({ icon: Icon, title, sub }) => (
               <div key={title} className="flex items-center gap-3 py-2">
@@ -157,7 +157,7 @@ export default function Home() {
       </section>
 
       {/* CATEGORY SHOWCASE TILES */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-8">
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-9 rounded-full bg-gradient-to-b from-brand to-[#7c3aed]" />
@@ -196,17 +196,16 @@ export default function Home() {
       </section>
 
       {/* PROMOTIONAL BANNER CARDS */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-8">
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
         <PromoBanners />
       </section>
 
       {/* TOP DEALS */}
       {topDeals.length > 0 && (
-        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
+        <section className="max-w-[1320px] mx-auto px-2 md:px-4">
           <ProductRow
-            title="🔥 Top Deals of the Day"
+            title="Top Deals of the Day"
             subtitle="Biggest discounts, while stocks last"
-            icon={Flame}
             accent="from-red-400 to-orange-500"
             products={topDeals}
             viewAllHref="/search"
@@ -240,7 +239,7 @@ export default function Home() {
       </section>
 
       {/* PER-CATEGORY HORIZONTAL SCROLLERS */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-8">
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
         {CATEGORY_CONFIG.map(({ key, label, emoji }) => {
           const list = productsByCategory[key] || [];
           if (list.length === 0) return null;
@@ -248,7 +247,7 @@ export default function Home() {
           return (
             <ProductRow
               key={key}
-              title={`${emoji} Best in ${label}`}
+              title={`Best in ${label}`}
               subtitle={`${list.length} curated picks for you`}
               accent={CATEGORY_ROW_ACCENT[key] || "from-brand to-brand-medium"}
               products={list.slice(0, 12)}
@@ -260,11 +259,10 @@ export default function Home() {
 
       {/* TOP RATED */}
       {topRated.length > 0 && (
-        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
+        <section className="max-w-[1320px] mx-auto px-2 md:px-4">
           <ProductRow
-            title="⭐ Top Rated"
+            title="Top Rated"
             subtitle="Customer favourites with stellar reviews"
-            icon={Star}
             accent="from-amber-400 to-orange-500"
             products={topRated}
             viewAllHref="/search"
@@ -274,11 +272,10 @@ export default function Home() {
 
       {/* NEW ARRIVALS */}
       {newArrivals.length > 0 && (
-        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
+        <section className="max-w-[1320px] mx-auto px-2 md:px-4">
           <ProductRow
-            title="✨ New Arrivals"
+            title="New Arrivals"
             subtitle="Fresh in this week"
-            icon={Sparkles}
             accent="from-brand to-[#7c3aed]"
             products={newArrivals}
             viewAllHref="/search"
@@ -288,11 +285,10 @@ export default function Home() {
 
       {/* BUDGET PICKS */}
       {budgetPicks.length > 0 && (
-        <section className="max-w-[1280px] mx-auto px-4 md:px-6">
+        <section className="max-w-[1320px] mx-auto px-2 md:px-4">
           <ProductRow
-            title="💰 Under ₹999"
+            title="Under ₹999"
             subtitle="Wallet-friendly steals"
-            icon={Wallet}
             accent="from-emerald-400 to-teal-500"
             products={budgetPicks}
             viewAllHref="/search"
@@ -301,12 +297,12 @@ export default function Home() {
       )}
 
       {/* TESTIMONIALS */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-4">
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-4">
         <Testimonials />
       </section>
 
       {/* PROMO CTA — newsletter signup */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-6 mt-2">
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-2">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-dark via-brand to-[#7c3aed] text-white shadow-[0_12px_40px_rgba(79,70,229,0.3)]">
           <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute -bottom-16 -left-10 w-72 h-72 rounded-full bg-white/5 blur-3xl" />

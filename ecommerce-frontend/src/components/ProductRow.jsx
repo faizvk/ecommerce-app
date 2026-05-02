@@ -6,7 +6,6 @@ import ProductCard from "./ProductCard";
 export default function ProductRow({
   title,
   subtitle,
-  icon: Icon,
   accent = "from-brand to-brand-medium",
   products = [],
   viewAllHref,
@@ -46,12 +45,11 @@ export default function ProductRow({
   return (
     <section className="mb-10 md:mb-12">
       {/* HEADER */}
-      <div className="flex items-center justify-between gap-3 mb-4 md:mb-5">
+      <div className="flex items-center justify-between gap-3 mb-4 md:mb-5 px-2 md:px-0">
         <div className="flex items-center gap-3 min-w-0">
           <div className={`w-1.5 h-9 rounded-full bg-gradient-to-b ${accent} flex-shrink-0`} />
           <div className="min-w-0">
-            <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight flex items-center gap-2">
-              {Icon && <Icon size={18} className="text-brand" />}
+            <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight">
               {title}
             </h2>
             {subtitle && (
@@ -72,47 +70,46 @@ export default function ProductRow({
       </div>
 
       {/* SCROLLER */}
-      <div className="relative -mx-4 md:-mx-6">
-        {/* Edge fade — left */}
+      <div className="relative -mx-2 md:-mx-4">
+        {/* Edge fade — left (small on mobile, larger on desktop) */}
         <div
-          className={`pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-12 md:w-16 bg-gradient-to-r from-[#f0f0ff] via-[#f0f0ff]/80 to-transparent transition-opacity duration-200 ${
+          className={`pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-4 md:w-12 bg-gradient-to-r from-[#f0f0ff] to-transparent transition-opacity duration-200 ${
             canScrollLeft ? "opacity-100" : "opacity-0"
           }`}
         />
         {/* Edge fade — right */}
         <div
-          className={`pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-12 md:w-16 bg-gradient-to-l from-[#f0f0ff] via-[#f0f0ff]/80 to-transparent transition-opacity duration-200 ${
+          className={`pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-4 md:w-12 bg-gradient-to-l from-[#f0f0ff] to-transparent transition-opacity duration-200 ${
             canScrollRight ? "opacity-100" : "opacity-0"
           }`}
         />
 
-        {/* Inline left hint */}
+        {/* Scroll hints — desktop only (touch users swipe naturally) */}
         <button
           onClick={() => scrollBy(-1)}
           aria-label="Scroll left"
-          className={`absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 text-gray-500 hover:text-brand bg-transparent border-0 cursor-pointer text-[0.72rem] font-bold uppercase tracking-wider transition-all ${
+          className={`hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 items-center gap-1 text-gray-500 hover:text-brand bg-transparent border-0 cursor-pointer text-[0.7rem] font-bold uppercase tracking-wider transition-opacity ${
             canScrollLeft ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={14} />
           Scroll
         </button>
 
-        {/* Inline right hint */}
         <button
           onClick={() => scrollBy(1)}
           aria-label="Scroll right"
-          className={`absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1 text-gray-500 hover:text-brand bg-transparent border-0 cursor-pointer text-[0.72rem] font-bold uppercase tracking-wider transition-all ${
+          className={`hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 items-center gap-1 text-gray-500 hover:text-brand bg-transparent border-0 cursor-pointer text-[0.7rem] font-bold uppercase tracking-wider transition-opacity ${
             canScrollRight ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         >
           Scroll
-          <ChevronRight size={16} />
+          <ChevronRight size={14} />
         </button>
 
         <div
           ref={scrollRef}
-          className="flex gap-3 md:gap-4 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth snap-x snap-mandatory px-4 md:px-6 py-3"
+          className="flex gap-3 md:gap-4 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-smooth snap-x snap-mandatory px-2 md:px-4 py-3"
         >
           {products.map((p) => (
             <div

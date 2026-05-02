@@ -25,8 +25,17 @@ export default function Navbar() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const searchInputRef = useRef(null);
   const menuRef = useRef(null);
+
+  // Track scroll position so navbar can shift to a glassy translucent state
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
   const isAdminPage = location.pathname.startsWith("/admin");
@@ -84,7 +93,11 @@ export default function Navbar() {
     "flex items-center gap-3 px-4 py-2.5 text-[0.88rem] font-medium text-gray-700 no-underline hover:bg-gray-50 transition-colors w-full bg-transparent border-0 cursor-pointer text-left";
 
   return (
-    <nav className="w-full px-4 md:px-[4%] py-3 md:py-4 flex flex-wrap items-center gap-x-3 gap-y-2 bg-gradient-to-r from-brand-dark via-[#2d2a6e] to-brand-dark text-white sticky top-0 z-50 shadow-[0_2px_20px_rgba(79,70,229,0.35)]">
+    <nav className={`w-full px-4 md:px-[4%] py-2.5 md:py-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-white sticky top-0 z-50 transition-all duration-300 ${
+      scrolled
+        ? "bg-brand-dark/65 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.18)]"
+        : "bg-gradient-to-r from-brand-dark via-[#2d2a6e] to-brand-dark shadow-[0_2px_20px_rgba(79,70,229,0.35)]"
+    }`}>
       {/* LOGO */}
       <Link
         to={isAdminPage ? "/admin" : "/"}
@@ -123,55 +136,46 @@ export default function Navbar() {
                 ? "bg-white shadow-[0_0_0_3px_rgba(129,140,248,0.4),0_8px_24px_rgba(0,0,0,0.12)]"
                 : "bg-white/95 hover:bg-white shadow-[0_2px_10px_rgba(0,0,0,0.08)]"
             }`}>
-              <div className="flex items-center justify-center pl-3.5 flex-shrink-0">
-                {searchLoading ? (
-                  <div className="w-4 h-4 rounded-full border-2 border-brand-medium/30 border-t-brand animate-spin" />
-                ) : (
-                  <Search size={16} className={searchFocused ? "text-brand" : "text-gray-400"} />
-                )}
-              </div>
+              <button
+                type="submit"
+                aria-label="Search"
+                className="flex items-center justify-center pl-3 pr-1 flex-shrink-0 bg-transparent border-0 cursor-pointer"
+              >
+                <Search size={16} className={searchFocused ? "text-brand" : "text-gray-400"} />
+              </button>
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search for products, brands, categories..."
+                placeholder="Search for products..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 onFocus={() => { setSearchFocused(true); setShowSuggestions(true); }}
                 onBlur={() => setSearchFocused(false)}
-                className="flex-1 min-w-0 px-3 py-2.5 md:py-3 bg-transparent border-0 text-gray-900 text-[0.9rem] outline-none placeholder:text-gray-400"
+                className="flex-1 min-w-0 px-2.5 py-2 bg-transparent border-0 text-gray-900 text-[0.88rem] outline-none placeholder:text-gray-400"
               />
               {searchText && (
                 <button
                   type="button"
                   onClick={() => { setSearchText(""); searchInputRef.current?.focus(); }}
                   aria-label="Clear search"
-                  className="mr-2 w-7 h-7 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center cursor-pointer border-0 hover:bg-gray-200 transition-colors flex-shrink-0"
+                  className="mr-2 w-6 h-6 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center cursor-pointer border-0 hover:bg-gray-200 transition-colors flex-shrink-0"
                 >
-                  <X size={13} />
+                  <X size={12} />
                 </button>
               )}
-              <button
-                type="submit"
-                disabled={!searchText.trim()}
-                aria-label="Search"
-                className="hidden md:flex items-center justify-center gap-1.5 self-stretch px-5 bg-gradient-to-r from-brand to-[#7c3aed] text-white border-0 font-bold text-[0.85rem] cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                Search
-                <ArrowRight size={14} />
-              </button>
             </div>
           </form>
 
           {showSuggestions && searchText.trim() && (
             <div className="absolute top-[calc(100%+8px)] w-full bg-white rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.18)] z-[200] overflow-hidden border border-gray-100">
-              <div className="flex items-center justify-between gap-2 px-4 py-2.5 bg-gray-50/70 border-b border-gray-100">
-                <span className="text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-gray-500">
-                  {searchLoading ? "Searching..." : suggestions.length > 0 ? `Top ${suggestions.length} matches` : "No matches"}
-                </span>
-                {suggestions.length > 0 && (
+              {suggestions.length > 0 && (
+                <div className="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50/70 border-b border-gray-100">
+                  <span className="text-[0.66rem] font-extrabold uppercase tracking-[0.12em] text-gray-500">
+                    {`Top ${suggestions.length} matches`}
+                  </span>
                   <span className="text-[0.62rem] text-gray-400 font-medium hidden sm:inline">Press Enter to see all</span>
-                )}
-              </div>
+                </div>
+              )}
               <div className="max-h-80 overflow-y-auto">
                 {suggestions.length > 0 ? (
                   <>
