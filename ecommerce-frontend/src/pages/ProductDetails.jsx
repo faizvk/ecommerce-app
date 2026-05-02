@@ -61,10 +61,22 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
-  const { currentProduct: product, relatedProducts: related, loading } = useSelector((state) => state.product);
-  const { activeOffers } = useSelector((state) => state.offer);
-  const cartItems = useSelector((state) => state.cartItems.items);
+  const user = useSelector((s) => s.auth.user);
+  const currentProduct = useSelector((s) => s.product.currentProduct);
+  const related = useSelector((s) => s.product.relatedProducts);
+  const productsCache = useSelector((s) => s.product.products);
+  const loading = useSelector((s) => s.product.loading);
+  const activeOffers = useSelector((s) => s.offer.activeOffers);
+  const cartItems = useSelector((s) => s.cartItems.items);
+
+  // Optimistic display: if catalog already has this product, use it while we
+  // refetch fresh data in the background. Eliminates loading flash when
+  // navigating between products from Home / ProductRow.
+  const cached = useMemo(
+    () => productsCache.find((p) => p._id === id),
+    [productsCache, id]
+  );
+  const product = currentProduct?._id === id ? currentProduct : cached;
 
   const { isWishlisted, toggle: toggleWishlist } = useWishlist();
   const { track: trackViewed, others: recentOthers } = useRecentlyViewed();

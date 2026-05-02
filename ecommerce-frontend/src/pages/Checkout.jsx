@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { getCart } from "../api/cart.api";
+import { useDispatch, useSelector } from "react-redux";
 import { placeOrder } from "../api/order.api";
 import { getProfile } from "../api/user.api";
 import api from "../api/api";
 import { refreshCartCountThunk, clearCart } from "../redux/slice/cartSlice";
-import { clearCartItemsState } from "../redux/slice/cartItemsSlice";
+import { clearCartItemsState, fetchCartThunk } from "../redux/slice/cartItemsSlice";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
 import { notify } from "../utils/notify";
 import { MapPin, ShoppingBag } from "lucide-react";
@@ -15,30 +14,45 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [cart, setCart] = useState(null);
+  // Pull cart from Redux (single source of truth) instead of independent API call
+  const cartItems = useSelector((s) => s.cartItems.items);
+  const cartTotal = useSelector((s) => s.cartItems.totalAmount);
+  const cartLoading = useSelector((s) => s.cartItems.loading);
+
   const [address, setAddress] = useState("");
   const [isProfileComplete, setIsProfileComplete] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
+  // Filter out items whose product was deleted so totals stay accurate
+  const validItems = useMemo(
+    () => (cartItems || []).filter((it) => it && it.productId && it.productId._id),
+    [cartItems]
+  );
+  const validTotal = useMemo(
+    () => validItems.reduce((s, i) => s + (i.price || 0) * (i.quantity || 0), 0),
+    [validItems]
+  );
+
   useEffect(() => {
-    const load = async () => {
+    // Always refresh cart so checkout is in sync with latest server state
+    dispatch(fetchCartThunk());
+    // Profile fetch is independent of cart fetch
+    (async () => {
       try {
-        const cartRes = await getCart();
-        setCart(cartRes.data.cart);
         const profileRes = await getProfile();
         setAddress(profileRes.data.user.address || "");
         setIsProfileComplete(profileRes.data.isProfileComplete);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load checkout data");
+      } catch {
+        setError("Failed to load profile");
       } finally {
-        setLoading(false);
+        setProfileLoading(false);
       }
-    };
-    load();
-  }, []);
+    })();
+  }, [dispatch]);
+
+  const loading = profileLoading || cartLoading;
 
   const startPayment = async () => {
     if (!isProfileComplete) {
@@ -47,7 +61,7 @@ export default function Checkout() {
       return;
     }
     if (!address.trim()) { setError("Shipping address is required"); return; }
-    if (!cart || cart.products.length === 0) { setError("Your cart is empty"); return; }
+    if (validItems.length === 0) { setError("Your cart is empty"); return; }
 
     setError("");
     setProcessing(true);
@@ -60,7 +74,7 @@ export default function Checkout() {
     }
 
     try {
-      const orderRes = await api.post("/payment/create-order", { amount: cart.totalAmount });
+      const orderRes = await api.post("/payment/create-order", { amount: validTotal });
       const { order, key } = orderRes.data;
 
       const options = {
@@ -117,7 +131,7 @@ export default function Checkout() {
     );
   }
 
-  if (!cart || cart.products.length === 0) {
+  if (validItems.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-5 text-center px-4">
         <div className="w-16 h-16 rounded-full bg-brand-light flex items-center justify-center">
@@ -157,9 +171,8 @@ export default function Checkout() {
           </div>
 
           <div className="flex flex-col gap-1">
-            {cart.products.map((item) => {
+            {validItems.map((item) => {
               const p = item.productId;
-              if (!p) return null;
               return (
                 <div key={p._id} className="flex gap-4 items-center py-3 border-b border-gray-100 last:border-0">
                   <img
@@ -179,7 +192,7 @@ export default function Checkout() {
 
           <div className="flex justify-between items-center mt-5 pt-4 border-t border-gray-200">
             <span className="font-semibold text-gray-700">Total</span>
-            <span className="text-2xl font-extrabold text-brand">₹{cart.totalAmount}</span>
+            <span className="text-2xl font-extrabold text-brand">₹{validTotal}</span>
           </div>
         </div>
 
@@ -207,7 +220,7 @@ export default function Checkout() {
             onClick={startPayment}
             disabled={processing}
           >
-            {processing ? "Processing..." : `Pay ₹${cart.totalAmount}`}
+            {processing ? "Processing..." : `Pay ₹${validTotal}`}
           </button>
 
           <Link

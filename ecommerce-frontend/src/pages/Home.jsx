@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -6,7 +6,13 @@ import { fetchProductsThunk } from "../redux/slice/productSlice";
 import { refreshCartCountThunk } from "../redux/slice/cartSlice";
 import { fetchCartThunk } from "../redux/slice/cartItemsSlice";
 import { fetchActiveOffersThunk } from "../redux/slice/offerSlice";
-import { getProductRating } from "../utils/productMeta";
+import {
+  selectProductsByCategory,
+  selectTopDeals,
+  selectTopRated,
+  selectNewArrivals,
+  selectBudgetPicks,
+} from "../redux/selectors";
 
 import ProductRow from "../components/ProductRow";
 import HeroCarousel from "../components/HeroCarousel";
@@ -46,51 +52,27 @@ export default function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { products, loading, error } = useSelector((state) => state.product);
-  const { user } = useSelector((state) => state.auth);
+  // Use granular selectors so components only re-render when the relevant slice changes
+  const products = useSelector((s) => s.product.products);
+  const loading = useSelector((s) => s.product.loading);
+  const error = useSelector((s) => s.product.error);
+  const userRole = useSelector((s) => s.auth.user?.role);
+
+  // Memoized derived collections — cached across renders, shared across components
+  const productsByCategory = useSelector(selectProductsByCategory);
+  const topDeals    = useSelector(selectTopDeals);
+  const topRated    = useSelector(selectTopRated);
+  const newArrivals = useSelector(selectNewArrivals);
+  const budgetPicks = useSelector(selectBudgetPicks);
 
   useEffect(() => {
+    // Only fetch if not already loaded (Redux acts as a cache)
+    if (!products || products.length === 0) dispatch(fetchProductsThunk());
     dispatch(refreshCartCountThunk());
-    dispatch(fetchProductsThunk());
     dispatch(fetchActiveOffersThunk());
-    if (user?.role === "user") dispatch(fetchCartThunk());
-  }, [dispatch, user?.role]);
-
-  /* Derived collections */
-  const productsByCategory = useMemo(() => {
-    const map = {};
-    for (const p of products || []) {
-      if (!p?.category) continue;
-      if (!map[p.category]) map[p.category] = [];
-      map[p.category].push(p);
-    }
-    return map;
-  }, [products]);
-
-  const topDeals = useMemo(() => {
-    return [...(products || [])]
-      .filter((p) => p.costPrice && p.salePrice && p.costPrice > p.salePrice)
-      .map((p) => ({ ...p, _discount: (p.costPrice - p.salePrice) / p.costPrice }))
-      .sort((a, b) => b._discount - a._discount)
-      .slice(0, 14);
-  }, [products]);
-
-  const topRated = useMemo(() => {
-    return [...(products || [])]
-      .map((p) => ({ ...p, _rating: getProductRating(p).rating }))
-      .sort((a, b) => b._rating - a._rating)
-      .slice(0, 14);
-  }, [products]);
-
-  const newArrivals = useMemo(() => {
-    return [...(products || [])]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 14);
-  }, [products]);
-
-  const budgetPicks = useMemo(() => {
-    return (products || []).filter((p) => p.salePrice <= 999).slice(0, 14);
-  }, [products]);
+    if (userRole === "user") dispatch(fetchCartThunk());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, userRole]);
 
   const goToCategory = (category) => {
     navigate(`/search?category=${encodeURIComponent(category)}`);
