@@ -91,37 +91,27 @@ const VARIANTS = {
   },
 };
 
-/* Inline-styled toast body (no JSX so this file stays .js-friendly and avoids tooling issues) */
+/* Inline-styled toast body — minimalist, no accent bar, compact */
 function Body({ variant, title, desc, action }) {
   const v = VARIANTS[variant] || VARIANTS.info;
   return createElement(
     "div",
-    { className: "flex items-start gap-3 py-1 pr-1" },
-    // accent bar
-    createElement("div", {
-      className: `absolute left-0 top-0 bottom-0 w-1 ${v.accent}`,
-    }),
-    // icon tile
-    createElement(
-      "div",
-      {
-        className: `w-9 h-9 rounded-xl ${v.iconBg} flex items-center justify-center flex-shrink-0`,
-      },
-      createElement(v.Icon, { size: 18, className: v.iconColor, strokeWidth: 2.2 })
-    ),
+    { className: "flex items-center gap-2.5" },
+    // icon
+    createElement(v.Icon, { size: 17, className: `${v.iconColor} flex-shrink-0`, strokeWidth: 2.2 }),
     // text
     createElement(
       "div",
       { className: "flex-1 min-w-0" },
       createElement(
         "p",
-        { className: `text-[0.88rem] font-bold leading-tight ${v.titleColor}` },
+        { className: `text-[0.85rem] font-bold leading-tight ${v.titleColor}` },
         title
       ),
       desc &&
         createElement(
           "p",
-          { className: "text-[0.78rem] text-gray-500 mt-0.5 leading-snug" },
+          { className: "text-[0.74rem] text-gray-600 mt-0.5 leading-snug truncate" },
           desc
         ),
       action &&
@@ -131,7 +121,7 @@ function Body({ variant, title, desc, action }) {
           {
             to: action.to,
             className:
-              "inline-block mt-1.5 text-[0.78rem] font-bold text-brand no-underline hover:underline",
+              "inline-block mt-0.5 text-[0.74rem] font-bold text-brand no-underline hover:underline",
           },
           `${action.label} →`
         )
