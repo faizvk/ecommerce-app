@@ -131,10 +131,10 @@ export default function Navbar() {
               searchInputRef.current?.blur();
             }}
           >
-            <div className={`relative flex items-center w-full overflow-hidden transition-all duration-200 rounded-2xl ${
+            <div className={`relative flex items-center w-full overflow-hidden transition-all duration-200 rounded-2xl backdrop-blur-md ${
               searchFocused
-                ? "bg-white shadow-[0_0_0_3px_rgba(129,140,248,0.4),0_8px_24px_rgba(0,0,0,0.12)]"
-                : "bg-white/95 hover:bg-white shadow-[0_2px_10px_rgba(0,0,0,0.08)]"
+                ? "bg-white shadow-[0_0_0_3px_rgba(129,140,248,0.4),0_8px_24px_rgba(0,0,0,0.12)] border border-transparent"
+                : "bg-white/75 hover:bg-white/90 border border-white/30"
             }`}>
               <button
                 type="submit"

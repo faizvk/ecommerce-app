@@ -21,6 +21,20 @@ export default {
         card: '0 2px 12px rgba(79,70,229,0.07)',
         hover: '0 12px 32px rgba(79,70,229,0.15)',
       },
+      keyframes: {
+        'slide-left': {
+          '0%, 100%': { transform: 'translateX(0)', opacity: '0.65' },
+          '50%':      { transform: 'translateX(-6px)', opacity: '1' },
+        },
+        'slide-right': {
+          '0%, 100%': { transform: 'translateX(0)', opacity: '0.65' },
+          '50%':      { transform: 'translateX(6px)', opacity: '1' },
+        },
+      },
+      animation: {
+        'slide-left':  'slide-left 1.6s ease-in-out infinite',
+        'slide-right': 'slide-right 1.6s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

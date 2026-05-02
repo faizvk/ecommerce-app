@@ -61,10 +61,10 @@ export default function ProductRow({
         {viewAllHref && (
           <Link
             to={viewAllHref}
-            className="flex items-center gap-1 px-3.5 py-1.5 text-[0.8rem] font-bold text-brand bg-brand-light border border-brand/25 rounded-full no-underline transition-all hover:bg-brand hover:text-white whitespace-nowrap flex-shrink-0"
+            className="flex items-center gap-0.5 px-2 py-1 text-[0.82rem] font-bold text-brand no-underline transition-colors hover:text-brand-dark whitespace-nowrap flex-shrink-0"
           >
             {viewAllLabel}
-            <ChevronRight size={13} />
+            <ChevronRight size={14} />
           </Link>
         )}
       </div>

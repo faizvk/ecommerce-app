@@ -1,25 +1,27 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { fadeIn } from "../animations/fadeIn";
 import { slides } from "../utils/slides";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const INTERVAL = 4500;
+const SWIPE_THRESHOLD = 50; // px
 
 export default function HeroCarousel() {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const touchStartRef = useRef(null);
 
   const nextSlide = useCallback(() => {
     setIndex((prev) => (prev + 1) % slides.length);
     setProgress(0);
   }, []);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     setIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
     setProgress(0);
-  };
+  }, []);
 
   useEffect(() => {
     setProgress(0);
@@ -29,8 +31,33 @@ export default function HeroCarousel() {
     return () => { clearInterval(progressTimer); clearTimeout(slideTimer); };
   }, [index, nextSlide]);
 
+  // Touch swipe to scroll
+  const onTouchStart = (e) => { touchStartRef.current = e.changedTouches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchStartRef.current == null) return;
+    const delta = e.changedTouches[0].clientX - touchStartRef.current;
+    if (Math.abs(delta) > SWIPE_THRESHOLD) {
+      delta > 0 ? prevSlide() : nextSlide();
+    }
+    touchStartRef.current = null;
+  };
+
+  // Keyboard arrow navigation
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "ArrowLeft") prevSlide();
+      else if (e.key === "ArrowRight") nextSlide();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [prevSlide, nextSlide]);
+
   return (
-    <div className="relative w-full h-[260px] sm:h-[360px] lg:h-[500px] overflow-hidden bg-brand-dark">
+    <div
+      className="relative w-full h-[260px] sm:h-[360px] lg:h-[500px] overflow-hidden bg-brand-dark touch-pan-y select-none"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
       {slides.map((slide, i) => (
         <div
           key={slide.id}
@@ -72,20 +99,20 @@ export default function HeroCarousel() {
         </div>
       ))}
 
-      {/* NAV BUTTONS */}
+      {/* TRANSPARENT NAV HINTS — animate left/right to suggest swipe */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-white/15 backdrop-blur-sm text-white rounded-full border border-white/25 cursor-pointer z-20 transition-all hover:bg-white/30 hover:scale-110"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-transparent border-0 text-white cursor-pointer transition-colors hover:text-brand-medium"
         aria-label="Previous slide"
       >
-        <ChevronLeft size={18} />
+        <ChevronLeft size={28} className="animate-slide-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]" strokeWidth={2.5} />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-white/15 backdrop-blur-sm text-white rounded-full border border-white/25 cursor-pointer z-20 transition-all hover:bg-white/30 hover:scale-110"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-2 bg-transparent border-0 text-white cursor-pointer transition-colors hover:text-brand-medium"
         aria-label="Next slide"
       >
-        <ChevronRight size={18} />
+        <ChevronRight size={28} className="animate-slide-right drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]" strokeWidth={2.5} />
       </button>
 
       {/* SLIDE INDICATORS + PROGRESS BAR */}

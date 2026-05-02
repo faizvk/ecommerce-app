@@ -214,7 +214,7 @@ export default function Home() {
       )}
 
       {/* CATEGORY NAV (sticky) */}
-      <section className="bg-white border-y border-gray-100 sticky top-[57px] md:top-[65px] z-40">
+      <section className="bg-[#f0f0ff]/80 backdrop-blur-md border-y border-gray-200/50 sticky top-[57px] md:top-[65px] z-40">
         <nav
           className="flex items-center gap-2 px-4 md:px-6 py-3 overflow-x-auto scrollbar-hide max-w-[1280px] mx-auto"
           aria-label="Product categories"
