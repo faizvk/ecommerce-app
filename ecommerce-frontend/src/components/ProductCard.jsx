@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import { fadeIn } from "../animations/fadeIn";
 import {
   addToCartThunk,
@@ -91,9 +91,13 @@ export default function ProductCard({ product }) {
     try {
       await dispatch(addToCartThunk({ productId: product._id, quantity: 1 })).unwrap();
       dispatch(refreshCartCountThunk());
-      toast.success("Added to cart!", { autoClose: 1200 });
+      notify.cart({
+        title: "Added to cart",
+        desc: product.name,
+        action: { label: "View cart", to: "/cart" },
+      });
     } catch {
-      toast.error("Couldn't add to cart");
+      notify.error("Couldn't add to cart");
     } finally {
       setBusy(false);
     }
@@ -102,7 +106,7 @@ export default function ProductCard({ product }) {
   const handleInc = async (e) => {
     stop(e);
     if (atStockCap) {
-      toast.info(`Only ${product.stock} in stock`, { autoClose: 1500 });
+      notify.warn({ title: "Stock limit reached", desc: `Only ${product.stock} available` });
       return;
     }
     setBusy(true);
@@ -110,7 +114,7 @@ export default function ProductCard({ product }) {
       await dispatch(increaseQtyThunk(product._id)).unwrap();
       dispatch(refreshCartCountThunk());
     } catch {
-      toast.error("Update failed");
+      notify.error("Update failed");
     } finally {
       setBusy(false);
     }
@@ -122,13 +126,13 @@ export default function ProductCard({ product }) {
     try {
       if (cartQty <= 1) {
         await dispatch(removeFromCartThunk(product._id)).unwrap();
-        toast.success("Removed from cart", { autoClose: 1200 });
+        notify.info({ title: "Removed from cart", desc: product.name });
       } else {
         await dispatch(decreaseQtyThunk(product._id)).unwrap();
       }
       dispatch(refreshCartCountThunk());
     } catch {
-      toast.error("Update failed");
+      notify.error("Update failed");
     } finally {
       setBusy(false);
     }
@@ -137,7 +141,15 @@ export default function ProductCard({ product }) {
   const handleWishlist = (e) => {
     stop(e);
     const nowWishlisted = toggle(product);
-    toast.success(nowWishlisted ? "Saved to wishlist" : "Removed from wishlist", { autoClose: 1200 });
+    if (nowWishlisted) {
+      notify.wishlist({
+        title: "Saved to wishlist",
+        desc: product.name,
+        action: { label: "View wishlist", to: "/wishlist" },
+      });
+    } else {
+      notify.info({ title: "Removed from wishlist", desc: product.name });
+    }
   };
 
   return (

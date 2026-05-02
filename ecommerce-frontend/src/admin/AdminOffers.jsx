@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import { Plus, Pencil, Trash2, Sparkles, Clock, Tag, ArrowLeft } from "lucide-react";
 import {
   adminFetchOffersThunk,
@@ -115,11 +115,11 @@ export default function AdminOffers() {
     setSaving(true);
     try {
       await dispatch(adminCreateOfferThunk(payload)).unwrap();
-      toast.success("Offer created successfully");
+      notify.success("Offer created successfully");
       setView({ mode: "list", offer: null });
       dispatch(adminFetchOffersThunk());
     } catch (err) {
-      toast.error(err || "Failed to create offer");
+      notify.error(err || "Failed to create offer");
     } finally {
       setSaving(false);
     }
@@ -130,11 +130,11 @@ export default function AdminOffers() {
     setSaving(true);
     try {
       await dispatch(adminUpdateOfferThunk({ id: view.offer._id, data: payload })).unwrap();
-      toast.success("Offer updated");
+      notify.success("Offer updated");
       setView({ mode: "list", offer: null });
       dispatch(adminFetchOffersThunk());
     } catch (err) {
-      toast.error(err || "Failed to update offer");
+      notify.error(err || "Failed to update offer");
     } finally {
       setSaving(false);
     }
@@ -143,10 +143,10 @@ export default function AdminOffers() {
   const handleToggle = async (offer) => {
     try {
       await dispatch(adminUpdateOfferThunk({ id: offer._id, data: { active: !offer.active } })).unwrap();
-      toast.success(offer.active ? "Offer paused" : "Offer activated");
+      notify.success(offer.active ? "Offer paused" : "Offer activated");
       dispatch(adminFetchOffersThunk());
     } catch (err) {
-      toast.error(err || "Failed to update offer");
+      notify.error(err || "Failed to update offer");
     }
   };
 
@@ -155,10 +155,10 @@ export default function AdminOffers() {
     setDeleting(true);
     try {
       await dispatch(adminDeleteOfferThunk(deleteTarget._id)).unwrap();
-      toast.success("Offer deleted");
+      notify.success("Offer deleted");
       setDeleteTarget(null);
     } catch (err) {
-      toast.error(err || "Failed to delete offer");
+      notify.error(err || "Failed to delete offer");
     } finally {
       setDeleting(false);
     }

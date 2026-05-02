@@ -2,7 +2,7 @@ import { useState } from "react";
 import { uploadImage } from "../utils/uploadImage";
 import { PRODUCT_CATEGORIES, FORM_INPUT_CLS, FORM_LABEL_CLS } from "../constants";
 import { X, Upload, Loader2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { notify } from "../../utils/notify";
 
 const initialForm = {
   name: "",
@@ -36,11 +36,11 @@ export default function ProductForm({
       );
       const successful = results.filter(Boolean);
       if (successful.length === 0) {
-        toast.error("All image uploads failed");
+        notify.error("All image uploads failed");
       } else {
         setImages((prev) => [...prev, ...successful]);
         if (successful.length < files.length) {
-          toast.warn(`${files.length - successful.length} image(s) failed to upload`);
+          notify.warn(`${files.length - successful.length} image(s) failed to upload`);
         }
       }
     } finally {
@@ -65,7 +65,7 @@ export default function ProductForm({
     const validationError = validate();
     if (validationError) {
       setError(validationError);
-      toast.error(validationError);
+      notify.error(validationError);
       return;
     }
     setError("");

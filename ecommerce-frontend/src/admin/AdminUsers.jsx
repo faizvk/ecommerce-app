@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import { Users as UsersIcon, Shield, User as UserIcon } from "lucide-react";
 import {
   fetchAllUsersThunk,
@@ -46,10 +46,10 @@ export default function AdminUsers() {
     setUpdatingId(confirmTarget._id);
     try {
       await dispatch(updateUserRoleThunk({ id: confirmTarget._id, role: confirmTarget.newRole })).unwrap();
-      toast.success(`${confirmTarget.name} is now ${confirmTarget.newRole === "admin" ? "an Admin" : "a User"}`);
+      notify.success(`${confirmTarget.name} is now ${confirmTarget.newRole === "admin" ? "an Admin" : "a User"}`);
       setConfirmTarget(null);
     } catch (err) {
-      toast.error(err || "Failed to update role");
+      notify.error(err || "Failed to update role");
     } finally {
       setUpdatingId(null);
     }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import "react-toastify/dist/ReactToastify.css";
 
 import {
@@ -134,9 +134,13 @@ export default function ProductDetails() {
       await dispatch(addToCartThunk({ productId: product._id, quantity })).unwrap();
       dispatch(fetchCartThunk());
       dispatch(refreshCartCountThunk());
-      toast.success(`${quantity} ${quantity === 1 ? "item" : "items"} added to cart!`);
+      notify.cart({
+        title: `${quantity} ${quantity === 1 ? "item" : "items"} added to cart`,
+        desc: product.name,
+        action: { label: "View cart", to: "/cart" },
+      });
     } catch {
-      toast.error("Failed to add to cart.");
+      notify.error("Failed to add to cart");
     } finally {
       setAdding(false);
     }
@@ -152,7 +156,7 @@ export default function ProductDetails() {
       dispatch(refreshCartCountThunk());
       navigate("/checkout");
     } catch {
-      toast.error("Couldn't proceed to checkout");
+      notify.error("Couldn't proceed to checkout");
     } finally {
       setBuying(false);
     }
@@ -170,7 +174,7 @@ export default function ProductDetails() {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(url);
-        toast.success("Link copied to clipboard!");
+        notify.success({ title: "Link copied", desc: "Share it with your friends!" });
       }
     } catch {
       // user cancelled
@@ -179,13 +183,21 @@ export default function ProductDetails() {
 
   const handleWishlist = () => {
     const now = toggleWishlist(product);
-    toast.success(now ? "Saved to wishlist" : "Removed from wishlist", { autoClose: 1200 });
+    if (now) {
+      notify.wishlist({
+        title: "Saved to wishlist",
+        desc: product.name,
+        action: { label: "View wishlist", to: "/wishlist" },
+      });
+    } else {
+      notify.info({ title: "Removed from wishlist", desc: product.name });
+    }
   };
 
   const checkDelivery = () => {
     const trimmed = pincode.trim();
     if (!/^\d{6}$/.test(trimmed)) {
-      toast.error("Please enter a valid 6-digit pincode");
+      notify.warn("Please enter a valid 6-digit pincode");
       return;
     }
     // Mock: 2-5 day delivery based on pincode parity
@@ -202,7 +214,7 @@ export default function ProductDetails() {
   const incQty = () => {
     if (!product) return;
     if (quantity >= product.stock) {
-      toast.info(`Only ${product.stock} in stock`, { autoClose: 1500 });
+      notify.warn({ title: "Stock limit", desc: `Only ${product.stock} available` });
       return;
     }
     setQuantity((q) => q + 1);

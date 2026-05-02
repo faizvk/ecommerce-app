@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import { Package } from "lucide-react";
 import {
   adminFetchOrdersThunk,
@@ -35,9 +35,9 @@ export default function AdminOrders() {
     setBusyId(orderId);
     try {
       await dispatch(adminUpdateOrderStatusThunk({ orderId, status: nextStatus })).unwrap();
-      toast.success(`Order marked as ${nextStatus}`);
+      notify.success(`Order marked as ${nextStatus}`);
     } catch (err) {
-      toast.error(err || "Failed to update status");
+      notify.error(err || "Failed to update status");
     } finally {
       setBusyId(null);
     }
@@ -48,10 +48,10 @@ export default function AdminOrders() {
     setBusyId(cancelTarget);
     try {
       await dispatch(cancelOrderThunk(cancelTarget)).unwrap();
-      toast.success("Order cancelled");
+      notify.success("Order cancelled");
       setCancelTarget(null);
     } catch (err) {
-      toast.error(err || "Failed to cancel order");
+      notify.error(err || "Failed to cancel order");
     } finally {
       setBusyId(null);
     }

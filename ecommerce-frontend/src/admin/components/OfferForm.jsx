@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../../utils/notify";
 import { Search, X, Upload, Check, Percent, IndianRupee } from "lucide-react";
 import { fetchProductsThunk } from "../../redux/slice/productSlice";
 import { uploadImage } from "../utils/uploadImage";
@@ -71,9 +71,9 @@ export default function OfferForm({
     try {
       const url = await uploadImage(file);
       setForm((f) => ({ ...f, bannerImage: url }));
-      toast.success("Banner uploaded");
+      notify.success("Banner uploaded");
     } catch {
-      toast.error("Banner upload failed");
+      notify.error("Banner upload failed");
     } finally {
       setUploadingBanner(false);
     }
@@ -81,12 +81,12 @@ export default function OfferForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.title.trim()) return toast.error("Title is required");
-    if (form.discountValue === "" || Number(form.discountValue) <= 0) return toast.error("Discount value must be positive");
-    if (form.discountType === "percent" && Number(form.discountValue) > 100) return toast.error("Percent discount cannot exceed 100%");
-    if (!form.endTime) return toast.error("End time is required");
-    if (new Date(form.endTime) <= new Date()) return toast.error("End time must be in the future");
-    if (selectedIds.size === 0) return toast.error("Select at least one product");
+    if (!form.title.trim()) return notify.error("Title is required");
+    if (form.discountValue === "" || Number(form.discountValue) <= 0) return notify.error("Discount value must be positive");
+    if (form.discountType === "percent" && Number(form.discountValue) > 100) return notify.error("Percent discount cannot exceed 100%");
+    if (!form.endTime) return notify.error("End time is required");
+    if (new Date(form.endTime) <= new Date()) return notify.error("End time must be in the future");
+    if (selectedIds.size === 0) return notify.error("Select at least one product");
 
     onSubmit({
       ...form,

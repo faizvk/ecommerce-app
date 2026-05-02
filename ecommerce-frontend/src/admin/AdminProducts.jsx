@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import { Plus, Pencil, Trash2, Package } from "lucide-react";
 import {
   fetchProductsThunk,
@@ -38,9 +38,9 @@ function StockEditor({ product }) {
     setSaving(true);
     try {
       await dispatch(updateStockThunk({ productId: product._id, stock: num })).unwrap();
-      toast.success("Stock updated", { autoClose: 1200 });
+      notify.success("Stock updated", { autoClose: 1200 });
     } catch {
-      toast.error("Stock update failed");
+      notify.error("Stock update failed");
       setValue(product.stock ?? 0);
     } finally {
       setSaving(false);
@@ -89,10 +89,10 @@ export default function AdminProducts() {
     setDeleting(true);
     try {
       await dispatch(adminDeleteProductThunk(confirmTarget._id)).unwrap();
-      toast.success("Product deleted");
+      notify.success("Product deleted");
       setConfirmTarget(null);
     } catch (err) {
-      toast.error(err || "Failed to delete product");
+      notify.error(err || "Failed to delete product");
     } finally {
       setDeleting(false);
     }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import {
   fetchProductByIdThunk,
   adminUpdateProductThunk,
@@ -26,10 +26,10 @@ export default function AdminEditProduct() {
     setSaving(true);
     try {
       await dispatch(adminUpdateProductThunk({ id, data: payload })).unwrap();
-      toast.success("Product updated successfully!");
+      notify.success("Product updated successfully!");
       navigate("/admin/products");
     } catch (err) {
-      toast.error(err || "Failed to update product");
+      notify.error(err || "Failed to update product");
     } finally {
       setSaving(false);
     }

@@ -161,7 +161,18 @@ export default function App() {
         </Suspense>
       </main>
 
-      <ToastContainer position="top-center" />
+      <ToastContainer
+        position="top-right"
+        newestOnTop
+        limit={4}
+        toastClassName="nexkart-toast"
+        bodyClassName="nexkart-toast__body"
+        progressClassName="nexkart-toast__progress"
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable={false}
+      />
       <Footer />
     </div>
   );

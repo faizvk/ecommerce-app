@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import { Heart, Trash2, ShoppingCart, ArrowRight, ShoppingBag } from "lucide-react";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { useWishlist } from "../hooks/useWishlist";
@@ -24,9 +24,9 @@ export default function Wishlist() {
       dispatch(fetchCartThunk());
       dispatch(refreshCartCountThunk());
       remove(product._id);
-      toast.success("Moved to cart");
+      notify.cart({ title: "Moved to cart", desc: product.name, action: { label: "View cart", to: "/cart" } });
     } catch {
-      toast.error("Couldn't add to cart");
+      notify.error("Couldn't add to cart");
     } finally {
       setBusyId(null);
     }
@@ -47,9 +47,13 @@ export default function Wishlist() {
       dispatch(fetchCartThunk());
       dispatch(refreshCartCountThunk());
       clear();
-      toast.success(`${added} ${added === 1 ? "item" : "items"} moved to cart`);
+      notify.cart({
+        title: `${added} ${added === 1 ? "item" : "items"} moved to cart`,
+        desc: "Your wishlist has been cleared",
+        action: { label: "View cart", to: "/cart" },
+      });
     } else {
-      toast.error("Couldn't move items to cart");
+      notify.error("Couldn't move items to cart");
     }
   };
 

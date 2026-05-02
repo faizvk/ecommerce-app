@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { notify } from "../utils/notify";
 import { adminAddProductThunk } from "../redux/slice/productSlice";
 import PageHeader from "./components/PageHeader";
 import ProductForm from "./components/ProductForm";
@@ -15,10 +15,10 @@ export default function AdminAddProduct() {
     setSaving(true);
     try {
       await dispatch(adminAddProductThunk(payload)).unwrap();
-      toast.success("Product added successfully!");
+      notify.success("Product added successfully!");
       navigate("/admin/products");
     } catch (err) {
-      toast.error(err || "Failed to add product");
+      notify.error(err || "Failed to add product");
     } finally {
       setSaving(false);
     }
