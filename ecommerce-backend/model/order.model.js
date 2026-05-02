@@ -47,6 +47,9 @@ const orderSchema = mongoose.Schema(
     razorpayOrderId: {
       type: String,
       default: null,
+      unique: true,
+      sparse: true, // allow multiple null values; uniqueness only when set
+      index: true,
     },
     paymentStatus: {
       type: String,

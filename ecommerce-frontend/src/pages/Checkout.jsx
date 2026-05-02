@@ -74,8 +74,18 @@ export default function Checkout() {
     }
 
     try {
-      const orderRes = await api.post("/payment/create-order", { amount: validTotal });
-      const { order, key } = orderRes.data;
+      // Amount is computed server-side from cart for security; we don't send it.
+      const orderRes = await api.post("/payment/create-order", {});
+      const { order, key, amount: serverAmount } = orderRes.data;
+
+      // If server's amount differs from what user saw (e.g. price changed mid-session),
+      // surface that before launching the Razorpay modal.
+      if (serverAmount && Math.abs(serverAmount - validTotal) > 0.01) {
+        setError(`Cart total updated to ₹${serverAmount}. Please review and try again.`);
+        setProcessing(false);
+        dispatch(fetchCartThunk());
+        return;
+      }
 
       const options = {
         key,
@@ -100,7 +110,16 @@ export default function Checkout() {
             navigate(`/track/${res.data.order._id}`, { replace: true });
           } catch (err) {
             console.error(err);
-            setError(err.response?.data?.message || "Payment verification failed. Contact support.");
+            const serverMsg = err.response?.data?.message;
+            // Make recovery actionable — show payment id so user can reach support
+            setError(
+              `${serverMsg || "Payment verification failed."} Your payment ID: ${response.razorpay_payment_id}. ` +
+              "Please save this and contact support — we'll resolve this quickly."
+            );
+            notify.error({
+              title: "Order placement failed",
+              desc: "Payment was charged. Save your payment ID below to contact support.",
+            });
           } finally {
             setProcessing(false);
           }
