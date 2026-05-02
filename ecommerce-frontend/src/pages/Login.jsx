@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { GoogleLogin } from "@react-oauth/google";
 import {
@@ -28,7 +28,9 @@ const PERKS = [
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { loading } = useSelector((state) => state.auth);
+  const intended = location.state?.from || null;
 
   const [googleOnly, setGoogleOnly] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -40,7 +42,8 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       const res = await dispatch(loginThunk(data)).unwrap();
-      navigate(res.user.role === "admin" ? "/admin" : "/", { replace: true });
+      const dest = res.user.role === "admin" ? "/admin" : (intended || "/");
+      navigate(dest, { replace: true });
     } catch (err) {
       if (err === "ACCOUNT_HAS_NO_PASSWORD") {
         setGoogleOnly(true);
@@ -56,7 +59,8 @@ export default function Login() {
     try {
       const res = await googleLogin(credential);
       dispatch(loginSuccess(res.data));
-      navigate(res.data.user.role === "admin" ? "/admin" : "/", { replace: true });
+      const dest = res.data.user.role === "admin" ? "/admin" : (intended || "/");
+      navigate(dest, { replace: true });
     } catch {
       setError("root", { message: "Google login failed" });
     }

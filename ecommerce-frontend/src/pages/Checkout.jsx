@@ -5,8 +5,10 @@ import { getCart } from "../api/cart.api";
 import { placeOrder } from "../api/order.api";
 import { getProfile } from "../api/user.api";
 import api from "../api/api";
-import { refreshCartCountThunk } from "../redux/slice/cartSlice";
+import { refreshCartCountThunk, clearCart } from "../redux/slice/cartSlice";
+import { clearCartItemsState } from "../redux/slice/cartItemsSlice";
 import { loadRazorpayScript } from "../utils/loadRazorpay";
+import { notify } from "../utils/notify";
 import { MapPin, ShoppingBag } from "lucide-react";
 
 export default function Checkout() {
@@ -65,7 +67,7 @@ export default function Checkout() {
         key,
         amount: order.amount,
         currency: order.currency,
-        name: "MyStore",
+        name: "NexKart",
         description: "Order Payment",
         order_id: order.id,
         handler: async function (response) {
@@ -76,7 +78,11 @@ export default function Checkout() {
               razorpay_signature: response.razorpay_signature,
             });
             const res = await placeOrder(address, response.razorpay_payment_id, response.razorpay_order_id);
+            // Clear cart state so subsequent visits show empty cart immediately
+            dispatch(clearCartItemsState());
+            dispatch(clearCart());
             dispatch(refreshCartCountThunk());
+            notify.order({ title: "Order placed!", desc: "Track its journey now", action: { label: "View order", to: `/track/${res.data.order._id}` } });
             navigate(`/track/${res.data.order._id}`, { replace: true });
           } catch (err) {
             console.error(err);

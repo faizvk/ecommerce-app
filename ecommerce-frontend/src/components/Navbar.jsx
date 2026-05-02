@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutThunk } from "../redux/slice/authSlice";
 import { clearCart } from "../redux/slice/cartSlice";
+import { clearCartItemsState } from "../redux/slice/cartItemsSlice";
 import {
   LogOut, LogIn, ShoppingCart, X, Menu, ShoppingBag, Heart, Search,
   ArrowRight, User as UserIcon, ClipboardList, Shield, ChevronRight,
@@ -77,6 +78,7 @@ export default function Navbar() {
     setMenuOpen(false);
     try { await dispatch(logoutThunk()).unwrap(); } catch { /* ignore */ }
     dispatch(clearCart());
+    dispatch(clearCartItemsState());
     navigate("/login", { replace: true });
   };
 
