@@ -131,16 +131,41 @@ export default function Orders() {
     );
   }
 
+  const totalSpent = orders
+    .filter((o) => o.status !== "cancelled")
+    .reduce((s, o) => s + (o.totalAmount || 0), 0);
+  const activeCount = categorized.pending.length + categorized.shipped.length;
+  const deliveredCount = categorized.delivered.length;
+
   return (
-    <div className="max-w-[900px] mx-auto px-4 py-6 md:py-8">
+    <div className="max-w-[1000px] mx-auto px-4 py-5 md:px-5 md:py-7">
       <Breadcrumbs items={[{ label: "My Orders" }]} className="mb-4" />
+
       {/* HEADER */}
-      <div className="mb-6">
-        <h1 className="text-xl md:text-2xl font-extrabold text-gray-900">My Orders</h1>
-        <p className="text-[0.82rem] text-gray-400 mt-0.5">
-          {orders.length} total order{orders.length !== 1 ? "s" : ""}
+      <div className="mb-5">
+        <h1 className="text-2xl md:text-[1.75rem] font-extrabold text-gray-900 leading-tight">My Orders</h1>
+        <p className="text-[0.85rem] text-gray-400 mt-0.5">
+          {orders.length} total order{orders.length !== 1 ? "s" : ""} · Track and manage all your purchases
         </p>
       </div>
+
+      {/* STATS GRID */}
+      {orders.length > 0 && (
+        <div className="grid grid-cols-3 gap-2 md:gap-3 mb-5">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-3 md:p-4">
+            <p className="text-[0.62rem] md:text-[0.65rem] font-bold uppercase tracking-wider text-gray-400">Active</p>
+            <p className="text-xl md:text-2xl font-extrabold text-amber-600 mt-0.5">{activeCount}</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-3 md:p-4">
+            <p className="text-[0.62rem] md:text-[0.65rem] font-bold uppercase tracking-wider text-gray-400">Delivered</p>
+            <p className="text-xl md:text-2xl font-extrabold text-green-600 mt-0.5">{deliveredCount}</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-3 md:p-4">
+            <p className="text-[0.62rem] md:text-[0.65rem] font-bold uppercase tracking-wider text-gray-400">Total Spent</p>
+            <p className="text-xl md:text-2xl font-extrabold text-brand mt-0.5">₹{totalSpent.toLocaleString("en-IN")}</p>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5">
