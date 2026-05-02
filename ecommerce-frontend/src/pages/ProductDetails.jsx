@@ -99,7 +99,6 @@ export default function ProductDetails() {
   useEffect(() => {
     dispatch(fetchProductByIdThunk(id));
     dispatch(fetchActiveOffersThunk());
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id, dispatch]);
 
   useEffect(() => {
@@ -237,7 +236,7 @@ export default function ProductDetails() {
   const recentlyViewedOthers = recentOthers(product._id);
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 md:py-8 pb-24 md:pb-8">
+    <div className="max-w-[1200px] mx-auto px-3 py-4 md:px-5 md:py-6 pb-24 md:pb-6">
       {/* BREADCRUMB */}
       <nav className="flex items-center gap-1.5 text-[0.78rem] text-gray-400 mb-5 flex-wrap">
         <Link to="/" className="hover:text-brand transition-colors no-underline text-gray-400">Home</Link>
@@ -253,7 +252,7 @@ export default function ProductDetails() {
       </nav>
 
       {/* MAIN HERO LAYOUT */}
-      <div className="flex flex-col gap-6 md:flex-row md:gap-10 md:items-start">
+      <div className="flex flex-col gap-5 md:flex-row md:gap-7 md:items-start">
         {/* LEFT — IMAGE GALLERY */}
         <div
           className="w-full md:w-[46%] md:sticky md:top-20"
@@ -291,11 +290,7 @@ export default function ProductDetails() {
               {/* Soft drop shadow that "floats" the image */}
               <div className="absolute inset-x-6 bottom-0 h-8 bg-black/15 blur-2xl rounded-full -z-10" />
 
-              <div className="relative aspect-square rounded-3xl overflow-hidden border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-white">
-                {/* Decorative gradient backdrop */}
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-light/40 via-white to-[#f5f0ff]/40" />
-                <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-brand/5 blur-3xl" />
-                <div className="absolute -bottom-24 -left-16 w-56 h-56 rounded-full bg-[#7c3aed]/5 blur-3xl" />
+              <div className="relative aspect-square rounded-3xl overflow-hidden border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.06)] bg-gray-100">
 
                 {/* Top-left badge stack */}
                 <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
@@ -325,26 +320,24 @@ export default function ProductDetails() {
                   <ZoomIn size={15} />
                 </button>
 
-                {/* Crossfade image stack */}
-                <div className="absolute inset-0 z-10 flex items-center justify-center">
-                  {images.length === 0 ? (
-                    <img src="/placeholder.jpg" alt={product.name} className="w-full h-full object-contain p-6 md:p-10" />
-                  ) : (
-                    images.map((img, i) => (
-                      <img
-                        key={i}
-                        src={img}
-                        alt={i === activeImage ? product.name : ""}
-                        onClick={() => i === activeImage && setLightbox(true)}
-                        className={`absolute inset-0 w-full h-full object-contain p-6 md:p-10 transition-all duration-500 ease-out ${
-                          i === activeImage
-                            ? "opacity-100 scale-100 cursor-zoom-in"
-                            : "opacity-0 scale-95 pointer-events-none"
-                        }`}
-                      />
-                    ))
-                  )}
-                </div>
+                {/* Crossfade image stack — fills entire frame */}
+                {images.length === 0 ? (
+                  <img src="/placeholder.jpg" alt={product.name} className="absolute inset-0 w-full h-full object-cover" />
+                ) : (
+                  images.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt={i === activeImage ? product.name : ""}
+                      onClick={() => i === activeImage && setLightbox(true)}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out ${
+                        i === activeImage
+                          ? "opacity-100 cursor-zoom-in"
+                          : "opacity-0 pointer-events-none"
+                      }`}
+                    />
+                  ))
+                )}
 
                 {/* Prev/Next nav (visible at low opacity, full on hover) */}
                 {images.length > 1 && (

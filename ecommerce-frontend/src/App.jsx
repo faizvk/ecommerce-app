@@ -6,6 +6,7 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { useFadeInScroll } from "./animations/useFadeInScroll";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
@@ -107,6 +108,7 @@ export default function App() {
 
   return (
     <div className="app-layout">
+      <ScrollToTop />
       <Navbar />
 
       <main className="main-content">
