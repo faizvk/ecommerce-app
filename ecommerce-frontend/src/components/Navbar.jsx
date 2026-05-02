@@ -80,8 +80,6 @@ export default function Navbar() {
     navigate("/login", { replace: true });
   };
 
-  if (isAuthPage) return null;
-
   let hideTimeout;
   const firstName = user?.name ? user.name.split(" ")[0] : "";
   const initials = user?.name ? user.name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase() : "";
@@ -115,8 +113,8 @@ export default function Navbar() {
         </span>
       </Link>
 
-      {/* SEARCH */}
-      {!isAdminPage && (
+      {/* SEARCH — hidden on admin & auth pages */}
+      {!isAdminPage && !isAuthPage && (
         <div
           className="order-3 w-full md:order-2 md:w-[42%] md:flex-1 md:max-w-[560px] relative"
           onMouseEnter={() => { clearTimeout(hideTimeout); setShowSuggestions(true); }}
@@ -235,8 +233,19 @@ export default function Navbar() {
 
       {/* RIGHT SIDE */}
       <div className="order-2 ml-auto md:order-3 flex items-center gap-3 md:gap-5">
+        {/* On auth pages, show only a minimal "Back to shop" link */}
+        {isAuthPage ? (
+          <Link
+            to="/"
+            className="flex items-center gap-1.5 text-white/85 no-underline font-semibold text-[0.85rem] transition-colors hover:text-white"
+          >
+            <ArrowRight size={15} className="rotate-180" />
+            Back to shop
+          </Link>
+        ) : null}
+
         {/* Wishlist & Cart — always visible for customers, on both mobile and desktop */}
-        {showCartIcons && (
+        {!isAuthPage && showCartIcons && (
           <>
             <Link
               to="/wishlist"
@@ -265,7 +274,8 @@ export default function Navbar() {
           </>
         )}
 
-        {/* DESKTOP NAV */}
+        {/* DESKTOP NAV — hidden on auth pages */}
+        {!isAuthPage && (
         <div className="hidden md:flex items-center gap-5">
           {user ? (
             <>
@@ -302,8 +312,10 @@ export default function Navbar() {
             </Link>
           )}
         </div>
+        )}
 
-        {/* HAMBURGER + DROPDOWN — mobile only */}
+        {/* HAMBURGER + DROPDOWN — mobile only, hidden on auth pages */}
+        {!isAuthPage && (
         <div className="md:hidden relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((v) => !v)}
@@ -403,6 +415,7 @@ export default function Navbar() {
             )}
           </div>
         </div>
+        )}
       </div>
     </nav>
   );
