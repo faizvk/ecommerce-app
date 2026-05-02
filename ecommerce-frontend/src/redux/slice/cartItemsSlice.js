@@ -132,7 +132,21 @@ const cartItemsSlice = createSlice({
 
       .addCase(decreaseQtyThunk.pending, pending)
       .addCase(decreaseQtyThunk.fulfilled, (state, action) => { applyCart(state, action.payload); })
-      .addCase(decreaseQtyThunk.rejected, rejected);
+      .addCase(decreaseQtyThunk.rejected, rejected)
+
+      // Reset cart whenever auth state changes (login/logout/session-expire) so cart
+      // items never leak between users. Use string action types to avoid circular imports.
+      .addMatcher(
+        (action) => /^auth\/(login|logout|restoreSession)\/fulfilled$/.test(action.type) ||
+                    /^auth\/restoreSession\/rejected$/.test(action.type),
+        (state) => {
+          state.cart = null;
+          state.items = [];
+          state.totalAmount = 0;
+          state.loading = false;
+          state.error = null;
+        }
+      );
   },
 });
 
