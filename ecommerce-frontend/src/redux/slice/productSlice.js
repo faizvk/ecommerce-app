@@ -41,6 +41,8 @@ export const searchProductsThunk = createAsyncThunk(
       return {
         products: res.data.products || [],
         totalPages: res.data.totalPages || 1,
+        totalCount: res.data.totalCount ?? (res.data.products?.length || 0),
+        page: res.data.page || 1,
       };
     } catch {
       return rejectWithValue("Search failed");
@@ -121,6 +123,7 @@ const productSlice = createSlice({
 
     searchedProducts: [],
     totalPages: 1,
+    totalCount: 0,
 
     relatedProducts: [],
 
@@ -170,11 +173,13 @@ const productSlice = createSlice({
       .addCase(searchProductsThunk.fulfilled, (state, action) => {
         state.searchedProducts = action.payload.products;
         state.totalPages = action.payload.totalPages;
+        state.totalCount = action.payload.totalCount ?? action.payload.products.length;
         state.loading = false;
       })
       .addCase(searchProductsThunk.rejected, (state, action) => {
         state.loading = false;
         state.searchedProducts = [];
+        state.totalCount = 0;
         state.totalPages = 1;
         state.error = action.payload;
       })
