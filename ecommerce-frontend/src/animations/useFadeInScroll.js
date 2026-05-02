@@ -1,10 +1,19 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+/**
+ * Reveals elements with `data-fade="true"` once they scroll into view.
+ *
+ * IMPORTANT: animation runs once. After an element is revealed, it stays
+ * revealed even when scrolled out of view. Previously the observer was
+ * also re-hiding elements as they exited the viewport, which made cart
+ * rows / cards disappear when scrolled past on mobile.
+ */
 export function useFadeInScroll() {
   const location = useLocation();
 
   useEffect(() => {
+    // Reset binding flag on route change so newly mounted elements get observed
     document.querySelectorAll("[data-fade='true']").forEach((el) => {
       el.removeAttribute("data-fade-bound");
     });
@@ -15,31 +24,21 @@ export function useFadeInScroll() {
       const elements = document.querySelectorAll(
         "[data-fade='true']:not([data-fade-bound])"
       );
-
       if (!elements.length) return;
 
       if (!observer) {
         observer = new IntersectionObserver(
-          (entries) => {
+          (entries, obs) => {
             entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
               const el = entry.target;
-              const direction = el.getAttribute("data-direction") || "up";
-              const distance = el.getAttribute("data-distance") || "40px";
-
-              if (entry.isIntersecting) {
-                el.style.opacity = "1";
-                el.style.transform = "translate(0, 0)";
-              } else {
-                const axis =
-                  direction === "left" || direction === "right" ? "X" : "Y";
-                const sign =
-                  direction === "up" || direction === "left" ? 1 : -1;
-                el.style.opacity = "0";
-                el.style.transform = `translate${axis}(${sign * distance})`;
-              }
+              el.style.opacity = "1";
+              el.style.transform = "translate(0, 0)";
+              // Once revealed, stop watching — element stays visible
+              obs.unobserve(el);
             });
           },
-          { threshold: 0.15 }
+          { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
         );
       }
 
@@ -52,10 +51,7 @@ export function useFadeInScroll() {
     observe();
 
     const mutationObserver = new MutationObserver(observe);
-    mutationObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       mutationObserver.disconnect();

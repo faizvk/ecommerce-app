@@ -308,7 +308,10 @@ export default function SearchResults() {
         </div>
       )}
 
-      {loading ? (
+      {/* Show full-page spinner only on first load (no products yet).
+          On pagination/filter change, keep current results visible with a subtle
+          opacity fade + top loading bar so it doesn't feel like a refresh. */}
+      {loading && searchedProducts.length === 0 ? (
         <div className="flex justify-center py-20">
           <div className="animate-spin w-10 h-10 rounded-full border-4 border-brand-medium border-t-brand" />
         </div>
@@ -350,13 +353,19 @@ export default function SearchResults() {
           )}
         </div>
       ) : (
-        <>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
+        <div className="relative">
+          {/* Top progress bar during pagination/filter changes */}
+          {loading && (
+            <div className="absolute -top-2 left-0 right-0 h-0.5 bg-brand-light overflow-hidden rounded-full z-10">
+              <div className="h-full w-1/3 bg-gradient-to-r from-brand to-[#7c3aed] animate-[slide-right_1.2s_ease-in-out_infinite]" />
+            </div>
+          )}
+          <div className={`grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4 transition-opacity duration-200 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
             {searchedProducts.map((p) => <ProductCard key={p._id} product={p} />)}
           </div>
 
           <Pagination page={filters.page} totalPages={totalPages} onChange={goToPage} />
-        </>
+        </div>
       )}
     </div>
   );
