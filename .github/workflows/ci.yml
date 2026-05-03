@@ -1,0 +1,59 @@
+name: CI                                                                                                                                                                                                
+                                                         
+on:
+  pull_request:
+    branches: [main]
+  push:                                                                                                                                                                                                 
+    branches: [main]
+                                                                                                                                                                                                          
+permissions:                                           
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true                                                                                                                                                                              
+  
+jobs:                                                                                                                                                                                                   
+  backend:                                             
+    name: Backend (lint + test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10                                                                                                                                                                                 
+    defaults:
+      run:                                                                                                                                                                                              
+         working-directory: ecommerce-backend           
+    steps:                                                                                                                                                                                              
+       - uses: actions/checkout@v4
+       - uses: actions/setup-node@v4                                                                                                                                                                     
+         with:                                          
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ecommerce-backend/package-lock.json                                                                                                                                    
+       - run: npm ci || npm install
+       - run: npm run lint                                                                                                                                                                               
+       - env:                                           
+           NODE_ENV: test                                                                                                                                                                                
+           MONGOOSE_URI: mongodb://localhost:27017/ci-test
+           CLIENT_URL: http://localhost:5173                                                                                                                                                             
+           ACCESS_SECRET_KEY: ci-access-secret-key-please-rotate
+           REFRESH_SECRET_KEY: ci-refresh-secret-key-please-rotate                                                                                                                                       
+           LOG_LEVEL: fatal                                                                                                                                                                              
+         run: npm test                                                                                                                                                                                   
+                                                                                                                                                                                                          
+  frontend:                                            
+    name: Frontend (lint + test + build)                                                                                                                                                                
+    runs-on: ubuntu-latest                             
+    timeout-minutes: 10
+    defaults:
+      run:                                                                                                                                                                                              
+        working-directory: ecommerce-frontend
+    steps:                                                                                                                                                                                              
+      - uses: actions/checkout@v4                      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20                                                                                                                                                                              
+          cache: npm
+          cache-dependency-path: ecommerce-frontend/package-lock.json                                                                                                                                   
+      - run: npm ci || npm install                     
+      - run: npm run lint
+      - run: npm test                                                                                                                                                                                   
+      - run: npm run build
