@@ -223,7 +223,7 @@ export default function Home() {
 
       {/* PER-CATEGORY HORIZONTAL SCROLLERS */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
-        {CATEGORY_CONFIG.map(({ key, label, emoji }) => {
+        {CATEGORY_CONFIG.map(({ key, label }) => {
           const list = productsByCategory[key] || [];
           if (list.length === 0) return null;
 

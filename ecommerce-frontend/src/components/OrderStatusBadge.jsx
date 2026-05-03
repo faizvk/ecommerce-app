@@ -20,5 +20,3 @@ export default function OrderStatusBadge({ status, size = "md" }) {
     </span>
   );
 }
-
-export { STATUS_CONFIG };

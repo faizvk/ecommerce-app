@@ -26,16 +26,16 @@ export default function Profile() {
   const { orders = [] } = useSelector((state) => state.order);
   const { count: wishlistCount } = useWishlist();
 
-  if (!authLoading && authUser?.role === "admin") {
-    return <Navigate to="/admin" replace />;
-  }
-
   useEffect(() => {
-    if (!authLoading && authUser) {
+    if (!authLoading && authUser && authUser.role !== "admin") {
       dispatch(fetchProfileThunk());
       dispatch(fetchOrdersThunk());
     }
   }, [authLoading, authUser, dispatch]);
+
+  if (!authLoading && authUser?.role === "admin") {
+    return <Navigate to="/admin" replace />;
+  }
 
   if (authLoading || profileLoading) {
     return (

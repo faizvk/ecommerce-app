@@ -30,14 +30,15 @@ export default function OrderTrack() {
   const { user, loading: authLoading } = useSelector((s) => s.auth);
   const { currentOrder: order, loading: orderLoading, error, message } = useSelector((s) => s.order);
 
+  useEffect(() => {
+    if (authLoading) return;
+    if (user?.role === "admin") return;
+    dispatch(trackOrderThunk(id));
+  }, [id, authLoading, user?.role, dispatch]);
+
   if (!authLoading && user?.role === "admin") {
     return <Navigate to="/admin" replace />;
   }
-
-  useEffect(() => {
-    if (authLoading) return;
-    dispatch(trackOrderThunk(id));
-  }, [id, authLoading, dispatch]);
 
   const handleCancel = () => {
     if (!window.confirm("Cancel this order? Your stock will be restored and refund (if applicable) will be processed.")) return;
