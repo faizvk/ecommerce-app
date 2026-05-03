@@ -1,228 +1,183 @@
-# MyStore — Full Stack Ecommerce Application
+# NexKart — Full-stack e-commerce platform
 
-A production-ready full-stack ecommerce platform built with a Node.js + Express backend and a React 19 + Vite frontend. Features complete shopping workflows, Razorpay payment integration, Google OAuth, admin dashboard with analytics, and a fully Tailwind CSS styled UI.
+> Modern shopping experience with Razorpay checkout, real-time order tracking, admin dashboard, sale offers, and an indigo–violet brand identity.
+
+[![CI](https://github.com/faizvk/ecommerce-app/actions/workflows/ci.yml/badge.svg)](https://github.com/faizvk/ecommerce-app/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/demo-live-4f46e5?logo=vercel)](https://ecommerce-frontend-eight-blush.vercel.app/)
 
 ---
 
-## Project Structure
+## ✨ Highlights
+
+- **Complete shopping flow** — catalog → product detail → cart → checkout → tracking, with offer pricing applied in real time
+- **Razorpay** integration with server-side amount computation, idempotent order placement, atomic stock reservation, profile-completeness gate before payment, and signed verification
+- **Admin dashboard** — products, offers (with timed sales), orders, users, plus charts on weekly revenue and trending products
+- **Wishlist + recently-viewed** with localStorage persistence
+- **Branded toast system** with 8 contextual variants (cart/wishlist/order/info/warn/error/success/promo)
+- **Smart search** with autocomplete, URL-driven filters with chips, ellipsis pagination
+- **Auto-expiring offers** — backend filters out expired offers in queries, frontend ticks down a live countdown banner
+- **33 passing tests** (24 frontend + 9 backend) and a CI workflow that runs lint + test + build on every PR
+- **Hardened backend** — Zod env validation, structured pino logs with request IDs, per-route rate limits, account lockout, centralized error envelope, hybrid Redis cache
+
+---
+
+## 🏛️ Architecture
 
 ```
 ecommerce-app/
-├── ecommerce-backend/      # Node.js + Express + MongoDB REST API
-├── ecommerce-frontend/     # React 19 + Vite + Tailwind CSS
-└── README.md
+├── ecommerce-backend/        # Node 20 + Express 5 + Mongoose 9
+│   ├── auth/                 # JWT verify + role guard
+│   ├── config/               # env (Zod-validated), logger (pino), db, redis
+│   ├── constants/            # ROLES, ORDER_STATUS, PAYMENT_STATUS, ERROR_CODES
+│   ├── controller/           # request handlers
+│   ├── middleware/           # asyncHandler, AppError, errorHandler, requestId, httpLogger, rateLimiters
+│   ├── model/                # User, Product, Cart, Order, Offer
+│   ├── routes/               # Express routers
+│   ├── scripts/              # seedProducts.js
+│   ├── tests/                # vitest + supertest
+│   └── utils/                # productCache, validStatus, sendEmail, googleClient
+└── ecommerce-frontend/       # React 19 + Vite 7 + Redux Toolkit
+    └── src/
+        ├── admin/            # admin dashboard (lazy-loaded)
+        ├── animations/       # fade-in scroll hook
+        ├── api/              # axios client + endpoint wrappers
+        ├── components/       # shared UI (Navbar, ProductCard, ProductRow…)
+        │   └── ui/           # Button, Skeleton primitives
+        ├── hooks/             # useWishlist, useRecentlyViewed, useDebouncedCallback
+        ├── pages/            # routed pages
+        ├── redux/            # slices + memoized selectors
+        ├── routes/           # ProtectedRoute / GuestRoute / AdminProtectedRoute
+        ├── test/             # vitest setup
+        └── utils/            # constants, notify, applyOffer, productMeta
 ```
 
----
+### Tech choices
 
-## Features
-
-### Customer
-- Browse products by category with live search and autocomplete
-- Product detail pages with image gallery, discount badges, stock status
-- Add to cart, update quantities, remove items
-- Checkout with shipping address and Razorpay payment gateway
-- Order tracking with live status timeline (Ordered → Shipped → Delivered)
-- Order history with status tabs (Pending, Shipped, Delivered, Cancelled)
-- Cancel pending orders
-- User profile management (view, edit, change password)
-- Google OAuth sign-in and password-based authentication
-
-### Admin
-- Dashboard with revenue/orders charts (Chart.js) and KPI stats
-- Full product management — add, edit, delete, update stock inline
-- Order management — update order status, cancel orders
-- User management — promote/demote between customer and admin roles
-- Image upload via Cloudinary drag-and-drop interface
-
-### Technical
-- JWT access + refresh token authentication with HTTP-only cookies
-- Redis caching for product listings
-- Regex-safe product search with server-side pagination
-- Cascade delete for user data (orders + cart on user deletion)
-- Rate limiting and security headers via Helmet
-- Environment-aware cookie settings (sameSite, secure) for cross-origin production
-- HTTPS redirect enforcement in production
+| Concern | Choice | Why |
+|---|---|---|
+| Server framework | Express 5 | Familiar, light, plays well with Render free tier |
+| ORM | Mongoose 9 | Schema validation + middleware hooks, Mongo native |
+| Validation | Zod | Single library covers env vars + (future) request bodies |
+| Auth | JWT (access + refresh) | Refresh in `httpOnly` cookie, access via `Authorization` header |
+| Payments | Razorpay | India-focused; server-side order creation + signed verification |
+| Cache | Redis (optional) | Versioned product cache; soft-fails to DB if Redis offline |
+| Logger | pino + pino-http | Structured JSON in prod, pretty in dev |
+| State (FE) | Redux Toolkit + reselect | Memoised selectors for derived collections |
+| Routing (FE) | React Router 7 | Lazy-loaded routes, sticky scroll |
+| Styling | Tailwind 3 | Brand tokens via CSS vars in `tailwind.config.js` |
+| Tests | Vitest + Supertest + Testing Library | Same runner everywhere |
 
 ---
 
-## Tech Stack
+## 🚀 Local development
+
+### Prerequisites
+- Node 20.x
+- MongoDB (local Docker or Atlas free tier)
+- *(optional)* Redis for product caching
+- *(optional)* Razorpay test keys for checkout
 
 ### Backend
-| Package | Purpose |
-|---|---|
-| Express 5 | HTTP server and routing |
-| Mongoose 9 | MongoDB ODM |
-| JWT | Access + refresh token auth |
-| bcrypt | Password hashing |
-| Razorpay | Payment gateway |
-| Google Auth Library | OAuth verification |
-| Redis | Product listing cache |
-| Helmet | Security headers |
-| express-rate-limit | API rate limiting |
-| cookie-parser | HTTP-only cookie handling |
-
-### Frontend
-| Package | Purpose |
-|---|---|
-| React 19 + Vite | UI framework and bundler |
-| Tailwind CSS 3 | Utility-first styling |
-| Redux Toolkit | Global state management |
-| React Router 7 | Client-side routing |
-| React Hook Form + Zod | Form handling and validation |
-| Axios | HTTP client |
-| Chart.js + react-chartjs-2 | Admin analytics charts |
-| React Toastify | Toast notifications |
-| Lucide React | Icon set |
-| Google OAuth (@react-oauth/google) | Google sign-in |
-| react-slick | Hero carousel |
-
----
-
-## Backend Setup
 
 ```bash
 cd ecommerce-backend
 npm install
+cp .env.example .env       # then fill in the values below
+npm run dev
 ```
 
-Create a `.env` file:
+Required env vars (validated at boot):
 
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-ACCESS_SECRET_KEY=your_jwt_access_secret
-REFRESH_SECRET_KEY=your_jwt_refresh_secret
-CLIENT_URL=http://localhost:5173
-RAZORPAY_KEY_ID=your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret
-REDIS_URL=your_redis_url
-GOOGLE_CLIENT_ID=your_google_client_id
-NODE_ENV=development
-```
+| Var | Example |
+|---|---|
+| `MONGOOSE_URI` | `mongodb://localhost:27017/nexkart` |
+| `CLIENT_URL` | `http://localhost:5173` |
+| `ACCESS_SECRET_KEY` | 16+ char random string |
+| `REFRESH_SECRET_KEY` | 16+ char random string |
 
-Start the server:
+Optional:
+- `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` — payments
+- `SMTP_*` — password reset emails
+- `GOOGLE_CLIENT_ID` — Google OAuth
+- `REDIS_URL` — caching layer
+- `LOG_LEVEL` — `debug | info | warn | error` (default `info`)
 
-```bash
-npm start
-```
-
-Runs on `http://localhost:5000`
-
----
-
-## Frontend Setup
+### Frontend
 
 ```bash
 cd ecommerce-frontend
 npm install
-```
-
-Create a `.env` file:
-
-```env
-VITE_API_URL=http://localhost:5000/api
-VITE_GOOGLE_CLIENT_ID=your_google_client_id
-VITE_CLOUDINARY_UPLOAD_PRESET=your_cloudinary_preset
-VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
-```
-
-Start the dev server:
-
-```bash
+echo 'VITE_BASE_URL="http://localhost:3000/api"' > .env
 npm run dev
 ```
 
-Runs on `http://localhost:5173`
+### Seed sample products
+
+```bash
+cd ecommerce-backend && npm run seed
+```
+
+This wipes existing products (intentionally) and inserts 30 per category (150 total) with realistic copy and on-theme Loremflickr images.
 
 ---
 
-## API Overview
+## 🧪 Testing & quality
 
-| Method | Endpoint | Description |
+```bash
+cd ecommerce-backend && npm test          # 9 tests (Vitest + Supertest)
+cd ecommerce-frontend && npm test         # 24 tests (Vitest + Testing Library)
+cd ecommerce-backend && npm run lint
+cd ecommerce-frontend && npm run lint
+```
+
+CI runs everything on every PR + every push to `main`. PRs that fail lint or test should not merge.
+
+### What's covered today
+- Backend: health endpoint, request id propagation, error envelope (AppError + unknown error redaction), 404 handler, asyncHandler async-throw forwarding
+- Frontend: offer pricing maths, product badge derivation, free-delivery threshold, wishlist add/remove/persist/clear
+- Build verification
+
+See [`FUTURE_WORK.md`](./FUTURE_WORK.md) for the test-coverage gap and the plan to close it.
+
+---
+
+## 🔒 Security model
+
+- **Refresh token** lives in `httpOnly`, `sameSite` cookie. Access token is currently in `localStorage` — see future-work for the migration to in-memory + silent refresh.
+- **Account lockout** — soft-locks an account for 15 min after 5 consecutive failed login attempts.
+- **Rate limits** — `/login`, `/signup`: 10 / 10 min · `/forgot-password`, `/reset-password`: 5 / 1 h · `/payment/*`: 30 / 15 min · everything else: 1000 / 15 min.
+- **Payment integrity** — `/payment/create-order` recomputes the amount from the user's cart server-side; the frontend can't tamper with it. `placeOrder` is idempotent on `razorpayOrderId` (DB unique sparse index) and reserves stock atomically (with rollback if any item fails).
+- **CORS** locked to `CLIENT_URL`; `helmet` enabled with strict referrer policy.
+
+---
+
+## 📦 Deployment
+
+| Surface | Host | Notes |
 |---|---|---|
-| POST | `/api/user/signup` | Register new user |
-| POST | `/api/user/login` | Login with email/password |
-| POST | `/api/user/google-login` | Login with Google OAuth |
-| POST | `/api/user/logout` | Logout |
-| GET | `/api/user/profile` | Get current user profile |
-| PUT | `/api/user/profile` | Update profile |
-| PUT | `/api/user/password` | Change password |
-| GET | `/api/product` | Get all products |
-| GET | `/api/product/:id` | Get product by ID |
-| GET | `/api/product/search` | Search/filter products |
-| POST | `/api/product` | Admin: add product |
-| PUT | `/api/product/:id` | Admin: update product |
-| DELETE | `/api/product/:id` | Admin: delete product |
-| GET | `/api/cart` | Get user cart |
-| POST | `/api/cart` | Add item to cart |
-| PUT | `/api/cart/increase` | Increase item quantity |
-| PUT | `/api/cart/decrease` | Decrease item quantity |
-| DELETE | `/api/cart/:productId` | Remove item from cart |
-| POST | `/api/order` | Place order |
-| GET | `/api/order` | Get user orders |
-| GET | `/api/order/:id` | Track order by ID |
-| PUT | `/api/order/:id/cancel` | Cancel order |
-| POST | `/api/payment/create-order` | Create Razorpay order |
+| Frontend | Vercel | Auto-deploy on `main` push |
+| Backend | Render | Free tier sleeps; UptimeRobot pings `/api/health` every 5 min |
+| Database | MongoDB Atlas | M0 free tier |
+| Cache | Redis (optional) | Soft-fails to DB if not configured |
+| Images | Cloudinary | Upload from admin form |
 
 ---
 
-## Available Scripts
+## 🤝 Contributing
 
-### Backend
-```bash
-npm start        # Start server with Node
-```
-
-### Frontend
-```bash
-npm run dev      # Start dev server
-npm run build    # Production build
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
-```
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md). PRs must:
+1. Pass `npm run lint` in any workspace touched
+2. Pass `npm test`
+3. Use [Conventional Commits](https://www.conventionalcommits.org/)
+4. Fill out the PR template
 
 ---
 
-## Security Notes
+## 📜 License
 
-- Never commit `.env` files
-- Keep JWT secrets and Razorpay keys private
-- Use HTTPS in production — the backend enforces redirects when `NODE_ENV=production`
-- Cookies are `httpOnly`, `secure`, and `sameSite=none` in production
+ISC. See [`LICENSE`](./LICENSE) (if added).
 
----
+## 🙏 Credits
 
-## UI Screenshots
-
-### Home
-
-![Home page](ecommerce-frontend/public/one.png)
-
-![Home page](ecommerce-frontend/public/two.png)
-
-### Cart
-
-![Cart](ecommerce-frontend/public/three.png)
-
-![Cart](ecommerce-frontend/public/four.png)
-
-![Cart](ecommerce-frontend/public/five.png)
-
-### Orders
-
-![Orders](ecommerce-frontend/public/six.png)
-
-### Admin Dashboard
-
-![Admin](ecommerce-frontend/public/seven.png)
-
-![Admin](ecommerce-frontend/public/eight.png)
-
-![Admin](ecommerce-frontend/public/nine.png)
-
----
-
-## License
-
-ISC License
+Build by [Faiz VK](https://github.com/faizvk). Branding, copy, and design by Claude.
+Product photos via [Loremflickr](https://loremflickr.com/) (placeholder data — replace with real assets before going live).
