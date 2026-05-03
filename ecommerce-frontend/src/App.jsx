@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import ErrorBoundary from "./components/ErrorBoundary";
+import AIShoppingAssistant from "./components/AIShoppingAssistant";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
@@ -163,6 +164,8 @@ export default function App() {
         </Suspense>
         </ErrorBoundary>
       </main>
+
+      <AIShoppingAssistant />
 
       <ToastContainer
         position="top-right"
