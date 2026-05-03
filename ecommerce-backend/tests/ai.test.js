@@ -4,21 +4,13 @@ import request from "supertest";
 import jwt from "jsonwebtoken";
 import { ACCESS_SECRET_KEY } from "../config/env.js";
 
-// We mock both AI SDKs at the module level so the controller doesn't make
-// real API calls during tests — and so we can assert on behaviour without
-// network dependencies.
+// We mock the Groq SDK so the controller doesn't make real API calls during
+// tests — and so we can assert on behaviour without network dependencies.
 const groqCreate = vi.fn();
-const geminiGenerate = vi.fn();
 
 vi.mock("groq-sdk", () => ({
   default: vi.fn(() => ({
     chat: { completions: { create: groqCreate } },
-  })),
-}));
-
-vi.mock("@google/generative-ai", () => ({
-  GoogleGenerativeAI: vi.fn(() => ({
-    getGenerativeModel: () => ({ generateContent: geminiGenerate }),
   })),
 }));
 
@@ -125,7 +117,7 @@ describe("POST /api/ai/chat", () => {
 
 describe("POST /api/ai/search-translate", () => {
   beforeEach(() => {
-    geminiGenerate.mockReset();
+    groqCreate.mockReset();
   });
 
   it("returns 400 when query is missing", async () => {
@@ -138,16 +130,20 @@ describe("POST /api/ai/search-translate", () => {
   });
 
   it("returns sanitised filters from valid AI JSON", async () => {
-    geminiGenerate.mockResolvedValueOnce({
-      response: {
-        text: () => JSON.stringify({
-          category: "electronics",
-          priceMax: 2000,
-          priceMin: null,
-          sort: "price-asc",
-          keywords: ["headphones", "wireless"],
-        }),
-      },
+    groqCreate.mockResolvedValueOnce({
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({
+              category: "electronics",
+              priceMax: 2000,
+              priceMin: null,
+              sort: "price-asc",
+              keywords: ["headphones", "wireless"],
+            }),
+          },
+        },
+      ],
     });
     const app = buildApp();
     const res = await request(app)
@@ -165,15 +161,19 @@ describe("POST /api/ai/search-translate", () => {
   });
 
   it("strips invalid fields and falls back to nulls", async () => {
-    geminiGenerate.mockResolvedValueOnce({
-      response: {
-        text: () => JSON.stringify({
-          category: "weapons", // not in allowed list
-          priceMax: -5,
-          sort: "random",
-          keywords: "not-an-array",
-        }),
-      },
+    groqCreate.mockResolvedValueOnce({
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({
+              category: "weapons",
+              priceMax: -5,
+              sort: "random",
+              keywords: "not-an-array",
+            }),
+          },
+        },
+      ],
     });
     const app = buildApp();
     const res = await request(app)
@@ -190,9 +190,9 @@ describe("POST /api/ai/search-translate", () => {
     });
   });
 
-  it("returns 502 when Gemini returns non-JSON", async () => {
-    geminiGenerate.mockResolvedValueOnce({
-      response: { text: () => "not json at all" },
+  it("returns 502 when Groq returns non-JSON", async () => {
+    groqCreate.mockResolvedValueOnce({
+      choices: [{ message: { content: "not json at all" } }],
     });
     const app = buildApp();
     const res = await request(app)

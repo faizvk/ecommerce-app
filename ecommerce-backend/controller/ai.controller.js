@@ -1,14 +1,16 @@
 import Groq from "groq-sdk";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GROQ_API_KEY, GEMINI_API_KEY } from "../config/env.js";
+import { GROQ_API_KEY } from "../config/env.js";
 import Product from "../model/product.model.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import AppError from "../middleware/AppError.js";
 import { ERROR_CODES } from "../constants/index.js";
 import logger from "../config/logger.js";
 
+// Single-provider for now: Groq powers both chat and structured search-translate
+// (via response_format: { type: "json_object" }). Gemini was tried but the free
+// key was rate-limited/revoked in practice, and consolidating providers cuts
+// failure modes in half.
 const groq = GROQ_API_KEY ? new Groq({ apiKey: GROQ_API_KEY }) : null;
-const gemini = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
 // Categories mirror the product schema enum — kept in sync manually.
 const CATEGORIES = ["electronics", "fashion", "dairy", "technology", "home appliances"];
@@ -131,10 +133,10 @@ export const chat = asyncHandler(async (req, res) => {
  * Returns: { filters: { category?, priceMax?, priceMin?, sort?, keywords[] } }
  *
  * Converts a natural-language query into structured filters that the
- * frontend can apply directly. Uses Gemini's JSON mode for reliability.
+ * frontend can apply directly. Uses Groq's JSON-mode for reliability.
  * ─────────────────────────────────────────────────────────── */
 export const searchTranslate = asyncHandler(async (req, res) => {
-  if (!gemini) {
+  if (!groq) {
     throw new AppError(503, ERROR_CODES.SERVICE_UNAVAILABLE, "AI search is not configured");
   }
 
@@ -146,22 +148,12 @@ export const searchTranslate = asyncHandler(async (req, res) => {
     throw new AppError(400, ERROR_CODES.VALIDATION_ERROR, "query is too long (max 200 chars)");
   }
 
-  const model = gemini.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    generationConfig: {
-      responseMimeType: "application/json",
-      temperature: 0.2,
-    },
-  });
-
-  const prompt = `Extract search filters from this shopping query and respond with ONLY valid JSON.
-
-Query: "${query.trim()}"
+  const systemPrompt = `You extract structured shopping filters from natural-language queries. Respond with ONLY a single JSON object — no prose, no markdown.
 
 Available categories: ${CATEGORIES.join(", ")}
 Available sorts: "price-asc", "price-desc", "newest", "rating"
 
-Output schema:
+Output schema (strict — every field must be present, use null when not inferred):
 {
   "category": one of [${CATEGORIES.map((c) => `"${c}"`).join(", ")}] or null,
   "priceMax": number or null,
@@ -176,13 +168,23 @@ Examples:
 "red dress for party" → {"category":"fashion","priceMax":null,"priceMin":null,"sort":null,"keywords":["red","dress","party"]}`;
 
   try {
-    const result = await model.generateContent(prompt);
-    const text = result.response.text().trim();
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: query.trim() },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.2,
+      max_tokens: 200,
+    });
+
+    const text = completion.choices?.[0]?.message?.content?.trim() || "";
     let filters;
     try {
       filters = JSON.parse(text);
     } catch {
-      logger.warn({ text }, "gemini returned non-JSON for searchTranslate");
+      logger.warn({ text }, "groq returned non-JSON for searchTranslate");
       throw new AppError(502, ERROR_CODES.UPSTREAM_ERROR, "AI returned an unparseable response");
     }
 
@@ -200,7 +202,7 @@ Examples:
     res.json({ success: true, data: { filters: safe } });
   } catch (err) {
     if (err instanceof AppError) throw err;
-    logger.error({ err: err.message }, "gemini searchTranslate failed");
+    logger.error({ err: err.message }, "groq searchTranslate failed");
     throw new AppError(502, ERROR_CODES.UPSTREAM_ERROR, "AI search is temporarily unavailable");
   }
 });
