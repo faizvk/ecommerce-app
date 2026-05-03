@@ -11,4 +11,8 @@ process.env.REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY || "test-refresh
 // crash unless we provide *something*. Use clearly fake values to avoid accidental use.
 process.env.RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "rzp_test_dummy_for_tests";
 process.env.RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "dummy_secret_for_tests";
+// AI providers — controller checks for presence at module load to gate features off.
+// Tests mock the SDKs themselves, so any non-empty value here just keeps the gate open.
+process.env.GROQ_API_KEY = process.env.GROQ_API_KEY || "test-groq-key";
+process.env.GEMINI_API_KEY = process.env.GEMINI_API_KEY || "test-gemini-key";
 process.env.LOG_LEVEL = "fatal"; // silence pino during tests
