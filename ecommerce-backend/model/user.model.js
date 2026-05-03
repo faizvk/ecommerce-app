@@ -81,11 +81,27 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
+
+    // Failed-login tracking — used to soft-lock accounts after repeated bad attempts.
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+      select: false,
+    },
+    lockedUntil: {
+      type: Date,
+      default: null,
+      select: false,
+    },
   },
   {
     timestamps: true,
   },
 );
+
+userSchema.methods.isLocked = function () {
+  return Boolean(this.lockedUntil && this.lockedUntil > Date.now());
+};
 
 userSchema.pre("save", async function () {
   if (!this.password) return;

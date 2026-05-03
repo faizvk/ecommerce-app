@@ -42,20 +42,50 @@ export const signup = async (req, res) => {
 };
 
 /* LOGIN */
+/**
+ * LOGIN
+ *
+ * Hardening:
+ *  - Generic 401 for both "no user" and "wrong password" so attackers can't
+ *    enumerate accounts.
+ *  - Failed attempts increment a counter; after MAX_ATTEMPTS the account is
+ *    soft-locked for LOCK_DURATION. Counter resets on success.
+ *  - Returns ACCOUNT_LOCKED (423) with the unlock time when locked.
+ */
+const MAX_ATTEMPTS = 5;
+const LOCK_DURATION_MS = 15 * 60 * 1000; // 15 minutes
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password)
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "Email and password are required" });
 
-    let user = await User.findOne({ email }).select("+password +provider");
+    let user = await User.findOne({ email })
+      .select("+password +provider +failedLoginAttempts +lockedUntil");
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      // Mimic the timing of a real password check to avoid timing-based enumeration
+      await new Promise((r) => setTimeout(r, 200));
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Google-only account fallback
+    // Account locked?
+    if (user.isLocked()) {
+      const retryAfter = Math.ceil((user.lockedUntil - Date.now()) / 1000);
+      res.set("Retry-After", String(retryAfter));
+      return res.status(423).json({
+        success: false,
+        error: {
+          code: "ACCOUNT_LOCKED",
+          message: `Account locked due to too many failed attempts. Try again in ${Math.ceil(retryAfter / 60)} minute(s).`,
+        },
+        lockedUntil: user.lockedUntil,
+      });
+    }
+
+    // Google-only account
     if (user.provider === "google" && !user.password) {
       return res.status(403).json({
         message: "ACCOUNT_HAS_NO_PASSWORD",
@@ -66,7 +96,24 @@ export const login = async (req, res) => {
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
+      // Record failure
+      const attempts = (user.failedLoginAttempts || 0) + 1;
+      const update = { $set: { failedLoginAttempts: attempts } };
+      if (attempts >= MAX_ATTEMPTS) {
+        update.$set.lockedUntil = new Date(Date.now() + LOCK_DURATION_MS);
+        update.$set.failedLoginAttempts = 0; // reset counter when locking
+      }
+      await User.updateOne({ _id: user._id }, update);
+
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Success — reset attempts + lock state
+    if (user.failedLoginAttempts > 0 || user.lockedUntil) {
+      await User.updateOne(
+        { _id: user._id },
+        { $set: { failedLoginAttempts: 0, lockedUntil: null } }
+      );
     }
 
     const accessToken = createAccessToken(user);
@@ -83,6 +130,8 @@ export const login = async (req, res) => {
 
     user = user.toObject();
     delete user.password;
+    delete user.failedLoginAttempts;
+    delete user.lockedUntil;
 
     res.status(200).json({
       message: "Login successful",
