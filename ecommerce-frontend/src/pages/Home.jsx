@@ -19,6 +19,7 @@ import HeroCarousel from "../components/HeroCarousel";
 import OfferBanner from "../components/OfferBanner";
 import Testimonials from "../components/Testimonials";
 import PromoBanners from "../components/PromoBanners";
+import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
@@ -78,15 +79,15 @@ export default function Home() {
     navigate(`/search?category=${encodeURIComponent(category)}`);
   };
 
-  if (loading) {
+  // Skeleton state — much closer to the final page than a centered spinner
+  if (loading && (!products || products.length === 0)) {
     return (
-      <main className="w-full">
-        <div className="flex justify-center items-center py-32">
-          <div className="flex flex-col items-center gap-4">
-            <div className="animate-spin w-12 h-12 rounded-full border-4 border-brand-medium border-t-brand" />
-            <p className="text-gray-500 font-medium">Loading products...</p>
-          </div>
-        </div>
+      <main className="w-full pb-10">
+        <div className="w-full h-[260px] sm:h-[360px] lg:h-[500px] bg-gray-100 animate-pulse" />
+        <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
+          <div className="h-8 w-48 bg-gray-200 rounded-md mb-5 animate-pulse" />
+          <ProductCardSkeletonGrid count={8} />
+        </section>
       </main>
     );
   }

@@ -7,6 +7,7 @@ import ProductCard from "../components/ProductCard";
 import SearchFilters from "../components/SearchFilters";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Pagination from "../components/Pagination";
+import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
 import { Search, Sparkles, Clock, ArrowLeft, X as XIcon } from "lucide-react";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
 
@@ -312,9 +313,7 @@ export default function SearchResults() {
           On pagination/filter change, keep current results visible with a subtle
           opacity fade + top loading bar so it doesn't feel like a refresh. */}
       {loading && searchedProducts.length === 0 ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin w-10 h-10 rounded-full border-4 border-brand-medium border-t-brand" />
-        </div>
+        <ProductCardSkeletonGrid count={12} />
       ) : searchedProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-5 text-center bg-white rounded-2xl border border-gray-100">
           <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
