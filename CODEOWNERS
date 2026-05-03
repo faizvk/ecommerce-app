@@ -1,0 +1,12 @@
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# Default owner — used when no other rule matches.
+*                            @faizvk
+
+# Backend
+/ecommerce-backend/          @faizvk
+
+# Frontend
+/ecommerce-frontend/         @faizvk
+
+# CI / build
+/.github/                    @faizvk

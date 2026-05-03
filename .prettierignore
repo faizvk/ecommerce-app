@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+coverage
+.next
+.cache
+.vite
+*.min.js
+*.min.css
+ecommerce-backend/node_modules
+ecommerce-frontend/dist
+ecommerce-frontend/node_modules
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
