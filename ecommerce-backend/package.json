@@ -15,10 +15,16 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "keywords": ["ecommerce", "express", "mongoose", "razorpay"],
+  "keywords": [
+    "ecommerce",
+    "express",
+    "mongoose",
+    "razorpay"
+  ],
   "author": "faiz",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -26,6 +32,7 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.2.1",
     "google-auth-library": "^10.5.0",
+    "groq-sdk": "^1.1.2",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.0.0",

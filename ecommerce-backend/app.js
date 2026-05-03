@@ -9,6 +9,7 @@ import cartRoutes from "./routes/cart.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import offerRoutes from "./routes/offer.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
 
 import { CLIENT_URL, NODE_ENV } from "./config/env.js";
 import requestId from "./middleware/requestId.js";
@@ -19,6 +20,7 @@ import {
   authLimiter,
   paymentLimiter,
   passwordResetLimiter,
+  aiLimiter,
 } from "./middleware/rateLimiters.js";
 import { ERROR_CODES } from "./constants/index.js";
 
@@ -76,6 +78,7 @@ app.use("/api/signup", authLimiter);
 app.use("/api/forgot-password", passwordResetLimiter);
 app.use("/api/reset-password", passwordResetLimiter);
 app.use("/api/payment", paymentLimiter);
+app.use("/api/ai", aiLimiter);
 
 // ─── Generous global limit (catches everything else) ────────────
 app.use("/api", globalLimiter);
@@ -87,6 +90,7 @@ app.use("/api", cartRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", paymentRoutes);
 app.use("/api", offerRoutes);
+app.use("/api", aiRoutes);
 
 // ─── 404 ─────────────────────────────────────────────────────────
 app.use((_req, res) => {

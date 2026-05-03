@@ -47,3 +47,13 @@ export const passwordResetLimiter = rateLimit({
   legacyHeaders: false,
   message: json("Too many password reset requests. Please try again in an hour"),
 });
+
+// AI endpoints — calls cost money and provider quotas are limited.
+// 30 / 5 min per IP keeps a real shopper unblocked while throttling abuse.
+export const aiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: json("AI assistant is busy. Please wait a moment and retry"),
+});

@@ -8,8 +8,10 @@ import SearchFilters from "../components/SearchFilters";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Pagination from "../components/Pagination";
 import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
-import { Search, Sparkles, Clock, ArrowLeft, X as XIcon } from "lucide-react";
+import { Search, Sparkles, Clock, ArrowLeft, X as XIcon, Wand2 } from "lucide-react";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
+import { translateSearchQuery } from "../api/ai.api";
+import { notify } from "../utils/notify";
 
 const PAGE_SIZE = 12;
 
@@ -127,6 +129,50 @@ export default function SearchResults() {
   useEffect(() => {
     if (filters.offerId && activeOffers.length === 0) dispatch(fetchActiveOffersThunk());
   }, [filters.offerId, activeOffers.length, dispatch]);
+
+  /* ────────── AI SMART FILTERS ──────────
+   * Translates the natural-language query into structured filters
+   * (category, price range, sort) and applies them in one URL update.
+   * Backend response is sanitised — only schema-valid values come back. */
+  const [aiPending, setAiPending] = useState(false);
+  const handleAiSmartSearch = useCallback(async () => {
+    if (!filters.query || aiPending) return;
+    setAiPending(true);
+    try {
+      const res = await translateSearchQuery(filters.query);
+      const f = res.data?.data?.filters || {};
+      const patch = { page: null };
+      if (f.category) patch.category = f.category;
+      if (f.priceMax) patch.max = f.priceMax;
+      if (f.priceMin) patch.min = f.priceMin;
+      if (f.sort) {
+        const map = {
+          "price-asc":  "salePrice-asc",
+          "price-desc": "salePrice-desc",
+          "newest":     "createdAt-desc",
+          "rating":     null,
+        };
+        const mapped = map[f.sort];
+        if (mapped) patch.sort = mapped;
+      }
+      if (Object.keys(patch).length === 1) {
+        notify.info("Couldn't extract filters from this query — try being more specific");
+      } else {
+        const next = new URLSearchParams(search);
+        Object.entries(patch).forEach(([k, v]) => {
+          if (v == null || v === "" || v === false) next.delete(k);
+          else next.set(k, v);
+        });
+        navigate(`/search?${next.toString()}`);
+        notify.success({ title: "Smart filters applied", desc: "AI refined your search" });
+      }
+    } catch (err) {
+      const msg = err.response?.data?.error?.message || "AI smart search failed";
+      notify.error(msg);
+    } finally {
+      setAiPending(false);
+    }
+  }, [filters.query, aiPending, search, navigate]);
 
   if (isOfferMode) {
     const offerExpired = offer && new Date(offer.endTime).getTime() <= now;
@@ -257,6 +303,17 @@ export default function SearchResults() {
                 ? <>Showing <span className="font-bold text-gray-700">{rangeStart}–{rangeEnd}</span> of <span className="font-bold text-gray-700">{totalCount}</span> {totalCount === 1 ? "result" : "results"}</>
                 : "No products found"}
             </p>
+          )}
+          {filters.query && (
+            <button
+              type="button"
+              onClick={handleAiSmartSearch}
+              disabled={aiPending}
+              className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand to-violet-600 text-white text-[0.78rem] font-bold shadow-card hover:shadow-hover transition disabled:opacity-50"
+            >
+              <Wand2 size={13} />
+              {aiPending ? "Thinking..." : "Refine with AI"}
+            </button>
           )}
         </div>
 

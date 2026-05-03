@@ -42,6 +42,10 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID:    z.string().optional(),
   REDIS_URL:           z.string().optional(),
   LOG_LEVEL:           z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
+
+  // AI providers — both optional; AI features are gracefully disabled when missing
+  GROQ_API_KEY:        z.string().min(1).optional(),
+  GEMINI_API_KEY:      z.string().min(1).optional(),
 });
 
 const result = envSchema.safeParse(process.env);
@@ -75,4 +79,6 @@ export const {
   GOOGLE_CLIENT_ID,
   REDIS_URL,
   LOG_LEVEL,
+  GROQ_API_KEY,
+  GEMINI_API_KEY,
 } = env;
