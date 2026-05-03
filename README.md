@@ -179,5 +179,5 @@ ISC. See [`LICENSE`](./LICENSE) (if added).
 
 ## 🙏 Credits
 
-Build by [Faiz VK](https://github.com/faizvk). Branding, copy, and design by Claude.
+Build by [Faiz VK](https://github.com/faizvk).
 Product photos via [Loremflickr](https://loremflickr.com/) (placeholder data — replace with real assets before going live).
