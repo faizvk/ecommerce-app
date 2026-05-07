@@ -71,8 +71,8 @@ export default function HeroCarousel() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-          {/* TEXT CONTENT */}
-          <div className="absolute top-1/2 left-5 -translate-y-1/2 z-10 max-w-[260px] sm:left-8 sm:max-w-[360px] lg:left-[8%] lg:max-w-[520px]">
+          {/* TEXT CONTENT — centered on mobile, left-aligned from sm+ */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[88%] max-w-[320px] text-center px-2 sm:left-8 sm:translate-x-0 sm:max-w-[360px] sm:text-left sm:px-0 lg:left-[8%] lg:max-w-[520px]">
             {/* Category pill */}
             <span className="inline-block mb-2 text-[0.65rem] sm:text-[0.7rem] font-bold tracking-[0.12em] uppercase text-white/60 bg-white/10 border border-white/20 rounded-full px-3 py-1">
               {slide.category}
@@ -115,8 +115,8 @@ export default function HeroCarousel() {
         <ChevronRight size={28} className="animate-slide-right drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]" strokeWidth={2.5} />
       </button>
 
-      {/* SLIDE INDICATORS + PROGRESS BAR */}
-      <div className="absolute bottom-4 left-5 sm:left-8 lg:left-[8%] z-20 flex items-center gap-3">
+      {/* SLIDE INDICATORS + PROGRESS BAR — centered on mobile, left-anchored from sm+ */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 sm:left-8 sm:translate-x-0 lg:left-[8%] z-20 flex items-center gap-3">
         <div className="flex gap-1.5">
           {slides.map((_, i) => (
             <button
