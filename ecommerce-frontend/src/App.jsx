@@ -2,18 +2,18 @@ import "./globalStyles/App.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { useFadeInScroll } from "./animations/useFadeInScroll";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AIShoppingAssistant from "./components/AIShoppingAssistant";
+import RouteLoader from "./components/RouteLoader";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 import GuestRoute from "./routes/GuestRoute";
-import ServerLoadingScreen from "./components/ServerLoadingScreen";
 
 import { useDispatch } from "react-redux";
 import { restoreSession } from "./redux/slice/authSlice";
@@ -50,63 +50,9 @@ export default function App() {
   useFadeInScroll();
   const dispatch = useDispatch();
 
-  const [backendReady, setBackendReady] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-
   useEffect(() => {
     dispatch(restoreSession());
   }, [dispatch]);
-
-  useEffect(() => {
-    let mounted = true;
-    let attempts = 0;
-
-    // Strip trailing slash AND any trailing /api suffix so the health check
-    // works regardless of whether VITE_BASE_URL includes /api or not.
-    const base = (import.meta.env.VITE_BASE_URL || "")
-      .replace(/\/$/, "")
-      .replace(/\/api$/, "");
-
-    // Tick the elapsed counter every second for the loading screen
-    const ticker = setInterval(() => {
-      if (mounted) setElapsed((s) => s + 1);
-    }, 1000);
-
-    const checkBackend = async () => {
-      if (!mounted) return;
-      attempts++;
-
-      try {
-        const res = await fetch(`${base}/api/health`);
-        if (res.ok && mounted) {
-          clearInterval(ticker);
-          setBackendReady(true);
-          return;
-        }
-      } catch {
-        // network error or CORS — keep retrying
-      }
-
-      // Give up after ~90 s and show the app anyway
-      // (individual pages have their own error states)
-      if (attempts >= 30 && mounted) {
-        clearInterval(ticker);
-        setBackendReady(true);
-        return;
-      }
-
-      setTimeout(checkBackend, 3000);
-    };
-
-    checkBackend();
-
-    return () => {
-      mounted = false;
-      clearInterval(ticker);
-    };
-  }, []);
-
-  if (!backendReady) return <ServerLoadingScreen elapsed={elapsed} />;
 
   return (
     <div className="app-layout">
@@ -115,7 +61,7 @@ export default function App() {
 
       <main className="main-content">
         <ErrorBoundary>
-        <Suspense fallback={<ServerLoadingScreen />}>
+        <Suspense fallback={<RouteLoader />}>
           <Routes>
             {/* Public */}
             <Route path="/" element={<Home />} />
