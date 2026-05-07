@@ -150,7 +150,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+        <div className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {CATEGORY_CONFIG.map(({ key, label, emoji, desc }) => {
             const count = productsByCategory[key]?.length || 0;
             const gradient = CATEGORY_TILE_GRADIENTS[key] || "from-brand to-brand-medium";
@@ -158,7 +158,7 @@ export default function Home() {
               <button
                 key={key}
                 onClick={() => goToCategory(key)}
-                className="group relative bg-white rounded-2xl border border-gray-100 p-5 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5"
+                className="group relative bg-white rounded-2xl border border-gray-100 p-5 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5 snap-start flex-shrink-0 w-[180px] sm:w-[210px] md:w-[230px]"
               >
                 <div className={`absolute -top-10 -right-8 w-28 h-28 rounded-full bg-gradient-to-br ${gradient} blur-2xl opacity-30 group-hover:opacity-60 transition-opacity`} />
                 <div className="relative">
