@@ -2,7 +2,7 @@
  * Seed Products Script
  * ──────────────────────────────────────────────────────────────
  * Wipes the products collection and inserts 30 products per category
- * (150 total) with curated images, realistic pricing, and full descriptions.
+ * across the canonical 7 categories (210 total).
  *
  * Usage:  node scripts/seedProducts.js
  *
@@ -12,6 +12,10 @@
  * - Uses Product.collection.insertMany to bypass Mongoose validators so we
  *   can store costPrice as the higher MRP and salePrice as the discounted
  *   price (matches what the frontend's strike-through UI expects).
+ *
+ * The legacy categories ("dairy", "technology", "home appliances") are NOT
+ * seeded here — they remain valid enum values in the model purely so older
+ * data migrations don't fail. New seed uses only the canonical 7.
  */
 
 import mongoose from "mongoose";
@@ -50,7 +54,7 @@ const STOPWORDS = new Set([
   "classic", "vintage", "genuine", "pure", "fresh", "cordless", "electric", "ultra",
   "slim", "digital", "and", "with", "the", "of", "a", "an", "high", "for", "in",
   "on", "by", "ml", "lt", "kg", "gm", "pc", "pcs", "set", "pack", "fit", "size",
-  "made", "from", "rich", "pure", "best", "top", "new", "free", "full",
+  "made", "from", "rich", "best", "top", "new", "free", "full", "natural",
 ]);
 
 // Hand-tuned keyword overrides for products where the auto-extracted keyword
@@ -68,21 +72,7 @@ const KEYWORD_OVERRIDES = {
     "Crewneck Basic T-Shirt": "tshirt",
     "Track Suit Set (2pc)": "tracksuit",
   },
-  dairy: {
-    "Pure Cow's Ghee (500g)": "ghee,butter",
-    "Fresh Curd / Yogurt (500g)": "yogurt,curd",
-  },
-  technology: {
-    "USB-C 7-in-1 Hub": "usb,hub",
-    "8-Port Gigabit Network Switch": "router,network",
-    "Wi-Fi 6 Router (AX1800)": "router,wifi",
-    "NAS 2-Bay 4TB": "harddrive,storage",
-    "HDMI Capture Card 4K": "computer,electronics",
-    "Stream Deck Mini (6 keys)": "keyboard,streaming",
-    "18U Server Rack Cabinet": "server,datacenter",
-    "Smart RGB LED Strip 5m": "led,lights",
-  },
-  homeAppliances: {
+  home: {
     "Smart Wi-Fi Thermostat": "thermostat",
     "Tower Fan Bladeless": "fan,tower",
     "Ceiling Fan with LED Light": "fan,ceiling",
@@ -90,22 +80,41 @@ const KEYWORD_OVERRIDES = {
     "Hand Mixer with Stand": "mixer,kitchen",
     "Belgian Waffle Maker": "waffle",
     "Cold-Press Slow Juicer": "juicer",
-    "Sonic Electric Toothbrush": "toothbrush",
+    "Memory Foam Pillows (Pair)": "pillow,bed",
   },
-};
-
-const categoryKeyForOverride = (cat) => {
-  if (cat === "home appliances") return "homeAppliances";
-  return cat;
+  beauty: {
+    "Eau de Parfum (50ml)": "perfume",
+    "Liquid Foundation SPF 25": "foundation,makeup",
+    "Hyaluronic Acid Serum": "skincare,serum",
+    "Retinol Night Serum": "serum,skincare",
+  },
+  sports: {
+    "Yoga Mat 6mm (Anti-Slip)": "yogamat",
+    "Adjustable Dumbbells 24kg": "dumbbell",
+    "Resistance Bands Set": "resistance,band",
+    "Cricket Bat (English Willow)": "cricket,bat",
+  },
+  books: {
+    "Atomic Habits": "book,reading",
+    "The Psychology of Money": "book,finance",
+    "Sapiens: A Brief History": "book,history",
+    "Ikigai": "book",
+  },
+  grocery: {
+    "Pure Cow's Ghee (500g)": "ghee,butter",
+    "Fresh Curd / Yogurt (500g)": "yogurt,curd",
+    "Basmati Rice (5kg)": "rice,basmati",
+    "Whole Wheat Flour (5kg)": "flour,wheat",
+  },
 };
 
 function extractKeyword(name) {
   const cleaned = name
     .toLowerCase()
-    .replace(/\([^)]*\)/g, " ")           // strip parenthesised qualifiers like (1L)
-    .replace(/[^\w\s-]/g, " ")            // strip punctuation
-    .replace(/\d+\.?\d*\s*(g|gm|kg|ml|l|w|inch|in|cm|mm|hz|fps|cup|oz)\b/gi, " ") // strip measurements
-    .replace(/\d+/g, " ")                 // strip raw numbers
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/[^\w\s-]/g, " ")
+    .replace(/\d+\.?\d*\s*(g|gm|kg|ml|l|w|inch|in|cm|mm|hz|fps|cup|oz)\b/gi, " ")
+    .replace(/\d+/g, " ")
     .split(/[\s-]+/)
     .map((w) => w.trim())
     .filter((w) => w && w.length >= 3 && !STOPWORDS.has(w));
@@ -113,20 +122,18 @@ function extractKeyword(name) {
 }
 
 const buildImagesFor = (category, index, name) => {
-  const overrides = KEYWORD_OVERRIDES[categoryKeyForOverride(category)] || {};
+  const overrides = KEYWORD_OVERRIDES[category] || {};
   const productKw = overrides[name] || extractKeyword(name);
-  const catKw = slug(category).replace("-", ","); // "home-appliances" -> "home,appliances"
-  const tags = productKw ? `${productKw}` : catKw;
+  const catKw = slug(category).replace("-", ",");
+  const tags = productKw || catKw;
   return [
     `https://loremflickr.com/800/800/${tags}?lock=${index * 7 + 11}`,
     `https://loremflickr.com/800/800/${tags}?lock=${index * 7 + 23}`,
   ];
 };
 
-/* ─────────────────────────  PRODUCT CATALOG  ───────────────────────── */
+/* ─────────────────────────  PRODUCT CATALOGS (30 each)  ───────────────────────── */
 // [name, description, mrp (costPrice), sellingPrice (salePrice)]
-// Price convention: costPrice = MRP/list, salePrice = customer-facing (lower).
-// Inserted via collection.insertMany to bypass schema validator.
 
 const ELECTRONICS = [
   ["Wireless Bluetooth Earbuds Pro", "Crystal-clear audio with active noise cancellation. 30-hour battery with charging case. IPX5 sweat resistant. Touch controls and dual-device pairing.", 2999, 1499],
@@ -157,8 +164,8 @@ const ELECTRONICS = [
   ["Wireless Game Controller", "Compatible with PC, Android, iOS. Bluetooth + USB-C wired. Hall effect joysticks, 16-hour battery, vibration feedback.", 4999, 2999],
   ["Webcam 1080p Full HD", "Auto-focus, dual mics with noise cancellation, 90° wide angle. Plug-and-play USB, privacy shutter, Zoom/Teams ready.", 3999, 2199],
   ["Smart Body Scale", "Bluetooth scale measuring 13 metrics including BMI, body fat, muscle mass. Syncs with fitness apps, supports 16 users.", 2499, 1399],
-  ["Bluetooth Car FM Adapter", "Stream music from phone via FM radio. Hands-free calls, 2 USB charge ports, voice assistant button, supports microSD.", 1299, 699],
-  ["Cable Management Box", "Hides power strips and tangled cables. Bamboo lid, 12 ventilation holes, fits 6-outlet surge protector. Modern home office must-have.", 1799, 999],
+  ["Ultra-Slim Laptop 14\"", "Intel Core i5, 16GB RAM, 512GB SSD. 14\" Full HD IPS display, fingerprint reader, 12-hour battery. Aluminium chassis, 1.3kg.", 79999, 54999],
+  ["External SSD 1TB", "USB-C 3.2 Gen 2, 1050 MB/s read/write. Pocket-sized, shock-resistant, AES 256-bit encryption.", 12999, 8499],
 ];
 
 const FASHION = [
@@ -194,73 +201,7 @@ const FASHION = [
   ["Track Suit Set (2pc)", "Matching jacket and joggers in soft-touch poly-blend. Athletic stripe down sleeves and legs. Slim modern fit.", 3999, 2399],
 ];
 
-const DAIRY = [
-  ["Whole Cow's Milk (1L)", "Fresh full-cream pasteurized milk. Rich in calcium and vitamin D. Great for tea, coffee, cooking, and direct drinking.", 80, 65],
-  ["Greek Yogurt Plain (500g)", "Thick, creamy strained yogurt with double protein. No added sugar. Pairs with fruit, granola, or savory dips.", 220, 180],
-  ["Salted Butter (250g)", "Premium creamery butter churned from 100% pure cream. Rich flavor for spreading, baking, and cooking.", 290, 240],
-  ["Cheddar Cheese Block (200g)", "Aged cheddar with sharp tangy flavor. Perfect for sandwiches, melts, and burgers. Vegetarian.", 320, 260],
-  ["Cream Cheese Spread (200g)", "Smooth, mild, spreadable cream cheese. Ideal for bagels, frostings, and dips. No preservatives.", 240, 195],
-  ["Mozzarella Cheese (250g)", "Fresh mild mozzarella that melts beautifully. Pizza-perfect, also great in caprese salads and lasagna.", 380, 290],
-  ["Heavy Whipping Cream (500ml)", "35% milk fat, whips perfectly. Use for desserts, sauces, and soups. UHT-treated, long shelf life.", 240, 195],
-  ["Cottage Cheese (300g)", "Low-fat cottage cheese with soft curds. Great protein source for breakfast, salads, and smoothies.", 199, 159],
-  ["Sour Cream (250g)", "Cultured cream with tangy flavor. Ideal topping for tacos, baked potatoes, and dips.", 199, 159],
-  ["Buttermilk (500ml)", "Tangy fermented buttermilk, perfect for baking pancakes, marinating chicken, or drinking chilled.", 90, 70],
-  ["Skim Milk (1L)", "Fat-free pasteurized milk. All the nutrition with zero fat. Great for shakes and smoothies.", 70, 55],
-  ["Almond Milk Unsweetened (1L)", "Plant-based dairy alternative made from real almonds. No added sugar, fortified with calcium and vitamins.", 220, 175],
-  ["Soy Milk (1L)", "Creamy soy milk with high plant protein. Lactose-free, perfect for coffee and cereal.", 199, 159],
-  ["Oat Milk Barista (1L)", "Foam-friendly oat milk that froths beautifully in coffee. Smooth, naturally sweet, plant-based.", 240, 195],
-  ["Vanilla Yogurt (500g)", "Smooth vanilla-flavored yogurt with real vanilla bean. Live cultures, perfect for breakfast or dessert.", 199, 159],
-  ["Strawberry Yogurt (500g)", "Creamy yogurt with real strawberry pieces. Naturally sweetened, kids love it.", 199, 159],
-  ["Parmesan Cheese (200g)", "Hard aged Parmesan with deep nutty flavor. Grate over pasta, salads, soups. Vegetarian.", 480, 380],
-  ["Feta Cheese (200g)", "Tangy crumbly feta in brine. Perfect for Greek salads, pizzas, and Mediterranean dishes.", 360, 290],
-  ["Brie Cheese (200g)", "Soft creamy brie with edible white rind. Delicious on crackers with grapes or honey.", 590, 450],
-  ["Gouda Cheese (250g)", "Smooth semi-hard Dutch cheese with mild buttery flavor. Slices well for sandwiches and burgers.", 480, 380],
-  ["Ricotta Cheese (300g)", "Light, fresh ricotta with delicate sweetness. Use in lasagna, cheesecake, and stuffed pastas.", 320, 260],
-  ["Sweetened Condensed Milk (400g)", "Thick sweet condensed milk in a tin. Essential for desserts, fudge, and Indian sweets.", 130, 105],
-  ["Skimmed Milk Powder (500g)", "Spray-dried milk powder. Long shelf life, easy to reconstitute, great for travel and baking.", 320, 260],
-  ["Pure Cow's Ghee (500g)", "Traditional clarified butter, slow-cooked from pure cow's milk. Rich aroma, perfect for cooking.", 599, 469],
-  ["Fresh Paneer (200g)", "Soft Indian cottage cheese, fresh and unsalted. Perfect for tikka, curries, and grilling.", 110, 89],
-  ["Sweet Lassi (500ml)", "Traditional yogurt-based drink, perfectly sweetened, ready to drink. Refreshing and probiotic.", 80, 65],
-  ["Chocolate Milkshake (300ml)", "Rich chocolate flavored milk drink. Ready-to-drink, perfect for kids and on-the-go indulgence.", 70, 55],
-  ["Cheese Spread Tin (200g)", "Smooth processed cheese spread. Perfect for sandwiches, crackers, and stuffing in vegetables.", 220, 175],
-  ["Cheese Slices (10 pcs)", "Individually wrapped processed cheese slices. Melts in burgers and sandwiches. Kid-friendly.", 199, 159],
-  ["Fresh Curd / Yogurt (500g)", "Traditional set curd, thick and tangy. Made daily from fresh whole milk. No preservatives.", 99, 79],
-];
-
-const TECHNOLOGY = [
-  ["Ultra-Slim Laptop 14\"", "Intel Core i5, 16GB RAM, 512GB SSD. 14\" Full HD IPS display, fingerprint reader, 12-hour battery. Aluminium chassis, 1.3kg.", 79999, 54999],
-  ["4K UHD Monitor 27\"", "27\" IPS panel, 3840x2160 resolution, 95% DCI-P3 color, USB-C 90W PD, HDMI 2.0. Height adjustable stand.", 49999, 32999],
-  ["Wireless Mechanical Keyboard", "75% layout, hot-swappable mechanical switches, RGB backlit. Bluetooth + 2.4GHz + USB-C. 4000mAh battery.", 9999, 5999],
-  ["Gaming Laptop 16\"", "AMD Ryzen 7, RTX 4060 8GB, 16GB DDR5, 1TB SSD. 165Hz QHD display, RGB keyboard, advanced cooling.", 159999, 109999],
-  ["External SSD 1TB", "USB-C 3.2 Gen 2, 1050 MB/s read/write. Pocket-sized, shock-resistant, AES 256-bit encryption.", 12999, 8499],
-  ["RGB Gaming Mouse", "Pixart 3389 sensor, 16000 DPI, 8 programmable buttons. Customizable RGB, lightweight 78g, braided cable.", 4999, 2799],
-  ["Gaming Headset 7.1 Surround", "50mm drivers, virtual 7.1 surround sound. Detachable boom mic with noise cancellation. Memory foam earcups.", 6999, 3999],
-  ["Curved Ultrawide Monitor 34\"", "34\" 1500R curved VA panel, 3440x1440, 144Hz, FreeSync. HDMI + DP, height/swivel/tilt adjustable.", 79999, 49999],
-  ["Mini PC Desktop", "Compact form factor, AMD Ryzen 5, 16GB RAM, 512GB NVMe. Wi-Fi 6, dual HDMI, 4 USB ports. Quiet operation.", 59999, 38999],
-  ["Powered USB Hub 7-Port", "7x USB 3.0 ports with individual power switches. 4A power adapter, supports BC 1.2 fast charging.", 2999, 1799],
-  ["Aluminium Laptop Stand", "Ergonomic 6-level height adjustable stand. Heat-dissipating aluminium, foldable, holds up to 17\" laptops.", 2499, 1399],
-  ["4K Pro Webcam", "Sony 1/2.5\" sensor, 4K 30fps, autofocus, dual stereo mics. Privacy shutter, USB-C, plug-and-play.", 9999, 6499],
-  ["Studio USB Microphone", "Cardioid condenser mic with built-in shock mount. 24-bit/96kHz audio, headphone monitor jack, mute button.", 8999, 5499],
-  ["Drawing Graphic Tablet", "10x6.3\" active area, 8192 levels of pen pressure, 60° tilt. Battery-free pen, 8 express keys.", 6999, 4499],
-  ["Bluetooth Numeric Keypad", "Slim 22-key Bluetooth numpad. Multi-device pairing, rechargeable, perfect for finance and data work.", 2499, 1399],
-  ["Surge Protector with USB", "6 sockets + 4 USB-A + 1 USB-C ports. 3000J surge protection, 1.8m cord, indicator lights, child-safe shutters.", 1999, 1199],
-  ["Cable Organizer Set", "Magnetic cable management clips, sleeves, and cord winders. Tidy up your desk and TV setup.", 1499, 799],
-  ["Extended XL Mouse Pad", "900x400mm desk-sized cloth mat. Smooth surface, anti-slip rubber base, water-resistant. RGB version available.", 1999, 999],
-  ["Webcam Ring Light", "10\" LED ring light with adjustable color temperature. Mounts on monitor or tripod, USB-powered, 10 brightness levels.", 2999, 1799],
-  ["Thunderbolt 4 Docking Station", "Single-cable connection: 4K dual display, 90W PD, Ethernet, 4x USB. Compatible with MacBook and Windows.", 24999, 16999],
-  ["Laptop Cooling Pad", "5-fan adjustable cooling pad with LED. 6 height settings, USB-powered, supports up to 17\" laptops. Ergonomic.", 2999, 1599],
-  ["Wireless Presenter Clicker", "Bluetooth + 2.4GHz remote with red laser pointer. 100m range, slide forward/back, blank screen mode.", 1999, 1199],
-  ["Adjustable Monitor Arm", "Single-monitor desk-mount arm. Holds 17-32\" monitors up to 9kg. Full motion: tilt, swivel, rotate.", 4999, 2999],
-  ["8-Port Gigabit Network Switch", "Plug-and-play 8-port Gigabit Ethernet switch. Metal case, fanless silent operation, low power.", 2499, 1499],
-  ["Wi-Fi 6 Router (AX1800)", "Dual-band Wi-Fi 6, 1.8 Gbps. 4 high-gain antennas, MU-MIMO, OFDMA. Mesh-ready, parental controls.", 7999, 4999],
-  ["NAS 2-Bay 4TB", "Personal cloud storage with 2x 2TB drives in RAID-1. Stream media, backup files, photos, mobile access.", 39999, 27999],
-  ["HDMI Capture Card 4K", "4K60 passthrough, 1080p60 capture via USB 3.0. Plug-and-play for streaming, recording gameplay.", 5999, 3499],
-  ["Stream Deck Mini (6 keys)", "6 customizable LCD keys for streaming and productivity. One-tap macros, scene switching, app launches.", 8999, 5999],
-  ["18U Server Rack Cabinet", "Wall-mount 18U cabinet with glass door, lock, cooling fans. Mesh sides, cable management. Network/AV equipment.", 24999, 17999],
-  ["Smart RGB LED Strip 5m", "5050 RGB LEDs, 5 meters, app-controlled with music sync. Voice control with Alexa/Google. Cuttable.", 2999, 1599],
-];
-
-const HOME_APPLIANCES = [
+const HOME = [
   ["Robot Vacuum Cleaner", "Smart mapping with LIDAR navigation. 2700Pa suction, 4-stage cleaning, mop function, 150-min runtime. App + voice control.", 39999, 24999],
   ["Air Fryer 5L Digital", "Cook with 90% less oil. 8 preset programs, 60-min timer, non-stick basket. Family-size 5L, easy to clean.", 9999, 5999],
   ["Espresso Coffee Machine", "15-bar pump, milk frother for cappuccino/latte. 1.2L water tank, removable drip tray. Café-style at home.", 24999, 15999],
@@ -269,28 +210,160 @@ const HOME_APPLIANCES = [
   ["4-Slice Toaster", "Extra-wide slots, 7 browning levels, defrost and bagel functions. Stainless steel finish, removable crumb tray.", 4999, 2999],
   ["Glass Electric Kettle 1.7L", "1500W rapid-boil kettle with cool-touch handle. Auto shutoff, boil-dry protection, blue LED illumination.", 2499, 1499],
   ["High-Speed Blender 1500W", "Crushes ice, makes smoothies, soup, nut butter. 6 stainless blades, 2L jar, variable speed + pulse.", 9999, 5999],
-  ["6Qt Slow Cooker", "Programmable digital slow cooker with 4 heat settings. Removable ceramic pot, dishwasher safe.", 5999, 3499],
   ["HEPA Air Purifier", "True HEPA H13 + activated carbon filter. Covers 50sqm, removes 99.97% of allergens, smoke, dust. Quiet sleep mode.", 14999, 8999],
   ["Ultrasonic Humidifier 4L", "Cool-mist whisper-quiet humidifier. 30-hour runtime, 360° nozzle, auto shut-off, optional aroma diffuser.", 3999, 2299],
-  ["Compact Dehumidifier 12L", "Removes up to 12L moisture/day. Ideal for 30-50sqm rooms. Auto-stop when full, drain hose included.", 19999, 12999],
   ["Smart Wi-Fi Thermostat", "Learning thermostat with smart scheduling. Energy-saving, app + voice control. Compatible with most HVAC systems.", 19999, 13999],
   ["Tower Fan Bladeless", "30\" tall tower fan with 3 speeds + 3 modes (Normal/Natural/Sleep). 12-hour timer, oscillation, remote.", 8999, 5499],
   ["Ceiling Fan with LED Light", "Modern 3-blade design, integrated LED light, 6-speed remote. Energy-efficient DC motor, reversible airflow.", 7999, 4999],
   ["Vacuum Sealer Machine", "Heat-seal & vacuum-seal in one. Dry/Moist food modes, 5 vacuum levels. Includes 10 bags. Keeps food fresh 5x longer.", 5999, 3499],
-  ["Rice Cooker 1.8L (10 cups)", "Multifunctional: rice, porridge, steam, slow cook. Non-stick inner pot, keep-warm function. Includes steaming basket.", 3999, 2299],
-  ["Electric Pressure Cooker 6L", "10-in-1 multi-cooker: pressure, slow cook, steam, sauté, yogurt, rice. 13 preset programs. Stainless inner.", 9999, 5999],
-  ["Bread Maker Machine", "12 programs including gluten-free. 3 loaf sizes, 3 crust settings, 13-hour delay timer. Non-stick pan.", 11999, 7499],
   ["Hand Mixer with Stand", "5-speed hand mixer with detachable stand. 250W motor, 5 attachments: beater, whisk, dough hooks. Easy storage.", 3999, 2499],
-  ["Food Processor 1000W", "12-cup capacity, slicing/shredding/chopping discs, dough blade, citrus juicer attachment. All in one.", 11999, 7499],
-  ["Sandwich Maker (4-Slice)", "Cooks 4 sandwiches at once. Non-stick plates, indicator lights, cool-touch handles. Perfect for breakfast.", 3499, 1999],
   ["Belgian Waffle Maker", "Deep-pocket Belgian waffles. Non-stick plates, indicator lights, browning control. Folds for storage.", 4499, 2799],
   ["Cold-Press Slow Juicer", "Masticating juicer extracts max nutrients. 60 RPM, low oxidation, quiet operation. Easy to clean.", 14999, 8999],
-  ["Ice Cream Maker 2L", "Compressor-free ice cream maker. Make ice cream, sorbet, frozen yogurt in 30 min. Auto-stop function.", 9999, 5999],
-  ["Electric Egg Boiler", "Cook 7 eggs at once. 3 hardness settings, auto shut-off with buzzer. Includes piercing pin.", 1999, 1099],
-  ["Handheld Garment Steamer", "1500W rapid heat-up in 25s. 250ml tank, 15-min runtime. Removes wrinkles from clothes, curtains, upholstery.", 3999, 2299],
-  ["Cordless Steam Iron", "Cordless freedom with 250ml tank. Variable steam, anti-drip, ceramic soleplate. Auto shut-off.", 4999, 2999],
-  ["Ionic Hair Dryer 2200W", "Fast-drying with negative ions for shine and frizz reduction. 3 heat + 2 speed settings, cool shot. Diffuser + concentrator.", 3499, 1999],
-  ["Sonic Electric Toothbrush", "62000 vibrations/min, 5 cleaning modes, 2-min smart timer. 30-day battery, USB charging, 4 brush heads included.", 4999, 2799],
+  ["Rice Cooker 1.8L (10 cups)", "Multifunctional: rice, porridge, steam, slow cook. Non-stick inner pot, keep-warm function. Includes steaming basket.", 3999, 2299],
+  ["Electric Pressure Cooker 6L", "10-in-1 multi-cooker: pressure, slow cook, steam, sauté, yogurt, rice. 13 preset programs. Stainless inner.", 9999, 5999],
+  ["Non-Stick Cookware Set (5pc)", "Granite-coated 5-piece cookware: frypan, saucepan with lid, kadai, tawa. PFOA-free, induction-ready, glass lid.", 7999, 4499],
+  ["Cotton Bedsheet King Size", "200 TC pure cotton printed bedsheet with 2 pillow covers. Fits 78x72\" mattress. Soft, breathable, machine-wash.", 2499, 1399],
+  ["Memory Foam Pillows (Pair)", "Contour-shaped memory foam pillows for neck support. Hypoallergenic, breathable bamboo cover, removable & washable.", 3999, 2199],
+  ["Microfibre Bath Towels (Set of 4)", "Quick-dry plush microfibre towels. Super absorbent, lightweight, lint-free. 70x140cm.", 1999, 999],
+  ["LED Wall Mirror with Lights", "Round LED-backlit bathroom mirror. 3 color temperatures, dimmable, defogger. 24\" diameter.", 7999, 4999],
+  ["Diwali String Lights (5m)", "Warm white LED string lights, 5m with 50 LEDs. 8 lighting modes, IP44 indoor/outdoor, USB-powered.", 999, 549],
+  ["Modular Storage Boxes (Set of 6)", "Stackable transparent organizer boxes. Snap-lock lids, food-safe BPA-free. Kitchen, pantry, kids' toys.", 1999, 1099],
+  ["Floor Lamp (Modern Tripod)", "Adjustable tripod floor lamp with linen shade. Walnut wood legs. E27 bulb compatible (sold separately).", 5999, 3499],
+  ["Wall Clock (Silent Sweep)", "12\" minimalist wall clock with non-ticking quartz movement. Wooden frame, easy-to-read numerals.", 1499, 799],
+  ["Bookshelf 5-Tier Wooden", "Open 5-shelf bookcase in engineered wood. Anti-tip wall anchor included. 60x180cm, walnut finish.", 9999, 5999],
+  ["Door Mat (Coir Anti-Slip)", "Heavy-duty natural coir doormat with rubber backing. Traps dirt, weatherproof, easy to clean. 60x40cm.", 799, 449],
+];
+
+const BEAUTY = [
+  ["Hyaluronic Acid Serum", "Intense hydration serum with 2% hyaluronic acid. Plumps fine lines, locks in moisture. Suits all skin types. 30ml.", 1499, 899],
+  ["Vitamin C Face Serum", "Brightening 10% vitamin C serum with vitamin E. Reduces dark spots, evens skin tone. Lightweight, fast-absorbing. 30ml.", 1799, 999],
+  ["Retinol Night Serum", "0.5% encapsulated retinol with squalane. Smooths fine lines and texture overnight. Build-up tolerance gradually. 30ml.", 2499, 1499],
+  ["Moisturising Day Cream SPF 30", "Lightweight daily moisturiser with broad-spectrum SPF 30. Vitamin B5, no white cast, non-greasy. 50ml.", 1999, 1199],
+  ["Niacinamide 10% Serum", "Pore-minimising serum with 10% niacinamide + 1% zinc. Controls oil, blurs blemishes. Fragrance-free. 30ml.", 999, 549],
+  ["Eau de Parfum (50ml)", "Long-lasting unisex parfum. Top notes of bergamot, heart of jasmine, dry-down of amber and musk. 50ml glass bottle.", 4999, 2999],
+  ["Liquid Foundation SPF 25", "24-hour wear medium-coverage foundation with SPF 25. Available in 12 shades. Buildable, dewy finish. 30ml.", 1799, 999],
+  ["Matte Liquid Lipstick", "Velvet-matte finish lipstick, lightweight, kiss-proof. Vitamin E enriched. Available in 18 shades.", 799, 449],
+  ["Eyeshadow Palette (12 Shades)", "Pigmented matte + shimmer eyeshadows. Long-wear formula, smooth blending. Cruelty-free, vegan.", 1999, 1199],
+  ["Volumizing Mascara (Waterproof)", "Waterproof lengthening + volumising mascara. Conditioned with castor oil. Smudge-proof, easy to remove.", 899, 499],
+  ["Sulfate-Free Shampoo (400ml)", "Gentle sulfate-free shampoo with argan oil. Adds shine without stripping. Safe for coloured and curly hair.", 899, 549],
+  ["Deep Conditioning Hair Mask (250g)", "Intensive 5-min hair mask with keratin, coconut, and shea butter. Repairs damage, smooths frizz, adds gloss.", 1199, 699],
+  ["Anti-Dandruff Shampoo (200ml)", "Pyrithione zinc + tea tree oil shampoo for flake-free scalp. Gentle daily use. Soothes itchiness.", 549, 349],
+  ["Argan Hair Oil (100ml)", "Cold-pressed Moroccan argan oil. Tames frizz, adds shine, protects from heat. Lightweight, non-greasy.", 699, 449],
+  ["Sheet Face Mask (Box of 10)", "Korean-style hydrating sheet masks: hyaluronic, vitamin C, snail mucin, aloe, charcoal varieties. 10 pack.", 999, 599],
+  ["Body Lotion with Shea (400ml)", "24-hour moisturising body lotion with shea butter and vitamin E. Light, non-sticky, dermatologist-tested.", 699, 399],
+  ["Foaming Face Wash (150ml)", "Daily gentle foaming face wash with green tea. Removes dirt and oil without drying. pH balanced.", 449, 269],
+  ["Lip Balm Trio (SPF 15)", "Triple pack of moisturising lip balms with SPF 15. Vanilla, rose, mint flavours. With beeswax and vitamin E.", 599, 349],
+  ["Sunscreen SPF 50 Gel (75ml)", "Lightweight invisible-finish gel sunscreen. Broad-spectrum SPF 50 PA+++. Non-comedogenic, water-resistant.", 799, 499],
+  ["Body Wash (Coconut · 500ml)", "Sulfate-free moisturising body wash with coconut milk. Creamy lather, leaves skin soft and lightly scented.", 599, 349],
+  ["Hair Straightener (Ceramic)", "Floating ceramic plates with ionic technology. 5 temperature settings up to 230°C. 60-sec heat-up, swivel cord.", 3499, 1999],
+  ["Hair Curling Wand (32mm)", "Tourmaline-ceramic barrel for shiny, frizz-free curls. 6 heat settings up to 210°C. Includes heat-resistant glove.", 2999, 1799],
+  ["Electric Trimmer (Beard)", "Cordless beard trimmer with 20 length settings (0.5–10mm). 90-min runtime, USB-C charging, washable head.", 2499, 1399],
+  ["Facial Cleansing Brush", "Silicone facial brush with 2 zones — deep cleansing + anti-aging. 8 intensities, USB-rechargeable, IP67 waterproof.", 3499, 1999],
+  ["Makeup Brush Set (12 pcs)", "Synthetic-bristle professional brush kit: face, eye, contour, blender. Includes faux-leather case.", 1999, 1199],
+  ["Nail Polish Set (6 Shades)", "Long-wear gel-effect nail polish set. 6 trendy shades, quick-dry formula, chip-resistant, vegan.", 999, 549],
+  ["Compact Makeup Mirror with LED", "Travel mirror with built-in dimmable LED lights. 1x + 7x magnification, USB-rechargeable.", 1499, 899],
+  ["Eyebrow Shaping Kit", "Complete brow kit: tweezers, brush, scissor, stencils, gel, powder duo, brow razor. Beginner-friendly.", 1299, 699],
+  ["Body Scrub (Coffee · 200g)", "Exfoliating coffee body scrub with cocoa butter. Smooths skin, fights cellulite, reveals glow. Vegan.", 799, 449],
+  ["Perfume Gift Set (3x 25ml)", "Discovery set of 3 mini perfumes — floral, woody, fresh. Perfect for travel or trying scents before committing.", 2499, 1499],
+];
+
+const SPORTS = [
+  ["Yoga Mat 6mm (Anti-Slip)", "Eco-friendly TPE yoga mat. 6mm cushioning, double-sided non-slip, lightweight 900g. Includes carry strap.", 1999, 1199],
+  ["Adjustable Dumbbells 24kg", "Pair of adjustable dumbbells, 2.5kg to 24kg per side. Quick-twist dial, compact storage. Replaces 15 weights.", 19999, 12999],
+  ["Resistance Bands Set", "Set of 5 colour-coded loop bands (10-50 lb). Latex-free natural rubber, includes door anchor, handles, ankle straps, carry bag.", 1499, 799],
+  ["Skipping Rope (Adjustable)", "Tangle-free PVC speed skipping rope. Ball-bearing handles, memory-foam grip, adjustable 3m length. Burns 200 cal in 10 min.", 599, 299],
+  ["Foam Roller (Trigger Point)", "High-density 13x33cm foam roller with EVA grid pattern. Relieves muscle tightness, improves recovery. Up to 150kg load.", 1499, 899],
+  ["Pull-Up Bar (Doorway)", "No-screw doorway pull-up bar. Fits 60-90cm doorframes, supports 150kg. 6 grip positions: chin-up, wide, narrow, push-up.", 1999, 1199],
+  ["Kettlebell 12kg (Vinyl-Coated)", "Cast-iron kettlebell with vinyl coating. Wide flat base for floor protection. Smooth handle for swings, presses, snatches.", 2499, 1499],
+  ["Boxing Gloves (16oz)", "Synthetic-leather boxing gloves with multi-layer foam. Velcro wrist strap, mesh palm for breathability. Heavy-bag training.", 2499, 1399],
+  ["Cycling Helmet (Adult)", "Lightweight in-mold helmet, 18 vents, MIPS rotation system. Adjustable dial-fit, removable visor. ISI certified.", 3499, 1999],
+  ["Sports Water Bottle (1L)", "BPA-free Tritan water bottle with flip-lock straw. Leak-proof, easy-grip texture, time-marked. Dishwasher-safe.", 699, 399],
+  ["Gym Duffle Bag 40L", "Spacious 40L duffle bag with shoe compartment, wet pocket. Padded shoulder strap, water-resistant nylon, multiple pockets.", 1999, 1199],
+  ["Treadmill Foldable (Home)", "Compact home treadmill, 1-12 km/h, 12 preset programs, LCD display. Folds for storage. Max user weight 110kg.", 39999, 24999],
+  ["Exercise Bike (Magnetic)", "Quiet magnetic-resistance indoor cycling bike. 8 levels, LCD monitor, adjustable seat & handlebars. Tablet holder included.", 19999, 12999],
+  ["Ab Wheel Roller (Dual)", "Ergonomic dual-wheel ab roller with foam handles. Knee pad included. Builds core strength, easy storage.", 999, 549],
+  ["Stretching Band Set (3pc)", "3 long-loop stretching bands (light, medium, heavy). Improves flexibility, ideal for yoga, pilates, physical therapy.", 999, 549],
+  ["Bicycle Front + Rear Lights (USB)", "USB-rechargeable bike light set. 200 lumens front + 30 lumens rear, IPX5 waterproof. 5 light modes, 10-hour runtime.", 1499, 799],
+  ["Cricket Bat (English Willow)", "Grade 3 English willow cricket bat. SH (long handle), 1180g, 9-piece cane handle. Pre-knocked-in.", 5999, 3499],
+  ["Cricket Set (Junior)", "Junior cricket kit — bat, ball, wickets, bails, stumps, carry bag. Ideal for ages 8-12. Lightweight tennis-ball bat.", 2999, 1799],
+  ["Football (Size 5, FIFA Approved)", "Match-quality football with hand-stitched panels. 32-panel construction, durable PU casing. FIFA Quality Pro.", 1999, 1099],
+  ["Basketball (Size 7)", "Indoor/outdoor composite leather basketball. Deep channels, soft-touch grip, regulation size 7 (29.5\").", 1799, 999],
+  ["Badminton Racket (Pair)", "Lightweight aluminium-alloy badminton racket set with 3 shuttlecocks. Even-balance frame, ideal for casual play.", 1499, 799],
+  ["Tennis Racket (Adult)", "Pre-strung graphite tennis racket, 27\" length, 270g. Oversized 100 sq in head for forgiveness. Includes cover.", 3499, 1999],
+  ["Trekking Backpack 50L", "50L trekking backpack with rain cover, hip belt, hydration sleeve. Multiple compartments, padded back panel.", 4999, 2999],
+  ["Camping Tent (3-Person)", "Lightweight 3-person dome tent, water-resistant 2000mm, easy 5-min setup. Mesh windows for ventilation. Carry bag.", 5999, 3499],
+  ["Sleeping Bag (Mummy Style)", "3-season mummy sleeping bag, comfort 5°C. Polyester with hollow-fibre fill. Compression sack included. 230x80cm.", 3999, 2299],
+  ["Trekking Pole (Pair)", "Aluminium adjustable trekking poles (65-135cm). Cork grips, anti-shock springs, carbide tips, removable mud baskets.", 2499, 1499],
+  ["Inflatable Pool Float", "Giant flamingo pool float, 1.4m wingspan. Reinforced PVC, dual valves for fast inflation. Adult use.", 1999, 1099],
+  ["Swim Goggles (Anti-Fog)", "Adult swim goggles with anti-fog UV-protection lenses. Soft silicone seal, adjustable strap. Includes nose clip + ear plugs.", 999, 499],
+  ["Fitness Smart Watch", "Activity tracker with 100+ sport modes, heart-rate, SpO2, GPS-connected. 14-day battery, 5ATM waterproof.", 4999, 2999],
+  ["Weight Lifting Belt", "Genuine leather weightlifting belt, 10cm wide. Double-prong roller buckle, reinforced stitching, suede inner lining.", 2499, 1499],
+];
+
+const BOOKS = [
+  ["Atomic Habits", "James Clear's bestseller on tiny changes that yield remarkable results. The proven framework for habit formation. Paperback, 320 pages.", 599, 349],
+  ["The Psychology of Money", "Morgan Housel's timeless lessons on wealth, greed, and happiness. 19 short stories on how people think about money. 256 pages.", 499, 299],
+  ["Sapiens: A Brief History", "Yuval Noah Harari's landmark book on how Homo sapiens came to dominate Earth. Hardcover, 464 pages.", 799, 499],
+  ["Ikigai", "Japanese secret to a long and happy life. Garcia & Miralles. Slim but powerful reading. Hardcover, 208 pages.", 399, 249],
+  ["Think and Grow Rich", "Napoleon Hill's classic on personal achievement and wealth-building. Distills 25 years of research. 320 pages.", 299, 179],
+  ["Rich Dad Poor Dad", "Robert Kiyosaki's #1 personal finance book. Lessons from two dads — what the rich teach their kids. 336 pages.", 499, 299],
+  ["The Alchemist", "Paulo Coelho's allegorical bestseller on following your dreams. Translated into 70+ languages. 208 pages.", 399, 249],
+  ["Man's Search for Meaning", "Viktor Frankl's account of surviving Auschwitz and finding purpose. A psychological masterpiece. 192 pages.", 349, 199],
+  ["The Subtle Art of Not Giving a F*ck", "Mark Manson's counterintuitive approach to living a good life. Direct, profane, life-changing. 224 pages.", 599, 349],
+  ["12 Rules for Life", "Jordan Peterson's antidote to chaos. Practical principles for life with depth and wit. Hardcover, 448 pages.", 699, 449],
+  ["Deep Work", "Cal Newport's guide to focused success in a distracted world. Rules for cultivating deep concentration. 304 pages.", 599, 349],
+  ["The 7 Habits of Highly Effective People", "Stephen Covey's classic on personal effectiveness. Principle-centered approach. 432 pages.", 599, 349],
+  ["Thinking, Fast and Slow", "Daniel Kahneman's groundbreaking work on the two systems that drive thought. Nobel laureate. 512 pages.", 699, 449],
+  ["The Power of Now", "Eckhart Tolle's spiritual guide to enlightenment. Practical teachings on living in the present. 240 pages.", 499, 299],
+  ["Becoming", "Michelle Obama's deeply personal memoir. From childhood to First Lady. Hardcover, 448 pages.", 899, 549],
+  ["Educated", "Tara Westover's memoir of escaping a survivalist family and earning a PhD. 352 pages.", 599, 349],
+  ["The Midnight Library", "Matt Haig's novel about a library between life and death, where each book is a different life. 304 pages.", 499, 299],
+  ["Where the Crawdads Sing", "Delia Owens' atmospheric mystery and coming-of-age story set in North Carolina marshlands. 384 pages.", 499, 299],
+  ["The Silent Patient", "Alex Michaelides' twisty psychological thriller — a woman who shoots her husband and never speaks again. 320 pages.", 399, 249],
+  ["A Brief History of Time", "Stephen Hawking's exploration of black holes, the Big Bang, and the nature of time. 256 pages.", 599, 349],
+  ["Premium Hardbound Notebook A5", "240-page dotted A5 notebook with PU leather cover. Lay-flat binding, ribbon bookmark, elastic closure, pen loop.", 999, 549],
+  ["Fountain Pen with Ink Cartridges", "Polished-finish fountain pen with medium nib. Includes 6 ink cartridges (blue, black, blue-black). Gift box.", 1999, 1199],
+  ["Gel Ink Pen Set (10 colours)", "Smooth-writing 0.5mm gel pen set in 10 colours. Quick-drying, fade-resistant. Perfect for journaling and study.", 499, 249],
+  ["Sticky Notes Variety Pack", "12 pads of sticky notes — assorted colours and sizes. 100 sheets each. Strong adhesive, easy peel.", 399, 199],
+  ["Highlighters (Pack of 6)", "Pastel-colour chisel-tip highlighters. Smear-proof on most paper. Quick-dry, no bleed-through.", 299, 149],
+  ["Desk Calendar 2026", "Premium 12-month flip desk calendar with monthly art. Includes goal tracker and notes section.", 599, 349],
+  ["Bookmark Set (Magnetic, 12 pcs)", "Magnetic bookmarks with literary quotes. 12 unique designs in a gift box. Folds to grip pages without falling.", 499, 249],
+  ["Leather-Bound Journal A5", "Hand-bound A5 journal with full-grain leather cover and unlined cotton paper. Travel-friendly. 200 pages.", 1999, 1199],
+  ["Wooden Bookends (Pair)", "Solid sheesham wood bookends with brass trim. Holds 10-15 books. Hand-finished, sold as a pair.", 1499, 849],
+  ["Reading Light (Clip-On)", "USB-rechargeable clip-on book light. 3 brightness levels, 360° flexible neck. Up to 60 hours runtime.", 999, 499],
+];
+
+const GROCERY = [
+  ["Basmati Rice (5kg)", "Premium aged long-grain basmati rice. Aromatic, fluffy when cooked, ideal for biryani and pulao. 5kg pack.", 899, 649],
+  ["Whole Wheat Flour (5kg)", "100% pure whole wheat chakki atta. Stone-ground, no maida added. Soft rotis. 5kg recyclable pack.", 349, 249],
+  ["Toor Dal (1kg)", "Premium polished yellow toor dal. Cleaned, ready to cook. Rich in plant protein and fibre. 1kg.", 199, 149],
+  ["Sunflower Oil (5L Jar)", "Refined sunflower cooking oil, light and heart-healthy. Rich in vitamin E. Pet jar for easy storage. 5L.", 1199, 899],
+  ["Cold-Pressed Coconut Oil (1L)", "100% pure cold-pressed virgin coconut oil. Suitable for cooking, hair and skin care. Glass bottle, 1L.", 699, 499],
+  ["Mustard Oil (1L)", "Kachi ghani cold-pressed mustard oil. Strong pungent aroma. Ideal for Indian cooking and pickling. 1L pet bottle.", 249, 179],
+  ["Pure Cow's Ghee (500g)", "Traditional bilona-method cow ghee. Granular texture, rich aroma. Free from chemicals and preservatives. 500g jar.", 599, 469],
+  ["Honey (Raw, 500g)", "100% pure raw multi-flora honey. Unprocessed, unfiltered, retains natural enzymes and pollen. Glass bottle.", 449, 299],
+  ["Green Tea (100 Bags)", "Premium long-leaf green tea bags. Antioxidant-rich. Refreshing, zero calories. 100 individually-wrapped bags.", 599, 349],
+  ["Black Coffee (Instant, 100g)", "100% Arabica freeze-dried instant coffee. Bold flavour, smooth body. Glass jar, 100g (makes ~50 cups).", 549, 349],
+  ["Filter Coffee Powder (500g)", "South Indian filter coffee blend (80% coffee, 20% chicory). Rich, aromatic, perfect with hot milk. 500g.", 499, 349],
+  ["Mixed Nuts Trail Mix (500g)", "Premium mix of almonds, cashews, walnuts, pistachios, raisins. Roasted, unsalted. 500g resealable pack.", 999, 699],
+  ["California Almonds (500g)", "Premium whole California almonds. Crunchy, naturally sweet. Rich in vitamin E and magnesium. 500g zip-lock.", 799, 549],
+  ["Whole Cashews (500g)", "W320 grade whole cashews. Plump, creamy, perfect for cooking or snacking. Premium quality, 500g pack.", 999, 699],
+  ["Dates (Medjool, 500g)", "Premium Medjool dates — large, soft, naturally sweet. Pitted, ready to eat. Imported, vacuum packed. 500g.", 999, 699],
+  ["Rolled Oats (1kg)", "Whole-grain rolled oats. Heart-healthy fibre, no added sugar. Perfect for breakfast and baking. 1kg pack.", 299, 199],
+  ["Muesli with Fruit & Nuts (500g)", "Crunchy multigrain muesli with raisins, almonds, cranberries. High fibre, low fat. 500g.", 449, 299],
+  ["Cornflakes Original (875g)", "Crispy original cornflakes. Fortified with iron and B-vitamins. Low fat. Family pack 875g.", 399, 249],
+  ["Whole Milk (1L Tetra Pack)", "UHT-treated whole milk. Long shelf life, no refrigeration until opened. Rich in calcium. 1L tetra.", 90, 69],
+  ["Fresh Curd / Yogurt (500g)", "Traditional set curd, thick and tangy. Made daily from fresh whole milk. No preservatives. 500g cup.", 99, 79],
+  ["Paneer Block (200g)", "Soft fresh Indian cottage cheese. Made from pure cow's milk, no fillers. Perfect for tikka and curries. 200g.", 110, 89],
+  ["Salted Butter (500g)", "Premium creamery butter, lightly salted. Spread on toast, melt over pancakes, or bake with. 500g.", 549, 449],
+  ["Cheddar Cheese Block (200g)", "Aged sharp cheddar. Strong flavour, melts well in sandwiches and burgers. Vegetarian. 200g.", 320, 260],
+  ["Tomato Ketchup (1kg)", "Classic tomato ketchup made with sun-ripened tomatoes. No artificial colours or flavours. 1kg squeeze bottle.", 199, 149],
+  ["Soy Sauce (500ml)", "Naturally brewed light soy sauce. Umami-rich, perfect for stir-fries, noodles, marinades. 500ml.", 249, 179],
+  ["Olive Oil Extra-Virgin (500ml)", "Cold-pressed extra-virgin olive oil from Spain. Fruity, peppery finish. Glass bottle to preserve flavour. 500ml.", 999, 699],
+  ["Pasta (Penne · 1kg)", "100% durum wheat semolina pasta. Holds sauce beautifully. Cooks in 9 min. 1kg.", 249, 169],
+  ["Dark Chocolate (70% Cocoa, 100g)", "Premium dark chocolate bar with 70% cocoa. Rich, smooth, slightly bitter. Vegan, gluten-free. 100g.", 349, 199],
+  ["Granola Bars (Box of 10)", "Crunchy granola bars with honey, almonds, raisins. 30g each, individually wrapped. Perfect for on-the-go.", 449, 299],
+  ["Sparkling Water (12 Cans)", "Naturally sourced sparkling mineral water. Zero calories, lightly carbonated. Pack of 12 × 330ml cans.", 599, 399],
 ];
 
 /* ─────────────────────────  ASSEMBLE & SEED  ───────────────────────── */
@@ -324,7 +397,6 @@ async function run() {
   await mongoose.connect(uri);
   console.log("✓ Connected");
 
-  // Find an admin user to use as sellerId
   const admin = await User.findOne({ role: "admin" });
   if (!admin) {
     console.error("✗ No admin user found. Create at least one admin first.");
@@ -332,24 +404,22 @@ async function run() {
   }
   console.log(`✓ Using admin: ${admin.email}`);
 
-  // Wipe existing products
   const delResult = await Product.deleteMany({});
   console.log(`✓ Removed ${delResult.deletedCount} existing products`);
 
-  // Build all docs
   const docs = [
-    ...buildDocs(ELECTRONICS,      "electronics",      admin._id),
-    ...buildDocs(FASHION,          "fashion",          admin._id),
-    ...buildDocs(DAIRY,            "dairy",            admin._id),
-    ...buildDocs(TECHNOLOGY,       "technology",       admin._id),
-    ...buildDocs(HOME_APPLIANCES,  "home appliances",  admin._id),
+    ...buildDocs(ELECTRONICS, "electronics", admin._id),
+    ...buildDocs(FASHION,     "fashion",     admin._id),
+    ...buildDocs(HOME,        "home",        admin._id),
+    ...buildDocs(BEAUTY,      "beauty",      admin._id),
+    ...buildDocs(SPORTS,      "sports",      admin._id),
+    ...buildDocs(BOOKS,       "books",       admin._id),
+    ...buildDocs(GROCERY,     "grocery",     admin._id),
   ];
 
-  // Bypass Mongoose validators (so costPrice can be > salePrice for the strike-through UI)
   const result = await Product.collection.insertMany(docs);
   console.log(`✓ Inserted ${result.insertedCount} products`);
 
-  // Invalidate Redis product cache so new products show up immediately
   try {
     await invalidateProductCache();
     console.log("✓ Product cache invalidated");
@@ -357,7 +427,6 @@ async function run() {
     console.log("⚠ Cache invalidation skipped (Redis unavailable)");
   }
 
-  // Print summary
   const counts = await Product.aggregate([
     { $group: { _id: "$category", count: { $sum: 1 } } },
     { $sort: { _id: 1 } },

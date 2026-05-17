@@ -45,20 +45,103 @@ const CATEGORY_TILE_GRADIENTS = {
 
 const CATEGORY_ROW_ACCENT = CATEGORY_TILE_GRADIENTS;
 
-// Trending brand strip — these are display-only tiles linking to a search
-// query on the brand name. Logos are tinted gradients with the brand initial;
-// swap to real logo SVGs when partnerships exist.
+// Trending brand strip. Each card has a structured layout — real brand logo
+// (sourced from cdn.simpleicons.org, white-filled), tagline, deal badge, and
+// a category-coloured cover image. Click runs a text search for the brand.
+//
+// To swap in licensed/agency-supplied logos, replace `logoSlug` with a CDN
+// path you control. Cover images come from Unsplash with width hints.
 const BRANDS = [
-  { name: "Apple",    gradient: "from-gray-700 to-gray-900" },
-  { name: "Samsung",  gradient: "from-blue-600 to-blue-800" },
-  { name: "Nike",     gradient: "from-black to-gray-700" },
-  { name: "Adidas",   gradient: "from-gray-800 to-black" },
-  { name: "Sony",     gradient: "from-slate-700 to-slate-900" },
-  { name: "Bose",     gradient: "from-zinc-700 to-zinc-900" },
-  { name: "Levi's",   gradient: "from-red-600 to-red-800" },
-  { name: "Puma",     gradient: "from-yellow-500 to-amber-600" },
-  { name: "Lakmé",    gradient: "from-pink-500 to-rose-600" },
-  { name: "Dell",     gradient: "from-sky-600 to-sky-800" },
+  {
+    name: "Apple",
+    logoSlug: "apple",
+    tagline: "iPhone · iPad · Mac",
+    deal: "Up to ₹6,000 off",
+    cover: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&q=80&auto=format",
+    bg: "from-gray-800 to-gray-900",
+    query: "Apple",
+  },
+  {
+    name: "Samsung",
+    logoSlug: "samsung",
+    tagline: "Galaxy · TVs · Appliances",
+    deal: "Up to 40% off",
+    cover: "https://images.unsplash.com/photo-1610792516775-01de03eae630?w=600&q=80&auto=format",
+    bg: "from-blue-700 to-blue-900",
+    query: "Samsung",
+  },
+  {
+    name: "Nike",
+    logoSlug: "nike",
+    tagline: "Footwear · Apparel",
+    deal: "Min 30% off",
+    cover: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80&auto=format",
+    bg: "from-zinc-800 to-black",
+    query: "Nike",
+  },
+  {
+    name: "Adidas",
+    logoSlug: "adidas",
+    tagline: "Originals · Performance",
+    deal: "Flat 40% off",
+    cover: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=600&q=80&auto=format",
+    bg: "from-gray-900 to-black",
+    query: "Adidas",
+  },
+  {
+    name: "Sony",
+    logoSlug: "sony",
+    tagline: "Audio · Cameras",
+    deal: "Save up to ₹15K",
+    cover: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600&q=80&auto=format",
+    bg: "from-slate-800 to-slate-950",
+    query: "Sony",
+  },
+  {
+    name: "Bose",
+    logoSlug: "bose",
+    tagline: "Premium Audio",
+    deal: "Up to 25% off",
+    cover: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80&auto=format",
+    bg: "from-neutral-800 to-neutral-950",
+    query: "Bose",
+  },
+  {
+    name: "Levi's",
+    logoSlug: "levis",
+    tagline: "Denim Since 1873",
+    deal: "Buy 2 Get 20% off",
+    cover: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80&auto=format",
+    bg: "from-red-700 to-red-900",
+    query: "Levi's",
+  },
+  {
+    name: "Puma",
+    logoSlug: "puma",
+    tagline: "Sportswear · Sneakers",
+    deal: "Min 35% off",
+    cover: "https://images.unsplash.com/photo-1539185441755-769473a23570?w=600&q=80&auto=format",
+    bg: "from-amber-600 to-orange-700",
+    query: "Puma",
+  },
+  {
+    name: "Lakmé",
+    logoSlug: "loreal",
+    tagline: "Makeup · Skincare",
+    deal: "Up to 30% off",
+    cover: "https://images.unsplash.com/photo-1522335789203-aaa2f6d1b7d8?w=600&q=80&auto=format",
+    bg: "from-pink-600 to-rose-700",
+    query: "Lakme",
+  },
+  {
+    name: "Dell",
+    logoSlug: "dell",
+    tagline: "Laptops · Monitors",
+    deal: "Save up to ₹20K",
+    cover: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80&auto=format",
+    bg: "from-sky-700 to-sky-900",
+    query: "Dell",
+  },
 ];
 
 export default function Home() {
@@ -196,14 +279,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY BRAND — horizontal scroller */}
+      {/* SHOP BY BRAND — structured cards with logo + cover + deal */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
         <div className="flex items-end justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-9 rounded-full bg-gradient-to-b from-brand to-[#7c3aed]" />
             <div>
               <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight">Shop by Brand</h2>
-              <p className="text-[0.8rem] text-gray-400 mt-0.5">Trusted names, all in one place</p>
+              <p className="text-[0.8rem] text-gray-400 mt-0.5">Trusted names, exclusive offers</p>
             </div>
           </div>
         </div>
@@ -211,13 +294,40 @@ export default function Home() {
           {BRANDS.map((b) => (
             <button
               key={b.name}
-              onClick={() => navigate(`/search?query=${encodeURIComponent(b.name)}`)}
-              className={`group relative snap-start flex-shrink-0 w-[120px] h-[80px] sm:w-[140px] sm:h-[90px] rounded-2xl overflow-hidden bg-gradient-to-br ${b.gradient} text-white cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-hover border-0`}
+              onClick={() => navigate(`/search?query=${encodeURIComponent(b.query)}`)}
+              className="group relative snap-start flex-shrink-0 w-[210px] sm:w-[240px] rounded-2xl overflow-hidden bg-white border border-gray-100 text-left cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-hover hover:border-brand/30"
             >
-              <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-white/10 blur-2xl" />
-              <div className="relative h-full flex flex-col items-center justify-center px-2">
-                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight">{b.name.charAt(0)}</span>
-                <span className="text-[0.72rem] font-bold uppercase tracking-wider text-white/80 mt-0.5">{b.name}</span>
+              {/* Cover image with brand-tinted overlay */}
+              <div className="relative h-24 overflow-hidden">
+                <img
+                  src={b.cover}
+                  alt=""
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className={`absolute inset-0 bg-gradient-to-br ${b.bg} opacity-80`} />
+                {/* Deal badge */}
+                <span className="absolute top-2 right-2 bg-white text-brand-dark text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
+                  {b.deal}
+                </span>
+                {/* Logo centered */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img
+                    src={`https://cdn.simpleicons.org/${b.logoSlug}/ffffff`}
+                    alt={b.name}
+                    loading="lazy"
+                    className="h-9 w-auto opacity-95 drop-shadow"
+                    onError={(e) => { e.currentTarget.style.display = "none"; }}
+                  />
+                </div>
+              </div>
+              {/* Body */}
+              <div className="px-3.5 py-3">
+                <p className="font-extrabold text-gray-900 text-[0.92rem] leading-tight">{b.name}</p>
+                <p className="text-[0.72rem] text-gray-500 mt-0.5 line-clamp-1">{b.tagline}</p>
+                <span className="mt-2 inline-flex items-center gap-0.5 text-brand text-[0.74rem] font-bold group-hover:translate-x-0.5 transition-transform">
+                  Shop now <ChevronRight size={12} />
+                </span>
               </div>
             </button>
           ))}
