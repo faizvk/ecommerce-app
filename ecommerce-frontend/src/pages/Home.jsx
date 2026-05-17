@@ -21,6 +21,7 @@ import Testimonials from "../components/Testimonials";
 import PromoBanners from "../components/PromoBanners";
 import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
+import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
   Sparkles, Mail, Send, TrendingUp, Users, Star, Lock,
@@ -205,6 +206,10 @@ export default function Home() {
   const topRated    = useSelector(selectTopRated);
   const newArrivals = useSelector(selectNewArrivals);
   const budgetPicks = useSelector(selectBudgetPicks);
+
+  // Recently viewed (localStorage-backed). Only render the row for returning
+  // users who have at least 2 viewed items — single-item rows look sad.
+  const { items: recentlyViewed } = useRecentlyViewed();
 
   useEffect(() => {
     // Only fetch if not already loaded (Redux acts as a cache)
@@ -430,6 +435,19 @@ export default function Home() {
           })}
         </div>
       </section>
+
+      {/* RECENTLY VIEWED — only for returning users with 2+ items */}
+      {recentlyViewed.length >= 2 && (
+        <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
+          <ProductRow
+            title="Pick up where you left off"
+            subtitle="Recently viewed"
+            accent="from-violet-400 to-purple-500"
+            products={recentlyViewed}
+            viewAllHref="/search"
+          />
+        </section>
+      )}
 
       {/* SHOP BY BRAND — full-bleed advertisement cards */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
