@@ -6,6 +6,7 @@ import {
   cancelOrder,
   adminGetOrders,
   adminUpdateOrderStatus,
+  adminAddOrderNote,
 } from "../../api/order.api";
 
 /* Place order (after payment success) */
@@ -82,6 +83,18 @@ export const adminUpdateOrderStatusThunk = createAsyncThunk(
       return res.data.order;
     } catch {
       return rejectWithValue("Failed to update order status");
+    }
+  }
+);
+
+export const adminAddOrderNoteThunk = createAsyncThunk(
+  "order/adminAddNote",
+  async ({ orderId, text }, { rejectWithValue }) => {
+    try {
+      const res = await adminAddOrderNote(orderId, text);
+      return res.data.order;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to add note");
     }
   }
 );
@@ -168,6 +181,13 @@ const orderSlice = createSlice({
 
       // ADMIN UPDATE STATUS
       .addCase(adminUpdateOrderStatusThunk.fulfilled, (state, action) => {
+        state.adminOrders = state.adminOrders.map((o) =>
+          o._id === action.payload._id ? action.payload : o
+        );
+      })
+
+      // ADMIN ADD NOTE
+      .addCase(adminAddOrderNoteThunk.fulfilled, (state, action) => {
         state.adminOrders = state.adminOrders.map((o) =>
           o._id === action.payload._id ? action.payload : o
         );

@@ -329,3 +329,49 @@ export const adminUpdateOrderStatus = async (req, res) => {
     });
   }
 };
+
+/**
+ * Append an internal admin note to an order. Customer-invisible — only
+ * returned on the admin orders endpoint. The author snapshot (admin email
+ * at write time) preserves the audit trail even if the admin is later
+ * demoted or deleted.
+ */
+export const adminAddOrderNote = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { text } = req.body || {};
+
+    if (!isValid(orderId))
+      return res.status(400).json({ message: "Invalid order ID" });
+
+    const trimmed = typeof text === "string" ? text.trim() : "";
+    if (!trimmed)
+      return res.status(400).json({ message: "Note text is required" });
+    if (trimmed.length > 1000)
+      return res.status(400).json({ message: "Note is too long (max 1000 chars)" });
+
+    const order = await Order.findById(orderId)
+      .populate("userId", "name email")
+      .populate("items.productId");
+
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.adminNotes.push({
+      text: trimmed,
+      author: req.user?.email || "admin",
+      createdAt: new Date(),
+    });
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Note added",
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to add note",
+      error: error.message,
+    });
+  }
+};

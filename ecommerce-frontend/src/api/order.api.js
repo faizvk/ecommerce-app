@@ -15,3 +15,6 @@ export const adminGetOrders = () => api.get("/admin/orders");
 
 export const adminUpdateOrderStatus = (id, status) =>
   api.put(`/admin/order/status/${id}`, { status });
+
+export const adminAddOrderNote = (id, text) =>
+  api.post(`/admin/order/note/${id}`, { text });

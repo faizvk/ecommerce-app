@@ -10,6 +10,7 @@ import {
   cancelOrder,
   adminGetAllOrders,
   adminUpdateOrderStatus,
+  adminAddOrderNote,
 } from "../controller/order.controller.js";
 
 const router = express.Router();
@@ -33,6 +34,13 @@ router.put(
   verifyToken,
   AutherizeRole("admin"),
   adminUpdateOrderStatus
+);
+
+router.post(
+  "/admin/order/note/:id",
+  verifyToken,
+  AutherizeRole("admin"),
+  adminAddOrderNote
 );
 
 export default router;

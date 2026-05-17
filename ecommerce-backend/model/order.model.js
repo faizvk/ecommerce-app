@@ -56,6 +56,16 @@ const orderSchema = mongoose.Schema(
       enum: ["pending", "paid", "failed"],
       default: "pending",
     },
+    // Internal admin notes — visible only in the admin panel, never shown to
+    // the customer. Each entry stamps the author and timestamp so the audit
+    // trail is preserved without a separate collection.
+    adminNotes: [
+      {
+        text: { type: String, required: true, trim: true, maxlength: 1000 },
+        author: { type: String, default: "" }, // admin email or name snapshot
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   {
     timestamps: true,

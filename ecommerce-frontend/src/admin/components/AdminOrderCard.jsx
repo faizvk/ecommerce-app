@@ -1,6 +1,92 @@
-import { memo } from "react";
-import { User, MapPin, Clock } from "lucide-react";
+import { memo, useState } from "react";
+import { useDispatch } from "react-redux";
+import { User, MapPin, Clock, StickyNote, Send } from "lucide-react";
 import { ORDER_STATUS_CONFIG, NEXT_STATUS } from "../constants";
+import { adminAddOrderNoteThunk } from "../../redux/slice/orderSlice";
+import { notify } from "../../utils/notify";
+
+function NotesPanel({ order }) {
+  const dispatch = useDispatch();
+  const [text, setText] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const notes = order.adminNotes || [];
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    const trimmed = text.trim();
+    if (!trimmed || saving) return;
+    setSaving(true);
+    try {
+      await dispatch(adminAddOrderNoteThunk({ orderId: order._id, text: trimmed })).unwrap();
+      setText("");
+      notify.success("Note added", { autoClose: 1500 });
+    } catch (err) {
+      notify.error(err || "Couldn't add note");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="border-t border-gray-100 bg-gray-50/50">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full px-5 py-3 flex items-center justify-between gap-2 text-[0.78rem] font-bold text-gray-600 hover:text-brand cursor-pointer border-0 bg-transparent"
+      >
+        <span className="inline-flex items-center gap-2">
+          <StickyNote size={13} />
+          Internal Notes
+          {notes.length > 0 && (
+            <span className="bg-brand text-white text-[0.62rem] font-extrabold px-1.5 py-0.5 rounded-full">
+              {notes.length}
+            </span>
+          )}
+        </span>
+        <span className="text-[0.7rem] text-gray-400">{open ? "Hide" : "Show"}</span>
+      </button>
+
+      {open && (
+        <div className="px-5 pb-4 flex flex-col gap-3">
+          {notes.length > 0 && (
+            <ul className="flex flex-col gap-2 max-h-48 overflow-y-auto">
+              {notes.map((n, i) => (
+                <li key={i} className="bg-white border border-gray-100 rounded-xl p-3">
+                  <p className="text-[0.82rem] text-gray-700 whitespace-pre-wrap break-words">{n.text}</p>
+                  <p className="text-[0.65rem] text-gray-400 mt-1.5 font-medium">
+                    {n.author || "admin"} · {new Date(n.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <form onSubmit={handleAdd} className="flex gap-2 items-start">
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value.slice(0, 1000))}
+              placeholder="Add an internal note (not visible to customer)…"
+              rows={2}
+              maxLength={1000}
+              disabled={saving}
+              className="flex-1 px-3 py-2 rounded-xl border border-gray-200 text-[0.82rem] bg-white outline-none focus:border-brand focus:shadow-[0_0_0_3px_rgba(79,70,229,0.12)] resize-none disabled:opacity-60"
+            />
+            <button
+              type="submit"
+              disabled={saving || !text.trim()}
+              aria-label="Add note"
+              className="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-0 flex-shrink-0"
+            >
+              <Send size={15} />
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
 
 const AdminOrderCard = memo(function AdminOrderCard({ order, busy, onAdvance, onCancel }) {
   const status = ORDER_STATUS_CONFIG[order.status] || ORDER_STATUS_CONFIG.pending;
@@ -113,6 +199,8 @@ const AdminOrderCard = memo(function AdminOrderCard({ order, busy, onAdvance, on
           </div>
         </div>
       </div>
+
+      <NotesPanel order={order} />
     </div>
   );
 });
