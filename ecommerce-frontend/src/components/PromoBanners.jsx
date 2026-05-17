@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, Zap, Shirt, Coffee, Cpu } from "lucide-react";
+import { ChevronRight, Sparkles, Shirt, Dumbbell, Cpu } from "lucide-react";
 
 const BANNERS = [
   {
     title: "Tech Mega Sale",
     subtitle: "Up to 60% off",
-    accent: "Save big on the latest gadgets",
+    accent: "Latest phones & audio",
     icon: Cpu,
     gradient: "from-blue-500 via-indigo-500 to-violet-600",
-    href: "/search?category=technology",
+    href: "/search?category=electronics",
     cta: "Shop Tech",
-    decorEmoji: "💻",
+    decorEmoji: "📱",
   },
   {
     title: "Fashion Frenzy",
@@ -23,24 +23,24 @@ const BANNERS = [
     decorEmoji: "👗",
   },
   {
-    title: "Daily Essentials",
-    subtitle: "Fresh & on time",
-    accent: "Dairy delivered to your door",
-    icon: Coffee,
-    gradient: "from-amber-400 via-orange-400 to-red-400",
-    href: "/search?category=dairy",
-    cta: "Shop Dairy",
-    decorEmoji: "🥛",
+    title: "Beauty Glow Up",
+    subtitle: "Up to 40% off",
+    accent: "Top skincare & cosmetics",
+    icon: Sparkles,
+    gradient: "from-fuchsia-400 via-pink-400 to-rose-400",
+    href: "/search?category=beauty",
+    cta: "Shop Beauty",
+    decorEmoji: "💄",
   },
   {
-    title: "Smart Home",
-    subtitle: "From ₹999",
-    accent: "Modern living essentials",
-    icon: Zap,
+    title: "Sports & Fitness",
+    subtitle: "From ₹499",
+    accent: "Gear up for game day",
+    icon: Dumbbell,
     gradient: "from-emerald-400 via-teal-500 to-cyan-500",
-    href: "/search?category=home%20appliances",
+    href: "/search?category=sports",
     cta: "Shop Now",
-    decorEmoji: "🏠",
+    decorEmoji: "⚽",
   },
 ];
 

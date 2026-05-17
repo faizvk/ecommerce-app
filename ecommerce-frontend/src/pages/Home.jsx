@@ -34,20 +34,32 @@ const BENEFITS = [
 ];
 
 const CATEGORY_TILE_GRADIENTS = {
-  "electronics":      "from-blue-400 to-indigo-500",
-  "fashion":          "from-pink-400 to-rose-500",
-  "dairy":            "from-amber-300 to-orange-400",
-  "technology":       "from-cyan-400 to-sky-500",
-  "home appliances":  "from-emerald-400 to-teal-500",
+  "electronics": "from-blue-400 to-indigo-500",
+  "fashion":     "from-pink-400 to-rose-500",
+  "home":        "from-emerald-400 to-teal-500",
+  "beauty":      "from-fuchsia-400 to-pink-500",
+  "sports":      "from-orange-400 to-red-500",
+  "books":       "from-amber-400 to-yellow-500",
+  "grocery":     "from-lime-400 to-green-500",
 };
 
-const CATEGORY_ROW_ACCENT = {
-  "electronics":      "from-blue-400 to-indigo-500",
-  "fashion":          "from-pink-400 to-rose-500",
-  "dairy":            "from-amber-400 to-orange-500",
-  "technology":       "from-cyan-400 to-sky-500",
-  "home appliances":  "from-emerald-400 to-teal-500",
-};
+const CATEGORY_ROW_ACCENT = CATEGORY_TILE_GRADIENTS;
+
+// Trending brand strip — these are display-only tiles linking to a search
+// query on the brand name. Logos are tinted gradients with the brand initial;
+// swap to real logo SVGs when partnerships exist.
+const BRANDS = [
+  { name: "Apple",    gradient: "from-gray-700 to-gray-900" },
+  { name: "Samsung",  gradient: "from-blue-600 to-blue-800" },
+  { name: "Nike",     gradient: "from-black to-gray-700" },
+  { name: "Adidas",   gradient: "from-gray-800 to-black" },
+  { name: "Sony",     gradient: "from-slate-700 to-slate-900" },
+  { name: "Bose",     gradient: "from-zinc-700 to-zinc-900" },
+  { name: "Levi's",   gradient: "from-red-600 to-red-800" },
+  { name: "Puma",     gradient: "from-yellow-500 to-amber-600" },
+  { name: "Lakmé",    gradient: "from-pink-500 to-rose-600" },
+  { name: "Dell",     gradient: "from-sky-600 to-sky-800" },
+];
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -151,21 +163,27 @@ export default function Home() {
           </div>
         </div>
         <div className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {CATEGORY_CONFIG.map(({ key, label, emoji, desc }) => {
+          {CATEGORY_CONFIG.map(({ key, label, desc, image }) => {
             const count = productsByCategory[key]?.length || 0;
-            const gradient = CATEGORY_TILE_GRADIENTS[key] || "from-brand to-brand-medium";
             return (
               <button
                 key={key}
                 onClick={() => goToCategory(key)}
-                className="group relative bg-white rounded-2xl border border-gray-100 p-5 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5 snap-start flex-shrink-0 w-[180px] sm:w-[210px] md:w-[230px]"
+                className="group relative bg-white rounded-2xl border border-gray-100 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5 snap-start flex-shrink-0 w-[180px] sm:w-[210px] md:w-[230px]"
               >
-                <div className={`absolute -top-10 -right-8 w-28 h-28 rounded-full bg-gradient-to-br ${gradient} blur-2xl opacity-30 group-hover:opacity-60 transition-opacity`} />
-                <div className="relative">
-                  <div className="text-3xl md:text-[2rem] mb-2 leading-none">{emoji}</div>
+                <div className="relative h-28 md:h-32 overflow-hidden bg-gray-100">
+                  <img
+                    src={image}
+                    alt={label}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-transparent" />
+                </div>
+                <div className="p-3.5 md:p-4">
                   <h3 className="font-extrabold text-gray-900 text-[0.95rem] leading-tight">{label}</h3>
                   <p className="text-[0.72rem] text-gray-400 mt-0.5 line-clamp-1">{desc}</p>
-                  <div className="mt-3 flex items-center justify-between">
+                  <div className="mt-2 flex items-center justify-between">
                     <span className="text-[0.72rem] font-bold text-gray-500">{count} items</span>
                     <span className="text-brand inline-flex items-center gap-0.5 text-[0.78rem] font-bold group-hover:translate-x-0.5 transition-transform">
                       Shop <ChevronRight size={13} />
@@ -178,9 +196,67 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SHOP BY BRAND — horizontal scroller */}
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
+        <div className="flex items-end justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-9 rounded-full bg-gradient-to-b from-brand to-[#7c3aed]" />
+            <div>
+              <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight">Shop by Brand</h2>
+              <p className="text-[0.8rem] text-gray-400 mt-0.5">Trusted names, all in one place</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {BRANDS.map((b) => (
+            <button
+              key={b.name}
+              onClick={() => navigate(`/search?query=${encodeURIComponent(b.name)}`)}
+              className={`group relative snap-start flex-shrink-0 w-[120px] h-[80px] sm:w-[140px] sm:h-[90px] rounded-2xl overflow-hidden bg-gradient-to-br ${b.gradient} text-white cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-hover border-0`}
+            >
+              <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-white/10 blur-2xl" />
+              <div className="relative h-full flex flex-col items-center justify-center px-2">
+                <span className="text-2xl sm:text-3xl font-extrabold tracking-tight">{b.name.charAt(0)}</span>
+                <span className="text-[0.72rem] font-bold uppercase tracking-wider text-white/80 mt-0.5">{b.name}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
       {/* PROMOTIONAL BANNER CARDS */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
         <PromoBanners />
+      </section>
+
+      {/* SPOTLIGHT AD — full-width flagship offer */}
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mb-8">
+        <button
+          onClick={() => navigate("/search?sort=salePrice-asc")}
+          className="group relative w-full overflow-hidden rounded-3xl text-left text-white cursor-pointer border-0 shadow-[0_12px_40px_rgba(79,70,229,0.25)]"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1600&q=80&auto=format"
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/95 via-brand/75 to-[#7c3aed]/50" />
+          <div className="relative px-6 py-10 md:px-12 md:py-16 flex flex-col items-start">
+            <span className="inline-flex items-center gap-1.5 mb-4 px-3 py-1 bg-white/15 border border-white/25 rounded-full text-[0.7rem] font-bold uppercase tracking-[0.18em]">
+              <Sparkles size={12} /> Mega Sale · Live now
+            </span>
+            <h2 className="text-2xl md:text-4xl font-extrabold leading-tight mb-3 max-w-2xl">
+              Up to 70% off this weekend
+            </h2>
+            <p className="text-white/85 text-[0.95rem] md:text-base max-w-xl mb-5">
+              Hand-picked deals across every category. New drops every hour — once they&apos;re gone, they&apos;re gone.
+            </p>
+            <span className="inline-flex items-center gap-1.5 bg-white text-brand-dark px-5 py-2.5 rounded-full font-extrabold text-[0.92rem] shadow-md group-hover:translate-x-1 transition-transform">
+              Shop the sale <ChevronRight size={15} />
+            </span>
+          </div>
+        </button>
       </section>
 
       {/* TOP DEALS */}

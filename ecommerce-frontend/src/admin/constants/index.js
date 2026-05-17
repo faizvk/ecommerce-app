@@ -1,9 +1,15 @@
+// Keep in sync with src/utils/productCategory.js — admin form only offers the
+// canonical category set; older "dairy"/"technology"/"home appliances" values
+// remain valid in the DB (see product.model.js enum) but aren't selectable
+// from the admin form, which encourages re-classification of legacy products.
 export const PRODUCT_CATEGORIES = [
   { value: "electronics", label: "Electronics", emoji: "📱" },
   { value: "fashion", label: "Fashion", emoji: "👗" },
-  { value: "dairy", label: "Dairy", emoji: "🥛" },
-  { value: "technology", label: "Technology", emoji: "💻" },
-  { value: "home appliances", label: "Home Appliances", emoji: "🏠" },
+  { value: "home", label: "Home & Kitchen", emoji: "🏠" },
+  { value: "beauty", label: "Beauty", emoji: "💄" },
+  { value: "sports", label: "Sports & Fitness", emoji: "⚽" },
+  { value: "books", label: "Books", emoji: "📚" },
+  { value: "grocery", label: "Grocery", emoji: "🛒" },
 ];
 
 export const ORDER_STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled"];

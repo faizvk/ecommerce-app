@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import { SlidersHorizontal, ChevronDown } from "lucide-react";
+import { CATEGORY_CONFIG } from "../utils/productCategory";
 
 const fieldCls =
   "px-3 py-2.5 border border-gray-200 rounded-xl bg-white text-[0.85rem] text-gray-700 transition-all focus:border-brand focus:outline-none focus:shadow-[0_0_0_3px_rgba(79,70,229,0.12)] cursor-pointer hover:border-gray-300";
@@ -71,11 +72,9 @@ function SearchFilters({ localFilters, setLocalFilters, applyFilters }) {
             className={fieldCls}
           >
             <option value="">All Categories</option>
-            <option value="electronics">📱 Electronics</option>
-            <option value="fashion">👗 Fashion</option>
-            <option value="dairy">🥛 Dairy</option>
-            <option value="technology">💻 Technology</option>
-            <option value="home appliances">🏠 Home Appliances</option>
+            {CATEGORY_CONFIG.map((c) => (
+              <option key={c.key} value={c.key}>{c.emoji} {c.label}</option>
+            ))}
           </select>
 
           <select

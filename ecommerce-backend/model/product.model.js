@@ -39,8 +39,16 @@ const productSchema = mongoose.Schema(
     category: {
       type: String,
       enum: [
+        // Current canonical set — surfaced in the UI nav and admin form.
         "electronics",
         "fashion",
+        "home",
+        "beauty",
+        "sports",
+        "books",
+        "grocery",
+        // Deprecated values — kept here so historical seed data continues to
+        // validate. Admin re-classification will eventually drain these.
         "dairy",
         "technology",
         "home appliances",

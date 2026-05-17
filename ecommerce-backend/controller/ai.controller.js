@@ -12,8 +12,8 @@ import logger from "../config/logger.js";
 // failure modes in half.
 const groq = GROQ_API_KEY ? new Groq({ apiKey: GROQ_API_KEY }) : null;
 
-// Categories mirror the product schema enum — kept in sync manually.
-const CATEGORIES = ["electronics", "fashion", "dairy", "technology", "home appliances"];
+// Categories mirror the canonical (non-deprecated) product schema enum — kept in sync manually.
+const CATEGORIES = ["electronics", "fashion", "home", "beauty", "sports", "books", "grocery"];
 
 // Cap conversation history sent to the model. Anything beyond this is dropped
 // (the client keeps the full history for display, but we don't pay tokens for it).
