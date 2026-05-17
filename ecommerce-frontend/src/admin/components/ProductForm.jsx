@@ -53,7 +53,8 @@ export default function ProductForm({
     if (!form.description.trim()) return "Description is required";
     if (form.costPrice === "" || Number(form.costPrice) < 0) return "Valid cost price required";
     if (form.salePrice === "" || Number(form.salePrice) < 0) return "Valid sale price required";
-    if (Number(form.salePrice) < Number(form.costPrice)) return "Sale price cannot be less than cost price";
+    // costPrice is MRP, salePrice is what the customer pays. Sale must not exceed cost.
+    if (Number(form.salePrice) > Number(form.costPrice)) return "Sale price cannot exceed cost (MRP) price";
     if (form.stock === "" || Number(form.stock) < 0) return "Valid stock required";
     if (images.length === 0) return "At least one product image is required";
     return "";

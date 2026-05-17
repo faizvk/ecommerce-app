@@ -30,10 +30,13 @@ const productSchema = mongoose.Schema(
       min: 0,
       required: true,
       validate: {
+        // The whole storefront treats costPrice as MRP (list/struck-through)
+        // and salePrice as the customer-facing discounted price. Sale must
+        // therefore be <= cost. Equal is allowed (no discount).
         validator: function (value) {
-          return value >= this.costPrice;
+          return value <= this.costPrice;
         },
-        message: "Sale price must be greater than or equal to cost price",
+        message: "Sale price cannot exceed cost (MRP) price",
       },
     },
     category: {
