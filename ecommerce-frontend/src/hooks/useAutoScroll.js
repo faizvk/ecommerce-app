@@ -47,24 +47,45 @@ export function useAutoScroll(ref, { speed = 0.5, resumeDelay = 2000, enabled = 
     el.addEventListener("wheel",       pause, { passive: true });
     el.addEventListener("keydown",     pause);
 
-    // Use a float accumulator — sub-pixel speed values (e.g. 0.45) would
+    // Compute the wrap point as the offsetLeft of the FIRST child in the
+    // duplicated second half. scrollWidth/2 looks right but is actually off
+    // by one gap-width (the gap between the last item of set 1 and the
+    // first item of set 2), so wrapping there causes a tiny visible jump.
+    // Recomputed each frame so the value updates as images finish loading
+    // and the strip grows.
+    const computeWrapPoint = () => {
+      const kids = el.children;
+      const n = kids.length;
+      if (n >= 2 && n % 2 === 0) {
+        return kids[n / 2].offsetLeft;
+      }
+      return el.scrollWidth / 2;
+    };
+
+    // scroll-behavior: smooth on the container would animate the wrap-back
+    // assignment too, producing a visible rewind. Force auto so the snap
+    // is invisible.
+    el.style.scrollBehavior = "auto";
+
+    // Float accumulator — sub-pixel speed values (e.g. 0.45) would
     // otherwise be truncated by scrollLeft's integer snap on some browsers.
     let acc = 0;
 
     const loop = () => {
-      if (!pausedRef.current) {
-        const half = el.scrollWidth / 2;
-        if (half > 0) {
-          acc += speed;
-          const step = Math.floor(acc);
-          if (step >= 1) {
-            acc -= step;
-            if (el.scrollLeft >= half) {
-              // Seamless wrap — works because content is rendered twice
-              el.scrollLeft = el.scrollLeft - half;
-            }
-            el.scrollLeft += step;
-          }
+      const wrap = computeWrapPoint();
+      // Always clamp scrollLeft back into the [0, wrap) range — this keeps
+      // both auto-scroll AND any post-manual-scroll position infinitely
+      // loopable. Without this, a user who scrolls way to the right ends
+      // up in the duplicated set and the visible content stops looking new.
+      if (wrap > 0 && el.scrollLeft >= wrap) {
+        el.scrollLeft = el.scrollLeft - wrap;
+      }
+      if (!pausedRef.current && wrap > 0) {
+        acc += speed;
+        const step = Math.floor(acc);
+        if (step >= 1) {
+          acc -= step;
+          el.scrollLeft += step;
         }
       }
       rafId = requestAnimationFrame(loop);

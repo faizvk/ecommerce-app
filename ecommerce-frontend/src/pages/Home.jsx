@@ -320,7 +320,7 @@ export default function Home() {
             </div>
             <div
               ref={trendingStripRef}
-              className="flex gap-2.5 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+              className="flex gap-2.5 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
               {[...TRENDING_SEARCHES, ...TRENDING_SEARCHES].map(({ rank, q, hint, trend }, dupIdx) => {
                 // Each card is fully tinted by its trend type so the strip
@@ -383,7 +383,7 @@ export default function Home() {
             pauses on touch/wheel/hover, resumes after a short idle. */}
         <div
           ref={categoryStripRef}
-          className="flex gap-3 md:gap-4 overflow-x-auto pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+          className="flex gap-3 md:gap-4 overflow-x-auto pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {[...CATEGORY_CONFIG, ...CATEGORY_CONFIG].map(({ key, label, desc, image }, dupIdx) => {
             const list = productsByCategory[key] || [];
@@ -530,7 +530,7 @@ export default function Home() {
             pauses on touch/wheel/hover, resumes after a short idle. */}
         <div
           ref={brandStripRef}
-          className="flex gap-3 md:gap-4 overflow-x-auto pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+          className="flex gap-3 md:gap-4 overflow-x-auto pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {[...BRANDS, ...BRANDS].map((b, dupIdx) => (
             <button

@@ -26,8 +26,6 @@ ecommerce-frontend/.env.*
 ############################
 # Environment Variables (root)
 ############################
-.env
-.env.*
 !.env.example
 
 ############################
@@ -82,3 +80,5 @@ desktop.ini
 ############################
 *.tgz
 *.zip
+config.bat
+node_modules
