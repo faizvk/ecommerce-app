@@ -70,29 +70,35 @@ export default function LiveActivityFeed() {
 
   return (
     <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-3">
-      <div className="relative overflow-hidden rounded-full bg-white border border-gray-100 shadow-card">
-        {/* Animated dot — signals 'live' */}
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+      <div className="relative overflow-hidden rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 shadow-[0_8px_24px_rgba(16,185,129,0.25)]">
+        {/* Decorative bg orbs */}
+        <div className="absolute -top-6 -right-10 w-32 h-32 rounded-full bg-white/15 blur-2xl" />
+        <div className="absolute -bottom-8 left-1/3 w-24 h-24 rounded-full bg-black/10 blur-2xl" />
+
+        {/* Animated 'Live' pill — sits on a darker glass plate so it pops on the gradient */}
+        <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-sm">
           <span className="relative flex w-2 h-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            <span className="absolute inline-flex h-full w-full rounded-full bg-white opacity-80 animate-ping" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
           </span>
-          <span className="text-[0.62rem] font-extrabold uppercase tracking-wider text-emerald-700">Live</span>
+          <span className="text-[0.62rem] font-extrabold uppercase tracking-wider text-white">Live</span>
         </div>
 
-        <div className="px-[78px] py-2.5 flex items-center gap-2 text-[0.78rem] md:text-[0.85rem]">
-          <ShoppingBag size={14} className="text-brand flex-shrink-0" />
+        <div className="relative px-[88px] py-3 flex items-center gap-2 text-[0.78rem] md:text-[0.85rem] text-white">
+          <div className="w-6 h-6 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+            <ShoppingBag size={13} className="text-white" />
+          </div>
           {/* The text element gets a key change on every tick so React replays
               the CSS fade-in keyframes — cheap crossfade without a heavy lib. */}
-          <p key={index} className="text-gray-700 truncate animate-[fadeIn_0.4s_ease-out]">
-            <span className="font-extrabold text-gray-900">{line.name}</span>
-            <span className="text-gray-400"> in </span>
-            <span className="inline-flex items-center gap-0.5 font-bold text-gray-600">
+          <p key={index} className="truncate animate-[fadeIn_0.4s_ease-out]">
+            <span className="font-extrabold text-white">{line.name}</span>
+            <span className="text-white/70"> in </span>
+            <span className="inline-flex items-center gap-0.5 font-bold text-white/95">
               <MapPin size={11} /> {line.city}
             </span>
-            <span className="text-gray-400"> just bought </span>
-            <span className="font-bold text-brand">{line.product.name}</span>
-            <span className="text-gray-300 ml-2">· {line.time}</span>
+            <span className="text-white/70"> just bought </span>
+            <span className="font-extrabold text-white underline decoration-white/40 underline-offset-2">{line.product.name}</span>
+            <span className="text-white/55 ml-2">· {line.time}</span>
           </p>
         </div>
       </div>
