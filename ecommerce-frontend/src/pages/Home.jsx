@@ -34,10 +34,38 @@ import {
 } from "lucide-react";
 
 const BENEFITS = [
-  { icon: Truck, title: "Free Delivery", sub: "On orders above ₹499" },
-  { icon: RefreshCcw, title: "Easy Returns", sub: "7-day hassle-free" },
-  { icon: ShieldCheck, title: "Secure Payments", sub: "100% safe checkout" },
-  { icon: Headphones, title: "24/7 Support", sub: "Always here to help" },
+  {
+    icon: Truck,
+    title: "Free Delivery",
+    sub: "On orders above ₹499",
+    accent: "from-sky-400 to-blue-600",
+    tint: "bg-sky-50",
+    iconColor: "text-sky-600",
+  },
+  {
+    icon: RefreshCcw,
+    title: "Easy Returns",
+    sub: "7-day hassle-free policy",
+    accent: "from-emerald-400 to-teal-600",
+    tint: "bg-emerald-50",
+    iconColor: "text-emerald-600",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Secure Payments",
+    sub: "100% safe checkout",
+    accent: "from-violet-400 to-indigo-600",
+    tint: "bg-violet-50",
+    iconColor: "text-violet-600",
+  },
+  {
+    icon: Headphones,
+    title: "24/7 Support",
+    sub: "Always here to help",
+    accent: "from-amber-400 to-orange-600",
+    tint: "bg-amber-50",
+    iconColor: "text-amber-600",
+  },
 ];
 
 // Trust badges — small credibility strip. Numbers are placeholder marketing
@@ -307,22 +335,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BENEFITS STRIP */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="max-w-[1320px] mx-auto px-2 md:px-4 py-4">
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {BENEFITS.map(({ icon: Icon, title, sub }) => (
-              <div key={title} className="flex items-center gap-3 py-2">
-                <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
-                  <Icon size={17} className="text-brand" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[0.82rem] font-bold text-gray-800 leading-none mb-0.5">{title}</p>
-                  <p className="text-[0.72rem] text-gray-400 leading-none">{sub}</p>
-                </div>
+      {/* BENEFITS STRIP — coloured cards, one per benefit */}
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-5">
+        <div className="grid grid-cols-2 gap-2.5 md:gap-4 md:grid-cols-4">
+          {BENEFITS.map(({ icon: Icon, title, sub, accent, tint, iconColor }) => (
+            <div
+              key={title}
+              className="group relative overflow-hidden rounded-2xl bg-white border border-gray-100 px-4 py-3.5 md:py-4 flex items-center gap-3 transition-all hover:shadow-card hover:-translate-y-0.5 hover:border-transparent"
+            >
+              {/* Accent bar on the left — full-height gradient */}
+              <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${accent}`} />
+              {/* Subtle decorative blur in the brand colour, behind the icon */}
+              <div className={`absolute -top-6 -left-6 w-20 h-20 rounded-full bg-gradient-to-br ${accent} opacity-10 blur-xl`} />
+
+              <div className={`relative w-11 h-11 md:w-12 md:h-12 rounded-xl ${tint} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
+                <Icon size={20} className={iconColor} />
               </div>
-            ))}
-          </div>
+              <div className="relative min-w-0">
+                <p className="text-[0.88rem] md:text-[0.92rem] font-extrabold text-gray-900 leading-tight">{title}</p>
+                <p className="text-[0.74rem] text-gray-500 leading-tight mt-0.5">{sub}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -542,7 +576,7 @@ export default function Home() {
       <LifestyleCollections />
 
       {/* SPOTLIGHT AD — full-width flagship offer */}
-      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mb-8">
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8 mb-8">
         <button
           onClick={() => navigate("/search?sort=salePrice-asc")}
           className="group relative w-full overflow-hidden rounded-3xl text-left text-white cursor-pointer border-0 shadow-[0_12px_40px_rgba(79,70,229,0.25)]"
