@@ -39,20 +39,33 @@ export function useAutoScroll(ref, { speed = 0.5, resumeDelay = 2000, enabled = 
       }, resumeDelay);
     };
 
-    el.addEventListener("mouseenter", pause);
-    el.addEventListener("touchstart", pause, { passive: true });
-    el.addEventListener("touchmove", pause, { passive: true });
-    el.addEventListener("wheel", pause, { passive: true });
-    el.addEventListener("keydown", pause);
+    // Pause only on explicit input interactions — NOT on hover. Hover-pause
+    // sounds nice but it stops the scroll the moment the cursor crosses the
+    // strip (which spans most of the page), making the feature look broken.
+    el.addEventListener("pointerdown", pause);
+    el.addEventListener("touchmove",   pause, { passive: true });
+    el.addEventListener("wheel",       pause, { passive: true });
+    el.addEventListener("keydown",     pause);
+
+    // Use a float accumulator — sub-pixel speed values (e.g. 0.45) would
+    // otherwise be truncated by scrollLeft's integer snap on some browsers.
+    let acc = 0;
 
     const loop = () => {
       if (!pausedRef.current) {
         const half = el.scrollWidth / 2;
-        if (half > 0 && el.scrollLeft >= half) {
-          // Seamless wrap — works because content is rendered twice
-          el.scrollLeft = el.scrollLeft - half;
+        if (half > 0) {
+          acc += speed;
+          const step = Math.floor(acc);
+          if (step >= 1) {
+            acc -= step;
+            if (el.scrollLeft >= half) {
+              // Seamless wrap — works because content is rendered twice
+              el.scrollLeft = el.scrollLeft - half;
+            }
+            el.scrollLeft += step;
+          }
         }
-        el.scrollLeft += speed;
       }
       rafId = requestAnimationFrame(loop);
     };
@@ -61,11 +74,10 @@ export function useAutoScroll(ref, { speed = 0.5, resumeDelay = 2000, enabled = 
     return () => {
       cancelAnimationFrame(rafId);
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-      el.removeEventListener("mouseenter", pause);
-      el.removeEventListener("touchstart", pause);
-      el.removeEventListener("touchmove", pause);
-      el.removeEventListener("wheel", pause);
-      el.removeEventListener("keydown", pause);
+      el.removeEventListener("pointerdown", pause);
+      el.removeEventListener("touchmove",   pause);
+      el.removeEventListener("wheel",       pause);
+      el.removeEventListener("keydown",     pause);
     };
   }, [ref, speed, resumeDelay, enabled]);
 }

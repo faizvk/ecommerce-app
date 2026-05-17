@@ -214,10 +214,16 @@ export default function Home() {
 
   // Auto-scrolling carousels. The hook RAF-increments scrollLeft while still
   // honoring manual touch/wheel/keyboard scroll, with a 2s resume-after-idle.
+  // `enabled` is tied to products being loaded so the hook re-runs once the
+  // strips actually mount (otherwise the refs are null on the early-return
+  // loading render and the loop never starts).
   const categoryStripRef = useRef(null);
   const brandStripRef = useRef(null);
-  useAutoScroll(categoryStripRef, { speed: 0.45 });
-  useAutoScroll(brandStripRef,    { speed: 0.7  });
+  const trendingStripRef = useRef(null);
+  const stripsReady = (products?.length || 0) > 0;
+  useAutoScroll(trendingStripRef, { speed: 0.4,  enabled: stripsReady });
+  useAutoScroll(categoryStripRef, { speed: 0.45, enabled: stripsReady });
+  useAutoScroll(brandStripRef,    { speed: 0.7,  enabled: stripsReady });
 
   useEffect(() => {
     // Only fetch if not already loaded (Redux acts as a cache)
@@ -312,8 +318,11 @@ export default function Home() {
                 Live data
               </span>
             </div>
-            <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              {TRENDING_SEARCHES.map(({ rank, q, hint, trend }) => {
+            <div
+              ref={trendingStripRef}
+              className="flex gap-2.5 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+            >
+              {[...TRENDING_SEARCHES, ...TRENDING_SEARCHES].map(({ rank, q, hint, trend }, dupIdx) => {
                 // Each card is fully tinted by its trend type so the strip
                 // reads as colorful and energetic rather than gray-on-gray.
                 const cardCls =
@@ -329,8 +338,10 @@ export default function Home() {
                 const trendLabel = trend === "hot" ? "Hot" : trend === "new" ? "New" : "Up";
                 return (
                   <button
-                    key={q}
+                    key={`${q}-${dupIdx}`}
                     onClick={() => navigate(`/search?query=${encodeURIComponent(q)}`)}
+                    aria-hidden={dupIdx >= TRENDING_SEARCHES.length ? "true" : undefined}
+                    tabIndex={dupIdx >= TRENDING_SEARCHES.length ? -1 : undefined}
                     className={`group relative overflow-hidden flex-shrink-0 flex items-center gap-3 pl-2 pr-4 py-2.5 rounded-2xl text-white border-0 cursor-pointer hover:-translate-y-0.5 hover:shadow-hover transition-all ${cardCls}`}
                   >
                     {/* Subtle decorative blur to add depth */}
