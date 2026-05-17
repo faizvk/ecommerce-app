@@ -23,6 +23,7 @@ import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
 import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import DealOfTheDay from "../components/DealOfTheDay";
+import CouponStrip from "../components/CouponStrip";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
   Sparkles, Mail, Send, TrendingUp, Users, Star, Lock,
@@ -454,6 +455,9 @@ export default function Home() {
           />
         </section>
       )}
+
+      {/* COUPONS — click-to-copy promo codes */}
+      <CouponStrip />
 
       {/* SHOP BY BRAND — full-bleed advertisement cards */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
