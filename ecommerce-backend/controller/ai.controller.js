@@ -206,3 +206,122 @@ Examples:
     throw new AppError(502, ERROR_CODES.UPSTREAM_ERROR, "AI search is temporarily unavailable");
   }
 });
+
+/* ────────────────────────────────────────────────────────────
+ * PICKS FOR YOU
+ *
+ * POST /api/ai/picks
+ * Body: { signals: [{ name, category, salePrice }, ...] }
+ *
+ * Given a short list of products the user has interacted with (recently
+ * viewed, wishlist, cart), asks Groq to pick 6 product IDs from the
+ * catalog that they're likely to want next. We hydrate IDs → full
+ * Product documents server-side and return them.
+ *
+ * Returns: { products: [Product, ...] }
+ * ─────────────────────────────────────────────────────────── */
+const MAX_SIGNALS = 12;
+const PICKS_COUNT = 6;
+// Pull a wider catalog window for picks than for chat, since we want
+// the model to choose from a larger pool of candidates.
+const PICKS_CATALOG_SIZE = 80;
+
+async function getCatalogForPicks() {
+  const products = await Product.find(
+    { deleted: false, stock: { $gt: 0 } },
+    "name salePrice category _id"
+  )
+    .limit(PICKS_CATALOG_SIZE)
+    .lean();
+  return products.map((p) => ({
+    id: String(p._id),
+    name: p.name,
+    price: p.salePrice,
+    category: p.category,
+  }));
+}
+
+export const picks = asyncHandler(async (req, res) => {
+  if (!groq) {
+    throw new AppError(503, ERROR_CODES.SERVICE_UNAVAILABLE, "AI picks are not configured");
+  }
+
+  const signals = Array.isArray(req.body?.signals) ? req.body.signals.slice(0, MAX_SIGNALS) : [];
+
+  const catalog = await getCatalogForPicks();
+  if (catalog.length === 0) {
+    return res.json({ success: true, data: { products: [] } });
+  }
+
+  const catalogText = catalog
+    .map((p) => `- id:${p.id} | ${p.name} | ₹${p.price} | ${p.category}`)
+    .join("\n");
+
+  const signalsText = signals.length
+    ? signals
+        .filter((s) => s?.name)
+        .map((s) => `- ${s.name}${s.category ? ` (${s.category})` : ""}${s.salePrice ? ` ₹${s.salePrice}` : ""}`)
+        .join("\n")
+    : "(no prior signals — pick a diverse, broadly-appealing mix)";
+
+  const systemPrompt = `You are NexKart's recommendation engine. Given a shopper's recent interactions, pick ${PICKS_COUNT} product IDs from the catalog they're most likely to want next.
+
+Rules:
+- Output ONLY valid JSON in the exact shape: {"ids": ["<id>", "<id>", ...]}
+- IDs must be EXACTLY from the catalog list — never invent IDs.
+- Aim for variety across categories unless the signals show a strong single-category preference.
+- If signals are sparse, lean toward broadly-appealing high-discount items.
+- Never include duplicates.`;
+
+  const userPrompt = `Shopper signals (recently viewed / wishlisted / carted):
+${signalsText}
+
+Catalog:
+${catalogText}
+
+Pick ${PICKS_COUNT} ids.`;
+
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.4,
+      max_tokens: 400,
+    });
+
+    const text = completion.choices?.[0]?.message?.content?.trim() || "";
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      logger.warn({ text }, "groq returned non-JSON for picks");
+      throw new AppError(502, ERROR_CODES.UPSTREAM_ERROR, "AI returned an unparseable response");
+    }
+
+    // Sanitise — only keep string IDs that actually exist in the catalog we sent
+    const validIds = new Set(catalog.map((p) => p.id));
+    const ids = Array.isArray(parsed.ids)
+      ? [...new Set(parsed.ids.filter((id) => typeof id === "string" && validIds.has(id)))].slice(0, PICKS_COUNT)
+      : [];
+
+    if (ids.length === 0) {
+      return res.json({ success: true, data: { products: [] } });
+    }
+
+    // Hydrate full product documents so the frontend ProductRow has everything it needs
+    const products = await Product.find({ _id: { $in: ids }, deleted: false }).lean();
+    // Preserve the model's ordering — Mongo's $in doesn't honor order
+    const byId = new Map(products.map((p) => [String(p._id), p]));
+    const ordered = ids.map((id) => byId.get(id)).filter(Boolean);
+
+    res.json({ success: true, data: { products: ordered } });
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    logger.error({ err: err.message }, "groq picks failed");
+    throw new AppError(502, ERROR_CODES.UPSTREAM_ERROR, "AI picks are temporarily unavailable");
+  }
+});

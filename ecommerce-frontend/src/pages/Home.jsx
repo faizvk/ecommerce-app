@@ -26,6 +26,7 @@ import DealOfTheDay from "../components/DealOfTheDay";
 import CouponStrip from "../components/CouponStrip";
 import LifestyleCollections from "../components/LifestyleCollections";
 import AppDownloadBanner from "../components/AppDownloadBanner";
+import AIPicksRow from "../components/AIPicksRow";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
   Sparkles, Mail, Send, TrendingUp, Users, Star, Lock,
@@ -661,6 +662,9 @@ export default function Home() {
           />
         </section>
       )}
+
+      {/* AI PICKS FOR YOU — Groq-personalised row (auth users with signals) */}
+      <AIPicksRow />
 
       {/* TESTIMONIALS */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-4">
