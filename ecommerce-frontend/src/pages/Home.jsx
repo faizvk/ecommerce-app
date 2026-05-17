@@ -29,44 +29,9 @@ import AppDownloadBanner from "../components/AppDownloadBanner";
 import AIPicksRow from "../components/AIPicksRow";
 import LiveActivityFeed from "../components/LiveActivityFeed";
 import {
-  ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
+  ChevronRight, ShieldCheck,
   Sparkles, Mail, Send, TrendingUp, Users, Star, Lock, Flame, ArrowUpRight,
 } from "lucide-react";
-
-const BENEFITS = [
-  {
-    icon: Truck,
-    title: "Free Delivery",
-    sub: "On orders above ₹499",
-    accent: "from-sky-400 to-blue-600",
-    tint: "bg-sky-50",
-    iconColor: "text-sky-600",
-  },
-  {
-    icon: RefreshCcw,
-    title: "Easy Returns",
-    sub: "7-day hassle-free policy",
-    accent: "from-emerald-400 to-teal-600",
-    tint: "bg-emerald-50",
-    iconColor: "text-emerald-600",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Secure Payments",
-    sub: "100% safe checkout",
-    accent: "from-violet-400 to-indigo-600",
-    tint: "bg-violet-50",
-    iconColor: "text-violet-600",
-  },
-  {
-    icon: Headphones,
-    title: "24/7 Support",
-    sub: "Always here to help",
-    accent: "from-amber-400 to-orange-600",
-    tint: "bg-amber-50",
-    iconColor: "text-amber-600",
-  },
-];
 
 // Trust badges — small credibility strip. Numbers are placeholder marketing
 // copy; swap with real metrics from analytics when available.
@@ -317,82 +282,63 @@ export default function Home() {
       {/* LIVE ACTIVITY — social proof ticker */}
       <LiveActivityFeed />
 
-      {/* TRENDING SEARCHES — ranked card strip with trend signals */}
-      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-6">
-        <div className="flex items-end justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 text-white flex items-center justify-center shadow-card">
-              <TrendingUp size={18} strokeWidth={2.5} />
+      {/* TRENDING SEARCHES — ranked cards on a richly-tinted band */}
+      <section className="mt-5">
+        <div className="relative overflow-hidden bg-gradient-to-r from-orange-50 via-rose-50 to-violet-50 border-y border-gray-100">
+          <div className="absolute -top-12 left-1/4 w-72 h-72 rounded-full bg-orange-300/20 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 right-1/4 w-72 h-72 rounded-full bg-violet-300/20 blur-3xl pointer-events-none" />
+
+          <div className="relative max-w-[1320px] mx-auto px-2 md:px-4 py-5">
+            <div className="flex items-end justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 text-white flex items-center justify-center shadow-card">
+                  <TrendingUp size={18} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight">Trending Now</h2>
+                  <p className="text-[0.75rem] text-gray-500 leading-tight">Top searches today · updated hourly</p>
+                </div>
+              </div>
+              <span className="hidden sm:inline-flex items-center gap-1 text-[0.72rem] font-bold text-emerald-700 bg-white/80 border border-emerald-200 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live data
+              </span>
             </div>
-            <div>
-              <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight">Trending Now</h2>
-              <p className="text-[0.75rem] text-gray-400 leading-tight">Top searches today · updated hourly</p>
+            <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {TRENDING_SEARCHES.map(({ rank, q, hint, trend }) => {
+                const trendIcon =
+                  trend === "hot" ? <Flame size={11} className="text-red-500" /> :
+                  trend === "new" ? <Sparkles size={11} className="text-violet-500" /> :
+                                    <ArrowUpRight size={11} className="text-emerald-500" />;
+                const trendLabel = trend === "hot" ? "Hot" : trend === "new" ? "New" : "Up";
+                const trendCls   = trend === "hot"
+                  ? "bg-red-50 text-red-600 border-red-200"
+                  : trend === "new"
+                  ? "bg-violet-50 text-violet-600 border-violet-200"
+                  : "bg-emerald-50 text-emerald-600 border-emerald-200";
+                return (
+                  <button
+                    key={q}
+                    onClick={() => navigate(`/search?query=${encodeURIComponent(q)}`)}
+                    className="group flex-shrink-0 flex items-center gap-3 pl-2 pr-4 py-2 rounded-2xl bg-white/95 backdrop-blur-sm border border-white shadow-card hover:shadow-hover hover:-translate-y-0.5 transition-all cursor-pointer"
+                  >
+                    <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-brand-light to-brand/15 text-brand text-[0.78rem] font-extrabold flex items-center justify-center flex-shrink-0 tabular-nums">
+                      {rank}
+                    </span>
+                    <div className="text-left">
+                      <p className="text-[0.85rem] font-extrabold text-gray-900 leading-tight group-hover:text-brand transition-colors whitespace-nowrap">{q}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[0.65rem] text-gray-400 font-semibold uppercase tracking-wider">{hint}</span>
+                        <span className={`inline-flex items-center gap-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded border ${trendCls}`}>
+                          {trendIcon} {trendLabel}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[0.72rem] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live data
-          </span>
-        </div>
-        <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {TRENDING_SEARCHES.map(({ rank, q, hint, trend }) => {
-            const trendIcon =
-              trend === "hot" ? <Flame size={11} className="text-red-500" /> :
-              trend === "new" ? <Sparkles size={11} className="text-violet-500" /> :
-                                <ArrowUpRight size={11} className="text-emerald-500" />;
-            const trendLabel = trend === "hot" ? "Hot" : trend === "new" ? "New" : "Up";
-            const trendCls   = trend === "hot"
-              ? "bg-red-50 text-red-600 border-red-100"
-              : trend === "new"
-              ? "bg-violet-50 text-violet-600 border-violet-100"
-              : "bg-emerald-50 text-emerald-600 border-emerald-100";
-            return (
-              <button
-                key={q}
-                onClick={() => navigate(`/search?query=${encodeURIComponent(q)}`)}
-                className="group flex-shrink-0 flex items-center gap-3 pl-2 pr-4 py-2 rounded-2xl bg-white border border-gray-100 hover:border-brand/40 hover:shadow-card transition-all cursor-pointer"
-              >
-                {/* Rank chip */}
-                <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-brand-light to-brand/15 text-brand text-[0.78rem] font-extrabold flex items-center justify-center flex-shrink-0 tabular-nums">
-                  {rank}
-                </span>
-                <div className="text-left">
-                  <p className="text-[0.85rem] font-extrabold text-gray-900 leading-tight group-hover:text-brand transition-colors whitespace-nowrap">{q}</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[0.65rem] text-gray-400 font-semibold uppercase tracking-wider">{hint}</span>
-                    <span className={`inline-flex items-center gap-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded border ${trendCls}`}>
-                      {trendIcon} {trendLabel}
-                    </span>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* BENEFITS STRIP — coloured cards, one per benefit */}
-      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-5">
-        <div className="grid grid-cols-2 gap-2.5 md:gap-4 md:grid-cols-4">
-          {BENEFITS.map(({ icon: Icon, title, sub, accent, tint, iconColor }) => (
-            <div
-              key={title}
-              className="group relative overflow-hidden rounded-2xl bg-white border border-gray-100 px-4 py-3.5 md:py-4 flex items-center gap-3 transition-all hover:shadow-card hover:-translate-y-0.5 hover:border-transparent"
-            >
-              {/* Accent bar on the left — full-height gradient */}
-              <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${accent}`} />
-              {/* Subtle decorative blur in the brand colour, behind the icon */}
-              <div className={`absolute -top-6 -left-6 w-20 h-20 rounded-full bg-gradient-to-br ${accent} opacity-10 blur-xl`} />
-
-              <div className={`relative w-11 h-11 md:w-12 md:h-12 rounded-xl ${tint} flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform`}>
-                <Icon size={20} className={iconColor} />
-              </div>
-              <div className="relative min-w-0">
-                <p className="text-[0.88rem] md:text-[0.92rem] font-extrabold text-gray-900 leading-tight">{title}</p>
-                <p className="text-[0.74rem] text-gray-500 leading-tight mt-0.5">{sub}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
