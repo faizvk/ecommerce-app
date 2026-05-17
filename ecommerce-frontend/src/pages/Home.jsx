@@ -407,8 +407,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {CATEGORY_CONFIG.map(({ key, label, desc, image }) => {
+        {/* Marquee viewport — auto-scrolls left infinitely; pauses on hover */}
+        <div className="group overflow-hidden -mx-2 px-2 md:-mx-4 md:px-4">
+          <div className="flex gap-3 md:gap-4 w-max pb-2 animate-marquee-slow group-hover:[animation-play-state:paused]">
+          {[...CATEGORY_CONFIG, ...CATEGORY_CONFIG].map(({ key, label, desc, image }, dupIdx) => {
             const list = productsByCategory[key] || [];
             const count = list.length;
             // Cap the displayed count so a category with 60 items doesn't dominate
@@ -436,9 +438,11 @@ export default function Home() {
 
             return (
               <button
-                key={key}
+                key={`${key}-${dupIdx}`}
                 onClick={() => goToCategory(key)}
-                className="group relative bg-white rounded-2xl border border-gray-100 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5 snap-start flex-shrink-0 w-[240px] sm:w-[260px] md:w-[280px] flex flex-col"
+                aria-hidden={dupIdx >= CATEGORY_CONFIG.length ? "true" : undefined}
+                tabIndex={dupIdx >= CATEGORY_CONFIG.length ? -1 : undefined}
+                className="group relative bg-white rounded-2xl border border-gray-100 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5 flex-shrink-0 w-[240px] sm:w-[260px] md:w-[280px] flex flex-col"
               >
                 {/* Hero cover */}
                 <div className="relative h-32 md:h-36 overflow-hidden bg-gray-100">
@@ -512,6 +516,7 @@ export default function Home() {
               </button>
             );
           })}
+          </div>
         </div>
       </section>
 
@@ -547,12 +552,16 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {BRANDS.map((b) => (
+        {/* Marquee viewport — auto-scrolls left infinitely; pauses on hover */}
+        <div className="group overflow-hidden -mx-2 px-2 md:-mx-4 md:px-4">
+          <div className="flex gap-3 md:gap-4 w-max pb-2 animate-marquee group-hover:[animation-play-state:paused]">
+          {[...BRANDS, ...BRANDS].map((b, dupIdx) => (
             <button
-              key={b.name}
+              key={`${b.name}-${dupIdx}`}
               onClick={() => navigate(`/search?query=${encodeURIComponent(b.query)}`)}
-              className="group relative snap-start flex-shrink-0 w-[88vw] max-w-[520px] sm:w-[500px] md:w-[540px] rounded-2xl overflow-hidden text-left cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-hover border-0 shadow-card"
+              aria-hidden={dupIdx >= BRANDS.length ? "true" : undefined}
+              tabIndex={dupIdx >= BRANDS.length ? -1 : undefined}
+              className="group relative flex-shrink-0 w-[88vw] max-w-[520px] sm:w-[500px] md:w-[540px] rounded-2xl overflow-hidden text-left cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-hover border-0 shadow-card"
               style={{ aspectRatio: "16 / 9" }}
             >
               {/* Full-bleed cover image */}
@@ -600,6 +609,7 @@ export default function Home() {
               </div>
             </button>
           ))}
+          </div>
         </div>
       </section>
 
