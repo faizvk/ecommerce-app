@@ -30,19 +30,10 @@ export default {
           '0%, 100%': { transform: 'translateX(0)', opacity: '0.65' },
           '50%':      { transform: 'translateX(6px)', opacity: '1' },
         },
-        // Infinite horizontal scroll for brand/category strips.
-        // Use with a flex container holding the items TWICE — at -50% the
-        // second copy is exactly where the first started, so 0% loops seamlessly.
-        'marquee': {
-          'from': { transform: 'translateX(0)' },
-          'to':   { transform: 'translateX(-50%)' },
-        },
       },
       animation: {
-        'slide-left':   'slide-left 1.6s ease-in-out infinite',
-        'slide-right':  'slide-right 1.6s ease-in-out infinite',
-        'marquee':      'marquee 45s linear infinite',
-        'marquee-slow': 'marquee 70s linear infinite',
+        'slide-left':  'slide-left 1.6s ease-in-out infinite',
+        'slide-right': 'slide-right 1.6s ease-in-out infinite',
       },
     },
   },

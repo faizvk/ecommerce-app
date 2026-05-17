@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -22,6 +22,7 @@ import PromoBanners from "../components/PromoBanners";
 import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
 import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
+import { useAutoScroll } from "../hooks/useAutoScroll";
 import DealOfTheDay from "../components/DealOfTheDay";
 import CouponStrip from "../components/CouponStrip";
 import LifestyleCollections from "../components/LifestyleCollections";
@@ -211,6 +212,13 @@ export default function Home() {
   // users who have at least 2 viewed items — single-item rows look sad.
   const { items: recentlyViewed } = useRecentlyViewed();
 
+  // Auto-scrolling carousels. The hook RAF-increments scrollLeft while still
+  // honoring manual touch/wheel/keyboard scroll, with a 2s resume-after-idle.
+  const categoryStripRef = useRef(null);
+  const brandStripRef = useRef(null);
+  useAutoScroll(categoryStripRef, { speed: 0.45 });
+  useAutoScroll(brandStripRef,    { speed: 0.7  });
+
   useEffect(() => {
     // Only fetch if not already loaded (Redux acts as a cache)
     if (!products || products.length === 0) dispatch(fetchProductsThunk());
@@ -306,30 +314,37 @@ export default function Home() {
             </div>
             <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {TRENDING_SEARCHES.map(({ rank, q, hint, trend }) => {
+                // Each card is fully tinted by its trend type so the strip
+                // reads as colorful and energetic rather than gray-on-gray.
+                const cardCls =
+                  trend === "hot"
+                    ? "bg-gradient-to-br from-orange-500 to-red-600 shadow-[0_8px_24px_rgba(239,68,68,0.25)]"
+                    : trend === "new"
+                    ? "bg-gradient-to-br from-violet-500 to-fuchsia-600 shadow-[0_8px_24px_rgba(168,85,247,0.25)]"
+                    : "bg-gradient-to-br from-emerald-500 to-teal-600 shadow-[0_8px_24px_rgba(16,185,129,0.25)]";
                 const trendIcon =
-                  trend === "hot" ? <Flame size={11} className="text-red-500" /> :
-                  trend === "new" ? <Sparkles size={11} className="text-violet-500" /> :
-                                    <ArrowUpRight size={11} className="text-emerald-500" />;
+                  trend === "hot" ? <Flame size={11} /> :
+                  trend === "new" ? <Sparkles size={11} /> :
+                                    <ArrowUpRight size={11} />;
                 const trendLabel = trend === "hot" ? "Hot" : trend === "new" ? "New" : "Up";
-                const trendCls   = trend === "hot"
-                  ? "bg-red-50 text-red-600 border-red-200"
-                  : trend === "new"
-                  ? "bg-violet-50 text-violet-600 border-violet-200"
-                  : "bg-emerald-50 text-emerald-600 border-emerald-200";
                 return (
                   <button
                     key={q}
                     onClick={() => navigate(`/search?query=${encodeURIComponent(q)}`)}
-                    className="group flex-shrink-0 flex items-center gap-3 pl-2 pr-4 py-2 rounded-2xl bg-white/95 backdrop-blur-sm border border-white shadow-card hover:shadow-hover hover:-translate-y-0.5 transition-all cursor-pointer"
+                    className={`group relative overflow-hidden flex-shrink-0 flex items-center gap-3 pl-2 pr-4 py-2.5 rounded-2xl text-white border-0 cursor-pointer hover:-translate-y-0.5 hover:shadow-hover transition-all ${cardCls}`}
                   >
-                    <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-brand-light to-brand/15 text-brand text-[0.78rem] font-extrabold flex items-center justify-center flex-shrink-0 tabular-nums">
+                    {/* Subtle decorative blur to add depth */}
+                    <span className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-white/20 blur-2xl pointer-events-none" />
+
+                    {/* White rank chip — pops on the coloured bg */}
+                    <span className="relative w-9 h-9 rounded-xl bg-white text-gray-900 text-[0.85rem] font-extrabold flex items-center justify-center flex-shrink-0 tabular-nums shadow-sm">
                       {rank}
                     </span>
-                    <div className="text-left">
-                      <p className="text-[0.85rem] font-extrabold text-gray-900 leading-tight group-hover:text-brand transition-colors whitespace-nowrap">{q}</p>
+                    <div className="relative text-left">
+                      <p className="text-[0.88rem] font-extrabold leading-tight whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]">{q}</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[0.65rem] text-gray-400 font-semibold uppercase tracking-wider">{hint}</span>
-                        <span className={`inline-flex items-center gap-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded border ${trendCls}`}>
+                        <span className="text-[0.62rem] text-white/80 font-bold uppercase tracking-wider">{hint}</span>
+                        <span className="inline-flex items-center gap-0.5 text-[0.6rem] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/20 border border-white/30 backdrop-blur-sm">
                           {trendIcon} {trendLabel}
                         </span>
                       </div>
@@ -353,9 +368,12 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* Marquee viewport — auto-scrolls left infinitely; pauses on hover */}
-        <div className="group overflow-hidden -mx-2 px-2 md:-mx-4 md:px-4">
-          <div className="flex gap-3 md:gap-4 w-max pb-2 animate-marquee-slow group-hover:[animation-play-state:paused]">
+        {/* Auto-scrolling strip; still manually scrollable — useAutoScroll
+            pauses on touch/wheel/hover, resumes after a short idle. */}
+        <div
+          ref={categoryStripRef}
+          className="flex gap-3 md:gap-4 overflow-x-auto pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+        >
           {[...CATEGORY_CONFIG, ...CATEGORY_CONFIG].map(({ key, label, desc, image }, dupIdx) => {
             const list = productsByCategory[key] || [];
             const count = list.length;
@@ -462,7 +480,6 @@ export default function Home() {
               </button>
             );
           })}
-          </div>
         </div>
       </section>
 
@@ -498,9 +515,12 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* Marquee viewport — auto-scrolls left infinitely; pauses on hover */}
-        <div className="group overflow-hidden -mx-2 px-2 md:-mx-4 md:px-4">
-          <div className="flex gap-3 md:gap-4 w-max pb-2 animate-marquee group-hover:[animation-play-state:paused]">
+        {/* Auto-scrolling strip; still manually scrollable — useAutoScroll
+            pauses on touch/wheel/hover, resumes after a short idle. */}
+        <div
+          ref={brandStripRef}
+          className="flex gap-3 md:gap-4 overflow-x-auto pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] scroll-smooth"
+        >
           {[...BRANDS, ...BRANDS].map((b, dupIdx) => (
             <button
               key={`${b.name}-${dupIdx}`}
@@ -555,7 +575,6 @@ export default function Home() {
               </div>
             </button>
           ))}
-          </div>
         </div>
       </section>
 
