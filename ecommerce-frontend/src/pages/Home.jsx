@@ -45,102 +45,123 @@ const CATEGORY_TILE_GRADIENTS = {
 
 const CATEGORY_ROW_ACCENT = CATEGORY_TILE_GRADIENTS;
 
-// Trending brand strip. Each card has a structured layout — real brand logo
-// (sourced from cdn.simpleicons.org, white-filled), tagline, deal badge, and
-// a category-coloured cover image. Click runs a text search for the brand.
+// Flagship brand spotlight cards — full-bleed advert format. Each card is a
+// sponsored-style banner: hero photo, brand logo, headline copy, price, CTA.
+// Click runs a text search for the brand or product.
 //
-// To swap in licensed/agency-supplied logos, replace `logoSlug` with a CDN
-// path you control. Cover images come from Unsplash with width hints.
+// `logoSlug` resolves to cdn.simpleicons.org/<slug>/ffffff. `cover` is an
+// Unsplash photo URL with a width hint so the browser downloads card-sized
+// JPEGs rather than the full-resolution original.
 const BRANDS = [
   {
     name: "Apple",
     logoSlug: "apple",
-    tagline: "iPhone · iPad · Mac",
-    deal: "Up to ₹6,000 off",
-    cover: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600&q=80&auto=format",
-    bg: "from-gray-800 to-gray-900",
+    headline: "Think different.",
+    sub: "iPhone 15 Pro · Titanium edition",
+    price: "₹1,19,900",
+    mrp: "₹1,34,900",
+    cover: "https://images.unsplash.com/photo-1592286927505-1def25115558?w=1000&q=80&auto=format",
+    tint: "from-gray-900/95 via-gray-900/60 to-transparent",
     query: "Apple",
-  },
-  {
-    name: "Samsung",
-    logoSlug: "samsung",
-    tagline: "Galaxy · TVs · Appliances",
-    deal: "Up to 40% off",
-    cover: "https://images.unsplash.com/photo-1610792516775-01de03eae630?w=600&q=80&auto=format",
-    bg: "from-blue-700 to-blue-900",
-    query: "Samsung",
-  },
-  {
-    name: "Nike",
-    logoSlug: "nike",
-    tagline: "Footwear · Apparel",
-    deal: "Min 30% off",
-    cover: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80&auto=format",
-    bg: "from-zinc-800 to-black",
-    query: "Nike",
-  },
-  {
-    name: "Adidas",
-    logoSlug: "adidas",
-    tagline: "Originals · Performance",
-    deal: "Flat 40% off",
-    cover: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=600&q=80&auto=format",
-    bg: "from-gray-900 to-black",
-    query: "Adidas",
   },
   {
     name: "Sony",
     logoSlug: "sony",
-    tagline: "Audio · Cameras",
-    deal: "Save up to ₹15K",
-    cover: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600&q=80&auto=format",
-    bg: "from-slate-800 to-slate-950",
+    headline: "Push your limits.",
+    sub: "WH-1000XM5 wireless · industry-leading ANC",
+    price: "₹26,990",
+    mrp: "₹34,990",
+    cover: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1000&q=80&auto=format",
+    tint: "from-amber-900/85 via-orange-800/40 to-transparent",
     query: "Sony",
+  },
+  {
+    name: "Nike",
+    logoSlug: "nike",
+    headline: "Just do it.",
+    sub: "Air Max 270 · all-day cushioning",
+    price: "₹8,995",
+    mrp: "₹13,495",
+    cover: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000&q=80&auto=format",
+    tint: "from-black/95 via-zinc-900/55 to-transparent",
+    query: "Nike",
+  },
+  {
+    name: "Samsung",
+    logoSlug: "samsung",
+    headline: "Galaxy unfolded.",
+    sub: "Galaxy S24 Ultra · 200MP camera",
+    price: "₹1,04,999",
+    mrp: "₹1,29,999",
+    cover: "https://images.unsplash.com/photo-1610792516775-01de03eae630?w=1000&q=80&auto=format",
+    tint: "from-blue-900/95 via-blue-800/55 to-transparent",
+    query: "Samsung",
   },
   {
     name: "Bose",
     logoSlug: "bose",
-    tagline: "Premium Audio",
-    deal: "Up to 25% off",
-    cover: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80&auto=format",
-    bg: "from-neutral-800 to-neutral-950",
+    headline: "Better sound, every day.",
+    sub: "QuietComfort Ultra · spatial audio",
+    price: "₹29,990",
+    mrp: "₹39,990",
+    cover: "https://images.unsplash.com/photo-1545127398-14699f92334b?w=1000&q=80&auto=format",
+    tint: "from-neutral-950/90 via-neutral-800/55 to-transparent",
     query: "Bose",
+  },
+  {
+    name: "Adidas",
+    logoSlug: "adidas",
+    headline: "Impossible is nothing.",
+    sub: "Ultraboost 22 · responsive energy return",
+    price: "₹12,999",
+    mrp: "₹17,999",
+    cover: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=1000&q=80&auto=format",
+    tint: "from-emerald-950/90 via-emerald-800/45 to-transparent",
+    query: "Adidas",
   },
   {
     name: "Levi's",
     logoSlug: "levis",
-    tagline: "Denim Since 1873",
-    deal: "Buy 2 Get 20% off",
-    cover: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80&auto=format",
-    bg: "from-red-700 to-red-900",
+    headline: "Live in Levi's.",
+    sub: "501 Original · since 1873",
+    price: "₹2,499",
+    mrp: "₹3,999",
+    cover: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=1000&q=80&auto=format",
+    tint: "from-red-900/90 via-red-800/50 to-transparent",
     query: "Levi's",
   },
   {
     name: "Puma",
     logoSlug: "puma",
-    tagline: "Sportswear · Sneakers",
-    deal: "Min 35% off",
-    cover: "https://images.unsplash.com/photo-1539185441755-769473a23570?w=600&q=80&auto=format",
-    bg: "from-amber-600 to-orange-700",
+    headline: "Forever faster.",
+    sub: "RS-X · retro running silhouette",
+    price: "₹6,999",
+    mrp: "₹9,999",
+    cover: "https://images.unsplash.com/photo-1539185441755-769473a23570?w=1000&q=80&auto=format",
+    tint: "from-yellow-900/90 via-amber-700/45 to-transparent",
     query: "Puma",
-  },
-  {
-    name: "Lakmé",
-    logoSlug: "loreal",
-    tagline: "Makeup · Skincare",
-    deal: "Up to 30% off",
-    cover: "https://images.unsplash.com/photo-1522335789203-aaa2f6d1b7d8?w=600&q=80&auto=format",
-    bg: "from-pink-600 to-rose-700",
-    query: "Lakme",
   },
   {
     name: "Dell",
     logoSlug: "dell",
-    tagline: "Laptops · Monitors",
-    deal: "Save up to ₹20K",
-    cover: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80&auto=format",
-    bg: "from-sky-700 to-sky-900",
+    headline: "Built to last. Designed to perform.",
+    sub: "XPS 15 · OLED 4K display",
+    price: "₹1,84,990",
+    mrp: "₹2,14,990",
+    cover: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=1000&q=80&auto=format",
+    tint: "from-sky-950/95 via-sky-800/50 to-transparent",
     query: "Dell",
+  },
+  {
+    name: "L'Oréal",
+    logoSlug: "loreal",
+    headline: "Because you're worth it.",
+    sub: "Revitalift skincare collection",
+    price: "₹999",
+    mrp: "₹1,499",
+    cover: "https://images.unsplash.com/photo-1522335789203-aaa2f6d1b7d8?w=1000&q=80&auto=format",
+    tint: "from-rose-950/90 via-pink-800/45 to-transparent",
+    query: "Loreal",
   },
 ];
 
@@ -279,14 +300,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP BY BRAND — structured cards with logo + cover + deal */}
+      {/* SHOP BY BRAND — full-bleed advertisement cards */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
         <div className="flex items-end justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-9 rounded-full bg-gradient-to-b from-brand to-[#7c3aed]" />
             <div>
               <h2 className="text-lg md:text-xl font-extrabold text-gray-900 leading-tight">Shop by Brand</h2>
-              <p className="text-[0.8rem] text-gray-400 mt-0.5">Trusted names, exclusive offers</p>
+              <p className="text-[0.8rem] text-gray-400 mt-0.5">Flagship picks from the names you love</p>
             </div>
           </div>
         </div>
@@ -295,38 +316,50 @@ export default function Home() {
             <button
               key={b.name}
               onClick={() => navigate(`/search?query=${encodeURIComponent(b.query)}`)}
-              className="group relative snap-start flex-shrink-0 w-[210px] sm:w-[240px] rounded-2xl overflow-hidden bg-white border border-gray-100 text-left cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-hover hover:border-brand/30"
+              className="group relative snap-start flex-shrink-0 w-[88vw] max-w-[520px] sm:w-[500px] md:w-[540px] rounded-2xl overflow-hidden text-left cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-hover border-0 shadow-card"
+              style={{ aspectRatio: "16 / 9" }}
             >
-              {/* Cover image with brand-tinted overlay */}
-              <div className="relative h-24 overflow-hidden">
+              {/* Full-bleed cover image */}
+              <img
+                src={b.cover}
+                alt=""
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              {/* Brand-coloured gradient tint for text legibility */}
+              <div className={`absolute inset-0 bg-gradient-to-r ${b.tint}`} />
+
+              {/* Brand logo badge top-left */}
+              <div className="absolute top-3 left-3 md:top-4 md:left-4 inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white/10 backdrop-blur-md border border-white/20">
                 <img
-                  src={b.cover}
-                  alt=""
+                  src={`https://cdn.simpleicons.org/${b.logoSlug}/ffffff`}
+                  alt={b.name}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="h-4 md:h-5 w-auto"
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
                 />
-                <div className={`absolute inset-0 bg-gradient-to-br ${b.bg} opacity-80`} />
-                {/* Deal badge */}
-                <span className="absolute top-2 right-2 bg-white text-brand-dark text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
-                  {b.deal}
-                </span>
-                {/* Logo centered */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <img
-                    src={`https://cdn.simpleicons.org/${b.logoSlug}/ffffff`}
-                    alt={b.name}
-                    loading="lazy"
-                    className="h-9 w-auto opacity-95 drop-shadow"
-                    onError={(e) => { e.currentTarget.style.display = "none"; }}
-                  />
-                </div>
+                <span className="text-white text-[0.72rem] md:text-[0.78rem] font-extrabold uppercase tracking-wider">{b.name}</span>
               </div>
-              {/* Body */}
-              <div className="px-3.5 py-3">
-                <p className="font-extrabold text-gray-900 text-[0.92rem] leading-tight">{b.name}</p>
-                <p className="text-[0.72rem] text-gray-500 mt-0.5 line-clamp-1">{b.tagline}</p>
-                <span className="mt-2 inline-flex items-center gap-0.5 text-brand text-[0.74rem] font-bold group-hover:translate-x-0.5 transition-transform">
-                  Shop now <ChevronRight size={12} />
+
+              {/* Sponsored micro-label top-right */}
+              <span className="absolute top-3 right-3 md:top-4 md:right-4 text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white/55">
+                Sponsored
+              </span>
+
+              {/* Advert content — bottom-left stack */}
+              <div className="absolute inset-x-4 bottom-4 md:inset-x-6 md:bottom-6 text-white max-w-[80%]">
+                <h3 className="text-xl md:text-3xl font-extrabold leading-tight mb-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+                  {b.headline}
+                </h3>
+                <p className="text-[0.82rem] md:text-[0.92rem] text-white/85 mb-3 line-clamp-1">
+                  {b.sub}
+                </p>
+                <div className="flex items-end gap-2 mb-3">
+                  <span className="text-lg md:text-2xl font-extrabold tabular-nums">{b.price}</span>
+                  <span className="text-[0.78rem] md:text-[0.85rem] text-white/55 line-through tabular-nums pb-0.5">{b.mrp}</span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 bg-white text-gray-900 px-4 py-2 rounded-full font-extrabold text-[0.78rem] md:text-[0.85rem] shadow-md group-hover:translate-x-1 transition-transform">
+                  Shop now <ChevronRight size={13} />
                 </span>
               </div>
             </button>
