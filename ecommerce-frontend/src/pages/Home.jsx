@@ -24,6 +24,7 @@ import { CATEGORY_CONFIG } from "../utils/productCategory";
 import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import DealOfTheDay from "../components/DealOfTheDay";
 import CouponStrip from "../components/CouponStrip";
+import LifestyleCollections from "../components/LifestyleCollections";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
   Sparkles, Mail, Send, TrendingUp, Users, Star, Lock,
@@ -530,6 +531,9 @@ export default function Home() {
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
         <PromoBanners />
       </section>
+
+      {/* LIFESTYLE COLLECTIONS — curated picks by intent */}
+      <LifestyleCollections />
 
       {/* SPOTLIGHT AD — full-width flagship offer */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mb-8">
