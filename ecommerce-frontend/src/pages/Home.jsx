@@ -268,28 +268,102 @@ export default function Home() {
         </div>
         <div className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {CATEGORY_CONFIG.map(({ key, label, desc, image }) => {
-            const count = productsByCategory[key]?.length || 0;
+            const list = productsByCategory[key] || [];
+            const count = list.length;
+            // Cap the displayed count so a category with 60 items doesn't dominate
+            // a row of cards each at 30. Shows '30+' once the threshold is crossed.
+            const countLabel = count >= 30 ? "30+" : String(count);
+            // Live stats derived from real data — minimum sale price and biggest
+            // discount %. Falls back to nulls when the category has no products.
+            const minPrice = count
+              ? Math.min(...list.map((p) => p.salePrice).filter((n) => typeof n === "number" && n > 0))
+              : null;
+            const maxDiscount = count
+              ? Math.max(
+                  ...list.map((p) =>
+                    p.costPrice > p.salePrice
+                      ? Math.round(((p.costPrice - p.salePrice) / p.costPrice) * 100)
+                      : 0
+                  )
+                )
+              : 0;
+            // Preview thumbnails — first 3 in-stock products. Skip the strip if
+            // any are missing images so we don't render broken tiles.
+            const previews = list
+              .filter((p) => p.image?.[0])
+              .slice(0, 3);
+
             return (
               <button
                 key={key}
                 onClick={() => goToCategory(key)}
-                className="group relative bg-white rounded-2xl border border-gray-100 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5 snap-start flex-shrink-0 w-[180px] sm:w-[210px] md:w-[230px]"
+                className="group relative bg-white rounded-2xl border border-gray-100 cursor-pointer text-left overflow-hidden transition-all hover:border-brand/30 hover:shadow-hover hover:-translate-y-0.5 snap-start flex-shrink-0 w-[240px] sm:w-[260px] md:w-[280px] flex flex-col"
               >
-                <div className="relative h-28 md:h-32 overflow-hidden bg-gray-100">
+                {/* Hero cover */}
+                <div className="relative h-32 md:h-36 overflow-hidden bg-gray-100">
                   <img
                     src={image}
                     alt={label}
                     loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                  {/* Item count badge top-left */}
+                  <span className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm text-gray-800 text-[0.65rem] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
+                    {countLabel} items
+                  </span>
+                  {/* Discount badge top-right */}
+                  {maxDiscount >= 20 && (
+                    <span className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-rose-500 text-white text-[0.65rem] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
+                      Up to {maxDiscount}% off
+                    </span>
+                  )}
+                  {/* Category name overlaid on image, big and prominent */}
+                  <div className="absolute bottom-2 left-3 right-3">
+                    <h3 className="text-white font-extrabold text-lg leading-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+                      {label}
+                    </h3>
+                  </div>
                 </div>
-                <div className="p-3.5 md:p-4">
-                  <h3 className="font-extrabold text-gray-900 text-[0.95rem] leading-tight">{label}</h3>
-                  <p className="text-[0.72rem] text-gray-400 mt-0.5 line-clamp-1">{desc}</p>
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="text-[0.72rem] font-bold text-gray-500">{count} items</span>
-                    <span className="text-brand inline-flex items-center gap-0.5 text-[0.78rem] font-bold group-hover:translate-x-0.5 transition-transform">
+
+                {/* Body */}
+                <div className="p-3 md:p-3.5 flex flex-col flex-1">
+                  <p className="text-[0.72rem] text-gray-500 line-clamp-1">{desc}</p>
+
+                  {/* Product preview thumbnails */}
+                  {previews.length > 0 && (
+                    <div className="flex gap-1.5 mt-2.5">
+                      {previews.map((p) => (
+                        <div
+                          key={p._id}
+                          className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 border border-gray-100"
+                        >
+                          <img
+                            src={p.image[0]}
+                            alt=""
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                          />
+                        </div>
+                      ))}
+                      {count > previews.length && (
+                        <div className="w-10 h-10 rounded-lg bg-brand-light text-brand flex items-center justify-center text-[0.7rem] font-extrabold border border-brand/15">
+                          +{Math.min(99, count - previews.length)}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Price + CTA row pinned to bottom */}
+                  <div className="mt-auto pt-3 flex items-end justify-between gap-2">
+                    {minPrice != null ? (
+                      <div className="flex flex-col leading-tight">
+                        <span className="text-[0.62rem] text-gray-400 uppercase font-bold tracking-wider">From</span>
+                        <span className="text-gray-900 text-[1rem] font-extrabold tabular-nums">₹{minPrice}</span>
+                      </div>
+                    ) : <span />}
+                    <span className="inline-flex items-center gap-0.5 bg-brand text-white px-3 py-1.5 rounded-full text-[0.74rem] font-bold group-hover:translate-x-0.5 transition-transform shadow-sm">
                       Shop <ChevronRight size={13} />
                     </span>
                   </div>
