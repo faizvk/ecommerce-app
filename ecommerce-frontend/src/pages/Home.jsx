@@ -22,6 +22,7 @@ import PromoBanners from "../components/PromoBanners";
 import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
 import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
+import DealOfTheDay from "../components/DealOfTheDay";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
   Sparkles, Mail, Send, TrendingUp, Users, Star, Lock,
@@ -434,6 +435,11 @@ export default function Home() {
             );
           })}
         </div>
+      </section>
+
+      {/* DEAL OF THE DAY — big urgency banner with live midnight countdown */}
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-8">
+        <DealOfTheDay />
       </section>
 
       {/* RECENTLY VIEWED — only for returning users with 2+ items */}
