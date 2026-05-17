@@ -23,7 +23,7 @@ import { ProductCardSkeletonGrid } from "../components/ui/Skeleton";
 import { CATEGORY_CONFIG } from "../utils/productCategory";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
-  Sparkles, Mail, Send,
+  Sparkles, Mail, Send, TrendingUp, Users, Star, Lock,
 } from "lucide-react";
 
 const BENEFITS = [
@@ -31,6 +31,30 @@ const BENEFITS = [
   { icon: RefreshCcw, title: "Easy Returns", sub: "7-day hassle-free" },
   { icon: ShieldCheck, title: "Secure Payments", sub: "100% safe checkout" },
   { icon: Headphones, title: "24/7 Support", sub: "Always here to help" },
+];
+
+// Trust badges — small credibility strip. Numbers are placeholder marketing
+// copy; swap with real metrics from analytics when available.
+const TRUST_BADGES = [
+  { icon: Users,       label: "100K+ Customers" },
+  { icon: Star,        label: "4.8 ★ Avg Rating" },
+  { icon: ShieldCheck, label: "Verified Sellers" },
+  { icon: Lock,        label: "Secure Checkout" },
+];
+
+// Trending searches — quick-tap entry chips that funnel into the existing
+// /search?query= flow. Keep this list short and current; rotate seasonally.
+const TRENDING_SEARCHES = [
+  "iPhone 15",
+  "Air Fryer",
+  "Running Shoes",
+  "Wireless Earbuds",
+  "Yoga Mat",
+  "Face Serum",
+  "Diwali Gifts",
+  "Backpack",
+  "Smart Watch",
+  "Coffee Maker",
 ];
 
 const CATEGORY_TILE_GRADIENTS = {
@@ -233,8 +257,41 @@ export default function Home() {
         <HeroCarousel />
       </section>
 
+      {/* TRUST BADGES — credibility ribbon directly under the hero */}
+      <section className="bg-gradient-to-r from-brand-light via-white to-brand-light border-b border-gray-100">
+        <div className="max-w-[1320px] mx-auto px-2 md:px-4 py-2.5">
+          <div className="flex items-center justify-around gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {TRUST_BADGES.map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-1.5 text-gray-700 flex-shrink-0">
+                <Icon size={14} className="text-brand" />
+                <span className="text-[0.72rem] md:text-[0.78rem] font-bold whitespace-nowrap">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ACTIVE OFFERS BANNER */}
       <OfferBanner />
+
+      {/* TRENDING SEARCHES — chip strip */}
+      <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-5">
+        <div className="flex items-center gap-2 mb-2.5">
+          <TrendingUp size={14} className="text-brand" />
+          <span className="text-[0.78rem] font-extrabold uppercase tracking-wider text-gray-700">Trending now</span>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-2 px-2 md:-mx-4 md:px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {TRENDING_SEARCHES.map((q) => (
+            <button
+              key={q}
+              onClick={() => navigate(`/search?query=${encodeURIComponent(q)}`)}
+              className="flex-shrink-0 px-3.5 py-1.5 rounded-full bg-white border border-gray-200 text-[0.8rem] font-semibold text-gray-700 hover:border-brand hover:bg-brand-light hover:text-brand transition-all whitespace-nowrap cursor-pointer"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      </section>
 
       {/* BENEFITS STRIP */}
       <section className="bg-white border-b border-gray-100">
