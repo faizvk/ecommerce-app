@@ -25,6 +25,7 @@ import { useRecentlyViewed } from "../hooks/useRecentlyViewed";
 import DealOfTheDay from "../components/DealOfTheDay";
 import CouponStrip from "../components/CouponStrip";
 import LifestyleCollections from "../components/LifestyleCollections";
+import AppDownloadBanner from "../components/AppDownloadBanner";
 import {
   ChevronRight, Truck, RefreshCcw, ShieldCheck, Headphones,
   Sparkles, Mail, Send, TrendingUp, Users, Star, Lock,
@@ -665,6 +666,9 @@ export default function Home() {
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-4">
         <Testimonials />
       </section>
+
+      {/* APP DOWNLOAD — dark banner with QR + store badges */}
+      <AppDownloadBanner />
 
       {/* PROMO CTA — newsletter signup */}
       <section className="max-w-[1320px] mx-auto px-2 md:px-4 mt-2">
