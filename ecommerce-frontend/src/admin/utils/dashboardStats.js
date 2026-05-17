@@ -8,10 +8,16 @@ export function computeDashboardStats({ users = [], products = [], orders = [] }
   const ordersByDay = Array(7).fill(0);
   let todayOrders = 0;
   let pendingOrders = 0;
+  let todayRevenue = 0;
+  // Previous-week revenue (days 7-13 back) for the WoW % comparison
+  let prevWeekRevenue = 0;
 
   for (const order of orders) {
     const created = new Date(order.createdAt);
-    if (created.toDateString() === today) todayOrders += 1;
+    if (created.toDateString() === today) {
+      todayOrders += 1;
+      if (order.status !== "cancelled") todayRevenue += order.totalAmount;
+    }
     if (order.status === "pending") pendingOrders += 1;
 
     const diffDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
@@ -19,10 +25,22 @@ export function computeDashboardStats({ users = [], products = [], orders = [] }
       const i = 6 - diffDays;
       ordersByDay[i] += 1;
       if (order.status !== "cancelled") revenueByDay[i] += order.totalAmount;
+    } else if (diffDays >= 7 && diffDays <= 13) {
+      if (order.status !== "cancelled") prevWeekRevenue += order.totalAmount;
     }
   }
 
   const weeklyRevenue = revenueByDay.reduce((a, b) => a + b, 0);
+
+  // Week-over-week growth %. null when prev week is 0 (avoids Infinity).
+  const revenueTrendPct = prevWeekRevenue > 0
+    ? Math.round(((weeklyRevenue - prevWeekRevenue) / prevWeekRevenue) * 100)
+    : null;
+  // Average order value across non-cancelled orders this week
+  const weeklyOrderCount = ordersByDay.reduce((a, b) => a + b, 0);
+  const avgOrderValue = weeklyOrderCount > 0
+    ? Math.round(weeklyRevenue / weeklyOrderCount)
+    : 0;
 
   // Top selling products
   const productCount = {};
@@ -55,8 +73,12 @@ export function computeDashboardStats({ users = [], products = [], orders = [] }
     products: products.length,
     orders: orders.length,
     todayOrders,
+    todayRevenue,
     pendingOrders,
     weeklyRevenue,
+    prevWeekRevenue,
+    revenueTrendPct,
+    avgOrderValue,
     revenueByDay,
     ordersByDay,
     daysOfWeek: DAYS_OF_WEEK,

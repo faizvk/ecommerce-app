@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { notify } from "../utils/notify";
-import { Users as UsersIcon, Shield, User as UserIcon } from "lucide-react";
+import { Users as UsersIcon, Shield, User as UserIcon, Search, X as XIcon } from "lucide-react";
 import {
   fetchAllUsersThunk,
   updateUserRoleThunk,
@@ -23,6 +23,7 @@ export default function AdminUsers() {
   const { user: currentUser } = useSelector((state) => state.auth);
 
   const [roleFilter, setRoleFilter] = useState("all");
+  const [query, setQuery] = useState("");
   const [confirmTarget, setConfirmTarget] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
 
@@ -31,9 +32,16 @@ export default function AdminUsers() {
   }, [dispatch]);
 
   const filteredUsers = useMemo(() => {
-    if (roleFilter === "all") return users;
-    return users.filter((u) => u.role === roleFilter);
-  }, [users, roleFilter]);
+    const q = query.trim().toLowerCase();
+    return users.filter((u) => {
+      if (roleFilter !== "all" && u.role !== roleFilter) return false;
+      if (q) {
+        const hay = `${u.name || ""} ${u.email || ""} ${u.contact || ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [users, roleFilter, query]);
 
   const counts = useMemo(() => ({
     all: users.length,
@@ -61,6 +69,28 @@ export default function AdminUsers() {
         title="User Management"
         subtitle={`${users.length} registered users`}
       />
+
+      {/* SEARCH */}
+      <div className="relative">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by name, email, or phone…"
+          className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-gray-200 bg-white text-sm outline-none focus:border-brand focus:shadow-[0_0_0_3px_rgba(79,70,229,0.12)] transition-all"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            aria-label="Clear search"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 cursor-pointer"
+          >
+            <XIcon size={14} />
+          </button>
+        )}
+      </div>
 
       {/* ROLE TABS */}
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
@@ -91,7 +121,19 @@ export default function AdminUsers() {
       {loading ? (
         <AdminLoader />
       ) : filteredUsers.length === 0 ? (
-        <EmptyState icon={UsersIcon} title="No users found" />
+        <EmptyState
+          icon={UsersIcon}
+          title="No users found"
+          description={query || roleFilter !== "all" ? "Try clearing your filters." : undefined}
+          action={query || roleFilter !== "all" ? (
+            <button
+              onClick={() => { setQuery(""); setRoleFilter("all"); }}
+              className="px-5 py-2.5 bg-brand text-white rounded-xl font-semibold text-sm transition-all hover:bg-brand-dark cursor-pointer border-0"
+            >
+              Clear filters
+            </button>
+          ) : undefined}
+        />
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-card bg-white">
           <table className="w-full text-[0.875rem]">

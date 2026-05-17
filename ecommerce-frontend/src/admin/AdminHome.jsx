@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
-import { Package, ShoppingCart, Users, TrendingUp, Clock, AlertTriangle } from "lucide-react";
+import { Package, ShoppingCart, Users, TrendingUp, TrendingDown, Clock, AlertTriangle, IndianRupee, Wallet } from "lucide-react";
 
 import { fetchProductsThunk } from "../redux/slice/productSlice";
 import { adminFetchOrdersThunk } from "../redux/slice/orderSlice";
@@ -80,19 +80,59 @@ export default function AdminHome() {
     <div className="flex flex-col gap-6 md:gap-8">
       <PageHeader title="Dashboard" subtitle="Store performance overview" />
 
+      {/* HEADLINE REVENUE — full-width card with WoW trend */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        {/* Weekly revenue + WoW % */}
+        <div className="lg:col-span-2 bg-gradient-to-br from-brand to-violet-600 text-white rounded-2xl p-6 shadow-card relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2">
+              <IndianRupee size={14} className="text-white/80" />
+              <p className="text-[0.78rem] font-bold uppercase tracking-wider text-white/80">Weekly Revenue</p>
+            </div>
+            <div className="flex items-end gap-3 flex-wrap">
+              <p className="text-3xl md:text-4xl font-extrabold tabular-nums">
+                ₹{stats.weeklyRevenue.toLocaleString("en-IN")}
+              </p>
+              {stats.revenueTrendPct != null && (
+                <span
+                  className={`inline-flex items-center gap-1 text-[0.78rem] font-extrabold px-2.5 py-1 rounded-full backdrop-blur-sm ${
+                    stats.revenueTrendPct >= 0
+                      ? "bg-emerald-500/25 text-emerald-100 border border-emerald-300/30"
+                      : "bg-red-500/25 text-red-100 border border-red-300/30"
+                  }`}
+                >
+                  {stats.revenueTrendPct >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                  {stats.revenueTrendPct >= 0 ? "+" : ""}{stats.revenueTrendPct}% WoW
+                </span>
+              )}
+            </div>
+            <p className="text-[0.78rem] text-white/70 mt-2">
+              vs ₹{stats.prevWeekRevenue.toLocaleString("en-IN")} previous week
+            </p>
+          </div>
+        </div>
+
+        {/* Today's revenue */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-card">
+          <div className="flex items-center gap-2 mb-2">
+            <Clock size={14} className="text-blue-600" />
+            <p className="text-[0.78rem] font-bold uppercase tracking-wider text-gray-500">Today</p>
+          </div>
+          <p className="text-2xl font-extrabold text-gray-900 tabular-nums">
+            ₹{(stats.todayRevenue || 0).toLocaleString("en-IN")}
+          </p>
+          <p className="text-[0.78rem] text-gray-500 mt-2">
+            {stats.todayOrders} {stats.todayOrders === 1 ? "order" : "orders"}
+          </p>
+        </div>
+      </div>
+
       {/* STATS GRID */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard value={stats.products} label="Total Products" icon={Package} />
         <StatCard value={stats.orders} label="Total Orders" icon={ShoppingCart} />
         <StatCard value={stats.users} label="Total Users" icon={Users} />
-        <StatCard
-          value={stats.todayOrders}
-          label="Today's Orders"
-          icon={Clock}
-          color="text-blue-600"
-          iconBg="bg-blue-50"
-          iconColor="text-blue-600"
-        />
         <StatCard
           value={stats.pendingOrders}
           label="Pending Orders"
@@ -102,12 +142,12 @@ export default function AdminHome() {
           iconColor="text-amber-600"
         />
         <StatCard
-          value={`₹${stats.weeklyRevenue.toLocaleString("en-IN")}`}
-          label="Weekly Revenue"
-          icon={TrendingUp}
-          color="text-green-600"
-          iconBg="bg-green-50"
-          iconColor="text-green-600"
+          value={`₹${stats.avgOrderValue.toLocaleString("en-IN")}`}
+          label="Avg Order Value"
+          icon={Wallet}
+          color="text-violet-600"
+          iconBg="bg-violet-50"
+          iconColor="text-violet-600"
         />
       </div>
 
